@@ -49,4 +49,3 @@ pub trait DomainService: Send + Sync {
         request: ResolveRequest,
     ) -> RuntimeFuture<'a, ResolvedItem>;
 }
-

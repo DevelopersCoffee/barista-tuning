@@ -16,4 +16,3 @@ pub use errors::{EdgeError, EdgeResult};
 pub use events::{Event, EventBus, EventSink};
 pub use trace::{TraceEvent, TraceId, TraceRecorder};
 pub use version::Version;
-

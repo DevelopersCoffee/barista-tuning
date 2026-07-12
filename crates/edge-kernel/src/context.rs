@@ -48,4 +48,3 @@ pub enum NetworkState {
     Metered,
     Online,
 }
-

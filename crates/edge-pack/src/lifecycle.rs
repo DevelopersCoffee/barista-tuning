@@ -19,9 +19,12 @@ pub enum PackLifecycle {
 }
 
 pub trait PackManager: Send + Sync {
-    fn install<'a>(&'a self, context: &'a Context, pack_path: &'a str) -> PackFuture<'a, PackManifest>;
+    fn install<'a>(
+        &'a self,
+        context: &'a Context,
+        pack_path: &'a str,
+    ) -> PackFuture<'a, PackManifest>;
     fn activate<'a>(&'a self, context: &'a Context, pack_id: &'a str) -> PackFuture<'a, ()>;
     fn deactivate<'a>(&'a self, context: &'a Context, pack_id: &'a str) -> PackFuture<'a, ()>;
     fn remove<'a>(&'a self, context: &'a Context, pack_id: &'a str) -> PackFuture<'a, ()>;
 }
-

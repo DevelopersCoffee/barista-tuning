@@ -29,4 +29,3 @@ pub trait IntentBackend: Send + Sync {
         request: IntentRequest,
     ) -> IntentFuture<'a, IntentResult>;
 }
-

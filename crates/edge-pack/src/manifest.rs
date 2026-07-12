@@ -29,4 +29,3 @@ pub struct PackDependency {
     pub id: String,
     pub version_requirement: String,
 }
-

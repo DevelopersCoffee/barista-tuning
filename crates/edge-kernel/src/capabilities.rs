@@ -23,4 +23,3 @@ impl CapabilitySet {
         self.values.iter()
     }
 }
-

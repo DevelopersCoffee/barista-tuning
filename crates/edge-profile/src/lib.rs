@@ -25,4 +25,3 @@ pub struct ProfileSignal {
 pub struct ProfileSnapshot {
     pub preferences: BTreeMap<String, String>,
 }
-

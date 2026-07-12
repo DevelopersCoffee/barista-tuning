@@ -26,4 +26,3 @@ pub trait EventSink: Send + Sync {
 pub trait EventBus: EventSink {
     fn subscribe(&self, sink: Box<dyn EventSink>) -> EdgeResult<()>;
 }
-

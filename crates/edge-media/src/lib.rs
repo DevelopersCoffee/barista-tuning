@@ -65,4 +65,3 @@ pub fn ensure_media_asset_has_identity(asset: &MediaAsset) -> EdgeResult<()> {
     }
     Ok(())
 }
-

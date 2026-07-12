@@ -35,4 +35,3 @@ impl fmt::Display for EdgeError {
 }
 
 impl std::error::Error for EdgeError {}
-

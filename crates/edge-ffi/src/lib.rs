@@ -49,7 +49,9 @@ pub unsafe extern "C" fn edge_intelligence_execute_json(request: *const c_char) 
         r#"{"candidates":[{"id":"native_mock_sony_max","title":"Sony Max","provider":"native_mock","type":"live_channel","score":0.91,"metadata":{"genre":"movies","language":"hi"}}],"traceId":"native-trace"}"#
     } else if request.contains("\"useCase\":\"resume\"") {
         r#"{"item":{"id":"native_mock_resume","title":"Resume Movie","streamUri":"https://example.invalid/resume.m3u8","headers":{},"subtitles":[],"thumbnail":null,"metadata":{}}}"#
-    } else if request.contains("\"useCase\":\"play\"") || request.contains("\"useCase\":\"resolve\"") {
+    } else if request.contains("\"useCase\":\"play\"")
+        || request.contains("\"useCase\":\"resolve\"")
+    {
         r#"{"id":"native_mock_aaj_tak","title":"Aaj Tak","streamUri":"https://example.invalid/native_mock_aaj_tak.m3u8","headers":{},"subtitles":[],"thumbnail":null,"metadata":{"genre":"news","language":"hi"}}"#
     } else {
         return json_response(false, "unknown use case", "{}");
@@ -69,7 +71,10 @@ fn json_response(ok: bool, error: &str, data: &str) -> *mut c_char {
     let response = if ok {
         format!(r#"{{"ok":true,"data":{data}}}"#)
     } else {
-        format!(r#"{{"ok":false,"error":"{}","data":{data}}}"#, escape_json(error))
+        format!(
+            r#"{{"ok":false,"error":"{}","data":{data}}}"#,
+            escape_json(error)
+        )
     };
 
     CString::new(response)

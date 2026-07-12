@@ -15,4 +15,3 @@ pub struct TraceEvent {
 pub trait TraceRecorder: Send + Sync {
     fn record(&self, event: TraceEvent) -> EdgeResult<()>;
 }
-

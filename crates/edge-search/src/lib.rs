@@ -30,7 +30,10 @@ pub trait CandidateRetriever: Send + Sync {
 }
 
 pub trait CandidateRanker: Send + Sync {
-    fn rank(&self, context: &Context, query: &SearchQuery, candidates: Vec<Candidate>)
-        -> EdgeResult<Vec<RankedCandidate>>;
+    fn rank(
+        &self,
+        context: &Context,
+        query: &SearchQuery,
+        candidates: Vec<Candidate>,
+    ) -> EdgeResult<Vec<RankedCandidate>>;
 }
-

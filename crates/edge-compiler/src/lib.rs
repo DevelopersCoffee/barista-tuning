@@ -28,4 +28,3 @@ pub struct ValidationReport {
     pub warning_count: usize,
     pub messages: Vec<String>,
 }
-

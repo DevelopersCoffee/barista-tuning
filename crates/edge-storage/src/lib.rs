@@ -10,4 +10,3 @@ pub trait UnitOfWork: Send {
 pub trait UnitOfWorkFactory: Send + Sync {
     fn begin(&self) -> EdgeResult<Box<dyn UnitOfWork>>;
 }
-

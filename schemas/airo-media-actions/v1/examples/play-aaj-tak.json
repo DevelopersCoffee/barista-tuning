@@ -1,0 +1,12 @@
+{
+  "intent": "play",
+  "tool": "media.play",
+  "confidence": 0.94,
+  "constraints": {
+    "query": "Aaj Tak",
+    "live": true
+  },
+  "missing_fields": [],
+  "clarification_required": false
+}
+

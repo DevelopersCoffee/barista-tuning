@@ -1,0 +1,23 @@
+[workspace]
+members = [
+    "crates/edge-kernel",
+    "crates/edge-pack",
+    "crates/edge-storage",
+    "crates/edge-search",
+    "crates/edge-intent",
+    "crates/edge-profile",
+    "crates/edge-runtime",
+    "crates/edge-compiler",
+    "crates/edge-media",
+    "crates/edge-ffi",
+    "crates/edge-cli",
+]
+resolver = "2"
+
+[workspace.package]
+edition = "2021"
+license = "MIT"
+version = "0.1.0"
+
+[workspace.lints.rust]
+unsafe_code = "forbid"

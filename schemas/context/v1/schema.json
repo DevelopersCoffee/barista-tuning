@@ -1,0 +1,51 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://edge-intelligence.local/schemas/context/v1/schema.json",
+  "title": "Execution Context 1.0",
+  "type": "object",
+  "required": ["request_id", "user", "device", "locale", "capabilities", "network", "time"],
+  "additionalProperties": false,
+  "properties": {
+    "request_id": { "type": "string", "minLength": 1 },
+    "user": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "user_id": { "type": ["string", "null"] },
+        "profile_id": { "type": ["string", "null"] }
+      }
+    },
+    "device": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "device_id": { "type": ["string", "null"] },
+        "device_class": { "type": ["string", "null"] }
+      }
+    },
+    "locale": {
+      "type": "object",
+      "required": ["language"],
+      "additionalProperties": false,
+      "properties": {
+        "language": { "type": "string", "minLength": 1 },
+        "region": { "type": ["string", "null"] }
+      }
+    },
+    "capabilities": {
+      "type": "array",
+      "items": { "type": "string" },
+      "uniqueItems": true
+    },
+    "network": {
+      "type": "string",
+      "enum": ["offline", "metered", "online"]
+    },
+    "time": { "type": "string", "format": "date-time" },
+    "attributes": {
+      "type": "object",
+      "additionalProperties": { "type": "string" }
+    }
+  }
+}
+

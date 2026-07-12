@@ -28,3 +28,12 @@ lightning_logs/
 # Local compiler outputs.
 build/
 build-*/
+target/
+packs/*.pack
+
+# Dart/Flutter generated files.
+.dart_tool/
+build/
+bindings/flutter/.dart_tool/
+bindings/flutter/build/
+bindings/flutter/pubspec.lock

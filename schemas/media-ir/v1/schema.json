@@ -1,0 +1,71 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://edge-intelligence.local/schemas/media-ir/v1/schema.json",
+  "title": "Media IR 1.0",
+  "type": "object",
+  "required": ["id", "title", "provider", "type", "metadata_version"],
+  "additionalProperties": false,
+  "properties": {
+    "id": { "type": "string", "minLength": 1 },
+    "title": { "type": "string", "minLength": 1 },
+    "provider": { "type": "string", "minLength": 1 },
+    "type": {
+      "type": "string",
+      "enum": ["live_channel", "movie", "episode", "live_event", "video", "audio", "podcast", "music"]
+    },
+    "language": {
+      "type": "array",
+      "items": { "type": "string" },
+      "uniqueItems": true
+    },
+    "genres": {
+      "type": "array",
+      "items": { "type": "string" },
+      "uniqueItems": true
+    },
+    "subgenres": {
+      "type": "array",
+      "items": { "type": "string" },
+      "uniqueItems": true
+    },
+    "country": { "type": ["string", "null"] },
+    "region": { "type": ["string", "null"] },
+    "keywords": {
+      "type": "array",
+      "items": { "type": "string" },
+      "uniqueItems": true
+    },
+    "cast": {
+      "type": "array",
+      "items": { "type": "string" },
+      "uniqueItems": true
+    },
+    "director": { "type": ["string", "null"] },
+    "year": { "type": ["integer", "null"], "minimum": 1800 },
+    "duration": { "type": ["integer", "null"], "minimum": 0 },
+    "rating": { "type": ["number", "null"], "minimum": 0 },
+    "age_rating": { "type": ["string", "null"] },
+    "mood": {
+      "type": "array",
+      "items": { "type": "string" },
+      "uniqueItems": true
+    },
+    "themes": {
+      "type": "array",
+      "items": { "type": "string" },
+      "uniqueItems": true
+    },
+    "availability": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "quality": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "stream_uri": { "type": ["string", "null"] },
+    "thumbnail": { "type": ["string", "null"] },
+    "metadata_version": { "type": "string", "minLength": 1 }
+  }
+}
+

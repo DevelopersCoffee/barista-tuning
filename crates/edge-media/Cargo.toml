@@ -1,0 +1,16 @@
+[package]
+name = "edge-media"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[dependencies]
+edge-kernel = { path = "../edge-kernel" }
+edge-runtime = { path = "../edge-runtime" }
+edge-search = { path = "../edge-search" }
+
+[lib]
+path = "src/lib.rs"
+
+[lints]
+workspace = true

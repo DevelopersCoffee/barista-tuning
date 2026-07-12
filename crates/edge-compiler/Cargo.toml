@@ -1,0 +1,15 @@
+[package]
+name = "edge-compiler"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[dependencies]
+edge-kernel = { path = "../edge-kernel" }
+edge-pack = { path = "../edge-pack" }
+
+[lib]
+path = "src/lib.rs"
+
+[lints]
+workspace = true

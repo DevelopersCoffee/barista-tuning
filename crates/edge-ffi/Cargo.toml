@@ -1,0 +1,16 @@
+[package]
+name = "edge-ffi"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[lib]
+crate-type = ["cdylib", "staticlib", "rlib"]
+path = "src/lib.rs"
+
+[dependencies]
+edge-kernel = { path = "../edge-kernel" }
+edge-media = { path = "../edge-media" }
+
+[lints.rust]
+unsafe_code = "allow"

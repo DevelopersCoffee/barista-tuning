@@ -1,0 +1,15 @@
+[package]
+name = "edge-cli"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[[bin]]
+name = "edge"
+path = "src/main.rs"
+
+[dependencies]
+edge-kernel = { path = "../edge-kernel" }
+
+[lints]
+workspace = true

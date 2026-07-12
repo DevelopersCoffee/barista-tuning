@@ -1,0 +1,15 @@
+[package]
+name = "edge-runtime"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[dependencies]
+edge-kernel = { path = "../edge-kernel" }
+edge-search = { path = "../edge-search" }
+
+[lib]
+path = "src/lib.rs"
+
+[lints]
+workspace = true

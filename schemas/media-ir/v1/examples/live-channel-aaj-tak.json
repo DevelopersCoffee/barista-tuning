@@ -1,0 +1,29 @@
+{
+  "id": "iptv_aaj_tak",
+  "title": "Aaj Tak",
+  "provider": "iptv",
+  "type": "live_channel",
+  "language": ["hi"],
+  "genres": ["news"],
+  "subgenres": ["national_news"],
+  "country": "IN",
+  "region": "india",
+  "keywords": ["breaking news", "politics", "india", "live", "24x7"],
+  "cast": [],
+  "director": null,
+  "year": null,
+  "duration": null,
+  "rating": null,
+  "age_rating": null,
+  "mood": ["informative"],
+  "themes": ["current affairs", "politics"],
+  "availability": {
+    "live": true,
+    "playable": true
+  },
+  "quality": {},
+  "stream_uri": "https://example.invalid/aajtak/master.m3u8",
+  "thumbnail": null,
+  "metadata_version": "1.0.0"
+}
+

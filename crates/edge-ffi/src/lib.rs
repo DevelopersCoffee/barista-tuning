@@ -28,6 +28,13 @@ pub extern "C" fn edge_intelligence_sdk_version_patch() -> u16 {
     0
 }
 
+/// Executes one SDK use case encoded as JSON and returns an allocated JSON response.
+///
+/// # Safety
+///
+/// `request` must be either null or a valid, NUL-terminated C string that remains
+/// alive for the duration of the call. The returned pointer must be released by
+/// calling [`edge_intelligence_string_free`] exactly once.
 #[no_mangle]
 pub unsafe extern "C" fn edge_intelligence_execute_json(request: *const c_char) -> *mut c_char {
     if request.is_null() {
@@ -42,7 +49,7 @@ pub unsafe extern "C" fn edge_intelligence_execute_json(request: *const c_char) 
     let data = if request.contains("\"useCase\":\"installPack\"") {
         r#"{"packId":"mock.media.pack","version":"0.1.0","activated":true}"#
     } else if request.contains("\"useCase\":\"parseIntent\"") {
-        r#"{"intent":"recommend","confidence":0.86,"constraints":{"genre":"news"},"missingFields":[],"clarificationRequired":false}"#
+        r#"{"intent":"recommend","tool":"media.recommend","confidence":0.86,"constraints":{"genre":"news"},"missingFields":[],"clarificationRequired":false}"#
     } else if request.contains("\"useCase\":\"search\"") {
         r#"{"candidates":[{"id":"native_mock_aaj_tak","title":"Aaj Tak","provider":"native_mock","type":"live_channel","score":0.97,"metadata":{"genre":"news","language":"hi"}}],"traceId":"native-trace"}"#
     } else if request.contains("\"useCase\":\"recommend\"") {
@@ -60,6 +67,13 @@ pub unsafe extern "C" fn edge_intelligence_execute_json(request: *const c_char) 
     json_response(true, "", data)
 }
 
+/// Frees a string returned by the Edge Intelligence FFI boundary.
+///
+/// # Safety
+///
+/// `value` must be null or a pointer previously returned by this library via
+/// `CString::into_raw`. Passing any other pointer, or freeing the same pointer
+/// more than once, is undefined behavior.
 #[no_mangle]
 pub unsafe extern "C" fn edge_intelligence_string_free(value: *mut c_char) {
     if !value.is_null() {

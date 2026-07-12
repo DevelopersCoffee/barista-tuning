@@ -1,0 +1,26 @@
+.DS_Store
+.env
+.venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+
+# Data and model artifacts are intentionally not committed.
+data/raw/*
+data/processed/*
+models/*
+reports/*
+!data/raw/Zomato_Menu_Scraped.xlsx
+!data/raw/.gitkeep
+!data/processed/.gitkeep
+!models/.gitkeep
+!reports/.gitkeep
+
+# Hugging Face and experiment logs.
+.cache/
+wandb/
+runs/
+mlruns/
+lightning_logs/

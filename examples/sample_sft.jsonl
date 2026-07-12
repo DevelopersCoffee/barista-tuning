@@ -1,0 +1,3 @@
+{"instruction":"Write a concise order confirmation for a cafe customer.","input":"Customer ordered one cappuccino and one blueberry muffin for pickup.","output":"Thanks for your order. Your cappuccino and blueberry muffin will be ready for pickup shortly."}
+{"instruction":"Rewrite the message to sound more professional.","input":"we are out of oat milk today sorry","output":"We are sorry, but oat milk is unavailable today. Please choose another milk option for your order."}
+{"instruction":"Answer the customer question using the policy.","input":"Policy: Orders can be cancelled before preparation starts. Question: Can I cancel my sandwich order?","output":"You can cancel the sandwich order if preparation has not started yet."}

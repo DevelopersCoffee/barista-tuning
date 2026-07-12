@@ -13,6 +13,20 @@ console = Console()
 
 
 @app.command()
+def compile(
+    ddl: Annotated[Path, typer.Argument(exists=True, readable=True)],
+    output: Annotated[Path, typer.Option("--output", "-o")] = Path("build"),
+) -> None:
+    """Compile a domain DDL file into Domain IR and Phase 1 artifacts."""
+    from slm_train_eval_publish.compiler import compile_domain
+
+    result = compile_domain(ddl, output)
+    console.print(f"Compiled domain artifacts: {result.root}")
+    console.print(f"Domain IR: {result.domain_ir}")
+    console.print(f"Compiler manifest: {result.compiler_manifest}")
+
+
+@app.command()
 def train(config: Annotated[Path, typer.Argument(exists=True, readable=True)]) -> None:
     """Fine-tune the configured base model."""
     from slm_train_eval_publish.train import train_model

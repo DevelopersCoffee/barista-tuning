@@ -82,8 +82,28 @@ ruff check .
 configs/                  YAML configs for train/eval/publish runs
 data/raw/                 local source data, ignored by git
 data/processed/           derived data, ignored by git
+docs/use-cases/           documented SLM use cases
 models/                   local model outputs, ignored by git
 reports/                  eval reports, ignored by git
 src/slm_train_eval_publish/
 tests/
 ```
+
+## Use Cases
+
+- [Prompt Enhancement and Local Context Augmentation](docs/use-cases/prompt-enhancement-local-context.md)
+- [Indian Splitwise-Style Finance QA](docs/use-cases/indian-splitwise-finance-qa.md)
+- [Federated Enterprise Search with Citations](docs/use-cases/federated-enterprise-search-citations.md)
+- [Release-Aware YugabyteDB Text-to-SQL](docs/use-cases/release-aware-yugabyte-text-to-sql.md)
+- [Edge Task-Specific SLMs](docs/use-cases/edge-task-specific-slm.md)
+- [Java Sonar SLM and Developer Digital Twin](docs/use-cases/java-sonar-developer-twin.md)
+
+## Design
+
+- [Domain Intelligence Platform Design](docs/design/slm-training-sdk.md)
+
+## Research Notes
+
+- [Blueprints and Prompt Template Search for SLMs](docs/research/blueprints-and-template-search.md)
+- [CRAFT Synthetic Dataset Generation](docs/research/craft-synthetic-dataset-generation.md)
+- [Fine-Tuned SLMs for Code Review Accuracy](docs/research/nvidia-code-review-slm-finetuning.md)

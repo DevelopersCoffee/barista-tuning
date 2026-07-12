@@ -24,3 +24,7 @@ wandb/
 runs/
 mlruns/
 lightning_logs/
+
+# Local compiler outputs.
+build/
+build-*/

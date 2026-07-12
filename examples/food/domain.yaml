@@ -1,0 +1,178 @@
+domain: food
+version: 1.0.0
+ir_version: 1.0.0
+description: Restaurant business-agent domain for menu search, recommendation, ingredient normalization, allergen filtering, and kitchen intent routing.
+
+capabilities:
+  - conversation
+  - intent_extraction
+  - entity_normalization
+  - recommendation
+  - retrieval
+  - structured_extraction
+  - tool_calling
+  - qa
+  - policy_checking
+
+policies:
+  - allergen_disclaimer
+  - automation_human_approval
+  - customer_sensitivity_filter
+  - deterministic_menu_grounding
+
+entities:
+  Dish:
+    attributes:
+      name:
+        type: string
+        required: true
+      category:
+        type: string
+      cuisine:
+        type: string
+      price:
+        type: number
+        required: true
+      ingredients:
+        type: array
+        items: string
+        required: true
+      allergens:
+        type: array
+        items: string
+      dietary_tags:
+        type: array
+        items: string
+      spice_level:
+        type: string
+      preparation_time_minutes:
+        type: integer
+      popularity_score:
+        type: number
+      chef_recommended:
+        type: boolean
+      availability:
+        type: boolean
+      profit_margin_score:
+        type: number
+      nutrition:
+        type: object
+    relationships:
+      contains:
+        target: Ingredient
+        cardinality: many
+      governed_by:
+        target: Policy
+        cardinality: many
+    capabilities:
+      - qa
+      - recommendation
+      - retrieval
+    policies:
+      - allergen_disclaimer
+      - customer_sensitivity_filter
+
+  Ingredient:
+    attributes:
+      id:
+        type: string
+        required: true
+      name:
+        type: string
+        required: true
+      aliases:
+        type: array
+        items: string
+      regional_names:
+        type: array
+        items: string
+      category:
+        type: string
+      official_allergen:
+        type: boolean
+      customer_sensitive:
+        type: boolean
+      dietary_flags:
+        type: array
+        items: string
+      cross_contamination_risk:
+        type: string
+      common_substitutions:
+        type: array
+        items: string
+    capabilities:
+      - entity_normalization
+
+  BusinessQuery:
+    attributes:
+      intent:
+        type: string
+        required: true
+      filters:
+        type: object
+      people:
+        type: integer
+      budget:
+        type: number
+      exclude_ingredients:
+        type: array
+        items: string
+      exclude_allergens:
+        type: array
+        items: string
+      max_price:
+        type: number
+      max_preparation_time:
+        type: integer
+      diet:
+        type: string
+      spice_level:
+        type: string
+    relationships:
+      targets:
+        target: Dish
+        cardinality: many
+      excludes:
+        target: Ingredient
+        cardinality: many
+    capabilities:
+      - intent_extraction
+      - recommendation
+      - tool_calling
+
+  CustomerProfile:
+    attributes:
+      diet:
+        type: string
+      avoid_ingredients:
+        type: array
+        items: string
+      preferred_spice:
+        type: string
+      budget:
+        type: number
+      favorite_cuisine:
+        type: string
+    relationships:
+      avoids:
+        target: Ingredient
+        cardinality: many
+    policies:
+      - customer_sensitivity_filter
+
+  Policy:
+    attributes:
+      id:
+        type: string
+        required: true
+      condition:
+        type: object
+        required: true
+      action:
+        type: string
+        required: true
+      message:
+        type: string
+        required: true
+    capabilities:
+      - policy_checking

@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.2.1
+
+- Add optional `llama.cpp` LoRA adapter configuration for local SLM intent
+  parsing via `EDGE_INTELLIGENCE_INTENT_LORA`.
+
 ## 0.2.0
 
 - Add native Rust FFI runtime dispatch for pack install, intent parsing, search,

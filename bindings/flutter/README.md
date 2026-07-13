@@ -33,7 +33,7 @@ dependencies:
     git:
       url: https://github.com/DevelopersCoffee/barista-tuning.git
       path: bindings/flutter
-      ref: slm_edge_intelligence-v0.2.0
+      ref: slm_edge_intelligence-v0.2.1
 ```
 
 For local development:

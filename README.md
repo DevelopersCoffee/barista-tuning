@@ -128,10 +128,12 @@ SDK API remains unchanged:
 ```bash
 EDGE_INTELLIGENCE_INTENT_BACKEND=llama.cpp \
 EDGE_INTELLIGENCE_LLAMA_CPP_BIN=/absolute/path/to/llama-cli \
-EDGE_INTELLIGENCE_INTENT_MODEL=/absolute/path/to/airo-media-actions.gguf
+EDGE_INTELLIGENCE_INTENT_MODEL=/absolute/path/to/base-model.gguf \
+EDGE_INTELLIGENCE_INTENT_LORA=/absolute/path/to/airo-media-actions-lora.gguf
 ```
 
-Without those variables, the runtime uses the production rule backend.
+`EDGE_INTELLIGENCE_INTENT_LORA` is optional. Without these variables, the
+runtime uses the production rule backend.
 
 ## IPTV To Media IR
 

@@ -57,6 +57,7 @@ pub struct IntentBackendConfig {
     pub kind: IntentBackendKind,
     pub model_path: Option<String>,
     pub executable_path: Option<String>,
+    pub lora_path: Option<String>,
 }
 
 impl Default for IntentBackendConfig {
@@ -65,6 +66,7 @@ impl Default for IntentBackendConfig {
             kind: IntentBackendKind::Rule,
             model_path: None,
             executable_path: None,
+            lora_path: None,
         }
     }
 }
@@ -82,6 +84,7 @@ impl ConfiguredIntentBackend {
             IntentBackendKind::LlamaCpp => Self::LlamaCpp(LlamaCppIntentBackend {
                 model_path: config.model_path,
                 executable_path: config.executable_path,
+                lora_path: config.lora_path,
             }),
         }
     }
@@ -127,6 +130,7 @@ impl IntentBackend for RuleIntentBackend {
 pub struct LlamaCppIntentBackend {
     pub model_path: Option<String>,
     pub executable_path: Option<String>,
+    pub lora_path: Option<String>,
 }
 
 impl LlamaCppIntentBackend {
@@ -140,15 +144,32 @@ impl LlamaCppIntentBackend {
             "llama.cpp model path is required",
         )?;
         let prompt = llama_prompt(&request.utterance);
-        let output = Command::new(executable)
-            .args(["-m", model, "-p", &prompt, "-n", "256", "--temp", "0"])
-            .output()
-            .map_err(|error| {
-                EdgeError::new(
-                    edge_kernel::errors::EdgeErrorKind::Internal,
-                    format!("failed to launch llama.cpp intent backend: {error}"),
-                )
-            })?;
+        let mut command = Command::new(executable);
+        command.args([
+            "-m",
+            model,
+            "-p",
+            &prompt,
+            "-n",
+            "256",
+            "--temp",
+            "0",
+            "--no-display-prompt",
+            "--no-conversation",
+            "--single-turn",
+            "--simple-io",
+        ]);
+        if let Some(lora_path) = self.lora_path.as_deref().map(str::trim) {
+            if !lora_path.is_empty() {
+                command.args(["--lora", lora_path]);
+            }
+        }
+        let output = command.output().map_err(|error| {
+            EdgeError::new(
+                edge_kernel::errors::EdgeErrorKind::Internal,
+                format!("failed to launch llama.cpp intent backend: {error}"),
+            )
+        })?;
 
         if !output.status.success() {
             return Err(EdgeError::new(
@@ -744,6 +765,7 @@ mod tests {
             kind: IntentBackendKind::LlamaCpp,
             model_path: Some("models/intent.gguf".to_string()),
             executable_path: None,
+            lora_path: None,
         });
 
         let error = backend
@@ -766,7 +788,7 @@ mod tests {
         let executable = temp.path().join("llama-cli");
         fs::write(
             &executable,
-            "#!/bin/sh\ncat <<'JSON'\n{\"intent\":\"search\",\"tool\":\"media.search\",\"confidence\":0.93,\"constraints\":{\"genre\":\"news\",\"language\":\"hi\",\"live\":true},\"missing_fields\":[],\"clarification_required\":false}\nJSON\n",
+            "#!/bin/sh\nprintf '%s ' \"$@\" > \"$(dirname \"$0\")/argv.txt\"\ncat <<'JSON'\n{\"intent\":\"search\",\"tool\":\"media.search\",\"confidence\":0.93,\"constraints\":{\"genre\":\"news\",\"language\":\"hi\",\"live\":true},\"missing_fields\":[],\"clarification_required\":false}\nJSON\n",
         )
         .unwrap();
         let mut permissions = fs::metadata(&executable).unwrap().permissions();
@@ -777,6 +799,7 @@ mod tests {
             kind: IntentBackendKind::LlamaCpp,
             model_path: Some("models/intent.gguf".to_string()),
             executable_path: Some(executable.to_string_lossy().to_string()),
+            lora_path: Some("models/intent-lora.gguf".to_string()),
         });
 
         let result = backend
@@ -792,5 +815,8 @@ mod tests {
             constraints([("genre", "news"), ("language", "hi"), ("live", "true")])
         );
         assert!(!result.clarification_required);
+
+        let argv = fs::read_to_string(temp.path().join("argv.txt")).unwrap();
+        assert!(argv.contains("--lora models/intent-lora.gguf"));
     }
 }

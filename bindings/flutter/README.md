@@ -94,6 +94,18 @@ flutter run \
 Omit those defines, or set `AIRO_EDGE_INTELLIGENCE_BACKEND=rule`, to use the
 public Dart rule backend.
 
+For SLM intent parsing, the Rust runtime can be configured without Flutter UI
+changes:
+
+```bash
+EDGE_INTELLIGENCE_INTENT_BACKEND=llama.cpp \
+EDGE_INTELLIGENCE_LLAMA_CPP_BIN=/absolute/path/to/llama-cli \
+EDGE_INTELLIGENCE_INTENT_MODEL=/absolute/path/to/base-model.gguf \
+EDGE_INTELLIGENCE_INTENT_LORA=/absolute/path/to/airo-media-actions-lora.gguf
+```
+
+`EDGE_INTELLIGENCE_INTENT_LORA` is optional.
+
 The native artifact produced by the Rust `edge-ffi` crate must be bundled with
 the app for `EdgeIntelligence.native()` calls. The Flutter app does not need to
 know about M3U parsing, SQLite, ranking indexes, Rust internals, or future SLM

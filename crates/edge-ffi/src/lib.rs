@@ -152,6 +152,7 @@ fn intent_backend() -> Result<ConfiguredIntentBackend, String> {
         kind,
         model_path: std::env::var("EDGE_INTELLIGENCE_INTENT_MODEL").ok(),
         executable_path: std::env::var("EDGE_INTELLIGENCE_LLAMA_CPP_BIN").ok(),
+        lora_path: std::env::var("EDGE_INTELLIGENCE_INTENT_LORA").ok(),
     }))
 }
 
@@ -422,6 +423,9 @@ mod tests {
     fn parse_intent_contract_returns_media_constraints() {
         let _guard = env_lock().lock().unwrap();
         std::env::remove_var("EDGE_INTELLIGENCE_INTENT_BACKEND");
+        std::env::remove_var("EDGE_INTELLIGENCE_INTENT_MODEL");
+        std::env::remove_var("EDGE_INTELLIGENCE_LLAMA_CPP_BIN");
+        std::env::remove_var("EDGE_INTELLIGENCE_INTENT_LORA");
         let response = call(json!({
             "useCase": "parseIntent",
             "payload": {"utterance": "Show Hindi news"}
@@ -456,6 +460,7 @@ mod tests {
         std::env::remove_var("EDGE_INTELLIGENCE_INTENT_BACKEND");
         std::env::remove_var("EDGE_INTELLIGENCE_INTENT_MODEL");
         std::env::remove_var("EDGE_INTELLIGENCE_LLAMA_CPP_BIN");
+        std::env::remove_var("EDGE_INTELLIGENCE_INTENT_LORA");
     }
 
     #[cfg(unix)]
@@ -493,6 +498,7 @@ mod tests {
         std::env::remove_var("EDGE_INTELLIGENCE_INTENT_BACKEND");
         std::env::remove_var("EDGE_INTELLIGENCE_INTENT_MODEL");
         std::env::remove_var("EDGE_INTELLIGENCE_LLAMA_CPP_BIN");
+        std::env::remove_var("EDGE_INTELLIGENCE_INTENT_LORA");
     }
 
     #[test]

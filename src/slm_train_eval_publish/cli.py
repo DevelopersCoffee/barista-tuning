@@ -152,6 +152,26 @@ def compile_iptv_pack(
     console.print(f"Pack: {pack_result.pack_path}")
 
 
+@app.command("validate-media-pack")
+def validate_media_pack(
+    pack_path: Annotated[Path, typer.Argument(exists=True, readable=True)],
+) -> None:
+    """Validate a ZIP-based media .pack before installing it on device."""
+    from slm_train_eval_publish.pack_validator import validate_media_pack as validate_pack
+
+    result = validate_pack(pack_path)
+    if result.valid:
+        pack_id = (result.manifest or {}).get("pack", {}).get("id", "unknown")
+        console.print(f"Valid media pack: {pack_id}")
+        console.print(f"Assets: {result.asset_count}")
+        return
+
+    console.print(f"Invalid media pack: {pack_path}")
+    for error in result.errors:
+        console.print(f"- {error}")
+    raise typer.Exit(1)
+
+
 @app.command("eval-media-actions")
 def eval_media_actions(
     dataset: Annotated[Path, typer.Argument(exists=True, readable=True)],
@@ -173,6 +193,82 @@ def eval_media_actions(
     console.print(f"Tool accuracy: {result['tool_accuracy']:.3f}")
     console.print(f"Constraint exact accuracy: {result['constraint_exact_accuracy']:.3f}")
     console.print(f"Clarification accuracy: {result['clarification_accuracy']:.3f}")
+
+
+@app.command("compare-media-action-predictions")
+def compare_media_action_predictions(
+    dataset: Annotated[Path, typer.Argument(exists=True, readable=True)],
+    predictions: Annotated[Path, typer.Argument(exists=True, readable=True)],
+    output: Annotated[Path | None, typer.Option("--output", "-o")] = None,
+) -> None:
+    """Compare SLM media-action predictions against labels and the rule baseline."""
+    import json
+
+    from slm_train_eval_publish.media_intent import evaluate_media_action_predictions_jsonl
+
+    result = evaluate_media_action_predictions_jsonl(dataset, predictions)
+    if output is not None:
+        output.parent.mkdir(parents=True, exist_ok=True)
+        output.write_text(json.dumps(result, indent=2, sort_keys=True), encoding="utf-8")
+        console.print(f"Comparison report: {output}")
+
+    console.print(f"Total: {result['total']}")
+    console.print(f"Rule intent accuracy: {result['rule']['intent_accuracy']:.3f}")
+    console.print(f"SLM intent accuracy: {result['slm']['intent_accuracy']:.3f}")
+    console.print(
+        "SLM constraint exact accuracy: "
+        f"{result['slm']['constraint_exact_accuracy']:.3f}"
+    )
+
+
+@app.command("package-edge-ffi-android")
+def package_edge_ffi_android(
+    airo_app: Annotated[
+        Path,
+        typer.Option(
+            "--airo-app",
+            help="Airo Flutter app root, for example /path/to/airo/app.",
+        ),
+    ],
+    artifact: Annotated[
+        list[str] | None,
+        typer.Option(
+            "--artifact",
+            help="Prebuilt artifact in ABI=PATH format. Can be passed more than once.",
+        ),
+    ] = None,
+    build: Annotated[
+        bool,
+        typer.Option("--build", help="Build Android artifacts with cargo-ndk before packaging."),
+    ] = False,
+    abi: Annotated[
+        list[str] | None,
+        typer.Option("--abi", help="Android ABI for --build. Can be passed more than once."),
+    ] = None,
+    release: Annotated[bool, typer.Option("--release/--debug")] = True,
+) -> None:
+    """Package Rust edge-ffi shared libraries into Airo Android jniLibs."""
+    from slm_train_eval_publish.android_ffi_packager import (
+        build_android_edge_ffi,
+        package_android_edge_ffi,
+        parse_abi_artifact,
+    )
+
+    if build:
+        result = build_android_edge_ffi(
+            repo_root=Path.cwd(),
+            airo_app=airo_app,
+            abis=abi or ["arm64-v8a"],
+            release=release,
+        )
+    else:
+        artifact_specs = artifact or []
+        artifacts = dict(parse_abi_artifact(spec) for spec in artifact_specs)
+        result = package_android_edge_ffi(airo_app=airo_app, artifacts=artifacts)
+
+    console.print(f"jniLibs: {result.jni_libs_root}")
+    for packaged_abi, path in sorted(result.copied.items()):
+        console.print(f"{packaged_abi}: {path}")
 
 
 @app.command()

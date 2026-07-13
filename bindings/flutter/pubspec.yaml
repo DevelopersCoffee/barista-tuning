@@ -1,6 +1,6 @@
 name: slm_edge_intelligence
 description: Flutter bindings for the Edge Intelligence runtime and offline media intent SDK.
-version: 0.1.0
+version: 0.2.0
 publish_to: none
 repository: https://github.com/DevelopersCoffee/barista-tuning
 issue_tracker: https://github.com/DevelopersCoffee/barista-tuning/issues

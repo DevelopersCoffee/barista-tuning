@@ -98,6 +98,16 @@ slm eval-media-actions data/processed/airo_media_actions_eval.jsonl \
   --output reports/airo_media_actions_rule_eval.json
 ```
 
+After a model produces JSONL predictions with `input` and `output` fields,
+compare its exact tool-call accuracy against the rule baseline:
+
+```bash
+slm compare-media-action-predictions \
+  data/processed/airo_media_actions_eval.jsonl \
+  reports/airo_media_actions_slm_predictions.jsonl \
+  --output reports/airo_media_actions_rule_vs_slm.json
+```
+
 Rows use the existing SFT shape, but the output is strict media action JSON:
 
 ```json
@@ -106,6 +116,17 @@ Rows use the existing SFT shape, but the output is strict media action JSON:
 
 The model is trained to emit SDK tool calls, not conversational answers or media
 metadata.
+
+At runtime, Rust FFI selects the local SLM backend by configuration. The Flutter
+SDK API remains unchanged:
+
+```bash
+EDGE_INTELLIGENCE_INTENT_BACKEND=llama.cpp \
+EDGE_INTELLIGENCE_LLAMA_CPP_BIN=/absolute/path/to/llama-cli \
+EDGE_INTELLIGENCE_INTENT_MODEL=/absolute/path/to/airo-media-actions.gguf
+```
+
+Without those variables, the runtime uses the production rule backend.
 
 ## IPTV To Media IR
 
@@ -142,6 +163,15 @@ slm compile-iptv-pack https://iptv-org.github.io/iptv/index.m3u \
   --pack-id media.iptv.global \
   --pack-name "Global IPTV"
 ```
+
+Validate the pack before bundling or installing it:
+
+```bash
+slm validate-media-pack packs/media.iptv.global-0.1.0.pack
+```
+
+Validation checks the manifest, checksum, required indexes/reports, `media.db`
+tables, playable asset count, and asset-count consistency.
 
 ## Evaluate
 

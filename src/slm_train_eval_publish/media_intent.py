@@ -141,6 +141,43 @@ def evaluate_media_actions_jsonl(path: Path) -> dict[str, Any]:
     if not rows:
         raise ValueError("evaluation file has no rows")
 
+    return _evaluate_rows(
+        rows,
+        lambda row: parse_media_intent(row["input"]).to_json(),
+    )
+
+
+def evaluate_media_action_predictions_jsonl(dataset: Path, predictions: Path) -> dict[str, Any]:
+    rows = [json.loads(line) for line in dataset.read_text(encoding="utf-8").splitlines() if line]
+    prediction_rows = [
+        json.loads(line) for line in predictions.read_text(encoding="utf-8").splitlines() if line
+    ]
+    if not rows:
+        raise ValueError("evaluation file has no rows")
+    if not prediction_rows:
+        raise ValueError("prediction file has no rows")
+
+    predictions_by_input = {
+        str(row["input"]): _prediction_payload(row)
+        for row in prediction_rows
+        if "input" in row
+    }
+    missing_inputs = [row["input"] for row in rows if row["input"] not in predictions_by_input]
+    if missing_inputs:
+        raise ValueError(f"prediction file is missing {len(missing_inputs)} inputs")
+
+    rule_report = _evaluate_rows(rows, lambda row: parse_media_intent(row["input"]).to_json())
+    slm_report = _evaluate_rows(rows, lambda row: predictions_by_input[row["input"]])
+
+    return {
+        "total": len(rows),
+        "rule": _without_failures(rule_report),
+        "slm": _without_failures(slm_report),
+        "slm_failures": slm_report["failures"],
+    }
+
+
+def _evaluate_rows(rows: list[dict[str, Any]], predict: Any) -> dict[str, Any]:
     metrics = {
         "total": len(rows),
         "intent_correct": 0,
@@ -152,7 +189,7 @@ def evaluate_media_actions_jsonl(path: Path) -> dict[str, Any]:
     failures: list[dict[str, Any]] = []
     for row in rows:
         expected = json.loads(row["output"])
-        actual = parse_media_intent(row["input"]).to_json()
+        actual = _normalize_result(predict(row))
 
         metrics["intent_correct"] += int(actual["intent"] == expected["intent"])
         metrics["tool_correct"] += int(actual["tool"] == expected["tool"])
@@ -179,6 +216,32 @@ def evaluate_media_actions_jsonl(path: Path) -> dict[str, Any]:
         "clarification_accuracy": metrics["clarification_correct"] / total,
         "failures": failures[:20],
     }
+
+
+def _prediction_payload(row: dict[str, Any]) -> dict[str, Any]:
+    output = row.get("output", row)
+    if isinstance(output, str):
+        output = json.loads(output)
+    if not isinstance(output, dict):
+        raise ValueError("prediction output must be an object or JSON object string")
+    return _normalize_result(output)
+
+
+def _normalize_result(value: dict[str, Any]) -> dict[str, Any]:
+    return {
+        "intent": value.get("intent"),
+        "tool": value.get("tool"),
+        "confidence": float(value.get("confidence", 0.0)),
+        "constraints": value.get("constraints", {}),
+        "missing_fields": value.get("missing_fields", value.get("missingFields", [])),
+        "clarification_required": bool(
+            value.get("clarification_required", value.get("clarificationRequired", False))
+        ),
+    }
+
+
+def _without_failures(report: dict[str, Any]) -> dict[str, Any]:
+    return {key: value for key, value in report.items() if key != "failures"}
 
 
 def _result(

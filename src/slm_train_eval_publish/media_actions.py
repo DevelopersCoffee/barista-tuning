@@ -154,6 +154,111 @@ def _base_templates():
             confidence=0.89,
         )
 
+    def sports_hd(rng: random.Random) -> MediaActionExample:
+        return MediaActionExample(
+            utterance=rng.choice(
+                [
+                    "Sports in HD only",
+                    "Find HD sports channels",
+                    "Show sports channels in 1080p",
+                ]
+            ),
+            intent="search",
+            tool="media.search",
+            constraints={"genre": "sports", "quality": "hd"},
+            confidence=0.86,
+        )
+
+    def language_movies(rng: random.Random) -> MediaActionExample:
+        label, code = rng.choice(languages)
+        constraints: dict[str, Any] = {"genre": "movies", "language": code}
+        utterance = rng.choice(
+            [
+                f"{label} movies",
+                f"Show {label.lower()} movie channels",
+                f"Find latest {label.lower()} movie",
+            ]
+        )
+        if "latest" in utterance:
+            constraints["sort"] = "recent"
+        return MediaActionExample(
+            utterance=utterance,
+            intent="search",
+            tool="media.search",
+            constraints=constraints,
+            confidence=0.86,
+        )
+
+    def business_news(rng: random.Random) -> MediaActionExample:
+        label, code = rng.choice(languages)
+        utterance = rng.choice(
+            [
+                "Show business news",
+                f"Find {label.lower()} business news",
+                f"Show business news in {label}",
+            ]
+        )
+        constraints: dict[str, Any] = {"genre": "business_news", "live": True}
+        if label.lower() in utterance.lower():
+            constraints["language"] = code
+        return MediaActionExample(
+            utterance=utterance,
+            intent="search",
+            tool="media.search",
+            constraints=constraints,
+            confidence=0.92,
+        )
+
+    def devotional(rng: random.Random) -> MediaActionExample:
+        label, code = rng.choice(languages)
+        utterance = rng.choice(
+            [
+                "I want devotional channels",
+                f"Show {label.lower()} bhajan channels",
+                f"Find religious programs in {label}",
+            ]
+        )
+        constraints: dict[str, Any] = {"genre": "religious"}
+        if label.lower() in utterance:
+            constraints["language"] = code
+        return MediaActionExample(
+            utterance=utterance,
+            intent="recommend",
+            tool="media.recommend",
+            constraints=constraints,
+            confidence=0.84,
+        )
+
+    def subscription_free(rng: random.Random) -> MediaActionExample:
+        return MediaActionExample(
+            utterance=rng.choice(
+                [
+                    "Only free channels",
+                    "Show free TV",
+                    "Find free channels",
+                ]
+            ),
+            intent="search",
+            tool="media.search",
+            constraints={"subscription": "free"},
+            confidence=0.76,
+        )
+
+    def parental_control(rng: random.Random) -> MediaActionExample:
+        return MediaActionExample(
+            utterance=rng.choice(
+                [
+                    "Kids should not see violent content",
+                    "Avoid violence for kids",
+                    "Recommend something without violence",
+                ]
+            ),
+            intent="recommend",
+            tool="media.recommend",
+            constraints={"parental_control": True, "avoid": "violence"},
+            confidence=0.82,
+        )
+
     def mood_recommendation(rng: random.Random) -> MediaActionExample:
         mood = rng.choice(moods)
         return MediaActionExample(
@@ -250,6 +355,12 @@ def _base_templates():
         play_direct,
         kids,
         sports,
+        sports_hd,
+        language_movies,
+        business_news,
+        devotional,
+        subscription_free,
+        parental_control,
         mood_recommendation,
         education,
         resume,

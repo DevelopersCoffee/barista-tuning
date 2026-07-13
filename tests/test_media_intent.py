@@ -5,6 +5,7 @@ from pathlib import Path
 
 from slm_train_eval_publish.media_actions import write_media_actions_jsonl
 from slm_train_eval_publish.media_intent import (
+    evaluate_media_action_predictions_jsonl,
     evaluate_media_actions_jsonl,
     parse_media_intent,
 )
@@ -70,3 +71,21 @@ def test_evaluate_media_actions_jsonl(tmp_path: Path) -> None:
     assert report["clarification_accuracy"] == 1.0
 
     json.dumps(report)
+
+
+def test_evaluate_media_action_predictions_jsonl(tmp_path: Path) -> None:
+    dataset = write_media_actions_jsonl(tmp_path / "actions.jsonl", count=40, seed=8)
+    rows = [json.loads(line) for line in dataset.read_text().splitlines()]
+    predictions = tmp_path / "predictions.jsonl"
+    with predictions.open("w", encoding="utf-8") as handle:
+        for row in rows:
+            handle.write(json.dumps({"input": row["input"], "output": row["output"]}))
+            handle.write("\n")
+
+    report = evaluate_media_action_predictions_jsonl(dataset, predictions)
+
+    assert report["total"] == 40
+    assert report["rule"]["intent_accuracy"] >= 0.9
+    assert report["slm"]["intent_accuracy"] == 1.0
+    assert report["slm"]["constraint_exact_accuracy"] == 1.0
+    assert report["slm_failures"] == []

@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.2.0
+
+- Add native Rust FFI runtime dispatch for pack install, intent parsing, search,
+  recommendation, resolve, play, and resume.
+- Add pack-backed SQLite media repository support for compiled IPTV `.pack`
+  archives.
+- Add native FFI integration tests against compiled Airo IPTV pack fixtures.
+- Add Android `libedge_ffi.so` packaging helpers for Airo app builds.
+
 ## 0.1.0
 
 - Add public Edge Intelligence Flutter SDK contracts.

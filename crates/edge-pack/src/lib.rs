@@ -3,5 +3,5 @@
 pub mod lifecycle;
 pub mod manifest;
 
-pub use lifecycle::{PackLifecycle, PackManager};
+pub use lifecycle::{InstalledPack, LocalPackManager, PackLifecycle, PackManager};
 pub use manifest::{PackDependency, PackManifest, PackSchema};

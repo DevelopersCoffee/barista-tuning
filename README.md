@@ -142,7 +142,7 @@ SDK API remains unchanged:
 
 ```bash
 EDGE_INTELLIGENCE_INTENT_BACKEND=llama.cpp \
-EDGE_INTELLIGENCE_LLAMA_CPP_BIN=/absolute/path/to/llama-cli \
+EDGE_INTELLIGENCE_LLAMA_CPP_BIN=/absolute/path/to/llama-completion \
 EDGE_INTELLIGENCE_INTENT_MODEL=/absolute/path/to/base-model.gguf \
 EDGE_INTELLIGENCE_INTENT_LORA=/absolute/path/to/airo-media-actions-lora.gguf
 ```
@@ -152,6 +152,22 @@ runtime uses the production rule backend.
 Set `EDGE_INTELLIGENCE_INTENT_BACKEND=llama.cpp+rule` to try llama.cpp first and
 fall back to the Rust rule backend when the local model is unavailable or emits
 an invalid/low-confidence intent.
+Use `llama-completion` with `-no-cnv` for raw completion mode; `llama-cli` chat
+mode can wrap the prompt and produce malformed schema output.
+
+The Airo media-action model can be bundled, tested, and published with Make:
+
+```bash
+make airo-slm-predict PYTHON=/tmp/slm-train-venv/bin/python
+make airo-slm-compare PYTHON=/tmp/slm-train-venv/bin/python
+make airo-hf-test-llama
+make airo-hf-publish \
+  PYTHON=/tmp/slm-train-venv/bin/python \
+  HF_REPO=developerscoffee/airo-media-actions-smollm2-135m
+```
+
+`make airo-hf-bundle` writes the Hugging Face upload payload under
+`.cache/hf-publish/airo-media-actions-smollm2-135m`.
 
 ## IPTV To Media IR
 

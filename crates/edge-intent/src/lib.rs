@@ -177,9 +177,6 @@ impl LlamaCppIntentBackend {
             "--temp",
             "0",
             "--no-display-prompt",
-            "--no-conversation",
-            "--single-turn",
-            "--simple-io",
         ]);
         if let Some(lora_path) = self.lora_path.as_deref().map(str::trim) {
             if !lora_path.is_empty() {
@@ -239,13 +236,11 @@ fn required_config<'a>(value: Option<&'a str>, message: &str) -> EdgeResult<&'a 
 fn llama_prompt(utterance: &str) -> String {
     format!(
         concat!(
-            "Translate this Airo TV request into one JSON object only.\n",
-            "Valid intents: search, recommend, play, resume, browse, favorite, clarify.\n",
-            "Valid tools: media.search, media.recommend, media.play, media.resume, media.browse, media.favorite, media.clarify.\n",
-            "Use string constraint values. Use confidence between 0 and 1.\n",
-            "Required keys: intent, tool, confidence, constraints, missing_fields, clarification_required.\n",
-            "Request: ",
-            "{}"
+            "### Instruction\n",
+            "Translate the Airo TV user request into a media action JSON object. Output JSON only. Do not answer conversationally.\n\n",
+            "### Input\n",
+            "{}\n\n",
+            "### Response\n"
         ),
         utterance
     )
@@ -703,7 +698,7 @@ mod tests {
     use std::fs;
 
     use super::{
-        constraints, parse_rule_intent, ConfiguredIntentBackend, IntentBackendConfig,
+        constraints, llama_prompt, parse_rule_intent, ConfiguredIntentBackend, IntentBackendConfig,
         IntentBackendKind, IntentRequest,
     };
 
@@ -801,6 +796,14 @@ mod tests {
             .contains("llama.cpp executable path is required"));
     }
 
+    #[test]
+    fn llama_prompt_matches_media_action_sft_template() {
+        assert_eq!(
+            llama_prompt("Show Hindi news"),
+            "### Instruction\nTranslate the Airo TV user request into a media action JSON object. Output JSON only. Do not answer conversationally.\n\n### Input\nShow Hindi news\n\n### Response\n"
+        );
+    }
+
     #[cfg(unix)]
     #[test]
     fn hybrid_llama_cpp_backend_falls_back_to_rules_on_invalid_output() {
@@ -873,5 +876,11 @@ mod tests {
 
         let argv = fs::read_to_string(temp.path().join("argv.txt")).unwrap();
         assert!(argv.contains("--lora models/intent-lora.gguf"));
+        assert!(!argv.contains("--single-turn"));
+        assert!(!argv.contains("--no-conversation"));
+        assert!(!argv.contains("--simple-io"));
+        assert!(argv.contains("### Instruction"));
+        assert!(argv.contains("### Input"));
+        assert!(argv.contains("### Response"));
     }
 }

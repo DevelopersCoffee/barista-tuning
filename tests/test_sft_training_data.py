@@ -4,7 +4,7 @@ from dataclasses import replace
 
 from slm_train_eval_publish.config import DataConfig, ModelConfig, PipelineConfig
 from slm_train_eval_publish.data import format_sft_example, format_sft_prompt_and_output
-from slm_train_eval_publish.train import _tokenize_dataset
+from slm_train_eval_publish.train import _enable_input_grads_for_checkpointing, _tokenize_dataset
 
 
 class TinyDataset:
@@ -36,6 +36,14 @@ class WhitespaceTokenizer:
             "input_ids": list(range(1, len(tokens) + 1)),
             "attention_mask": [1] * len(tokens),
         }
+
+
+class FakeModel:
+    def __init__(self) -> None:
+        self.enabled = False
+
+    def enable_input_require_grads(self) -> None:
+        self.enabled = True
 
 
 def test_format_sft_prompt_and_output_separates_completion() -> None:
@@ -73,3 +81,15 @@ def test_tokenize_dataset_masks_prompt_labels() -> None:
     assert tokenized["labels"][prompt_token_count:] == tokenized["input_ids"][
         prompt_token_count:
     ]
+
+
+def test_gradient_checkpointing_enables_input_grads_for_lora() -> None:
+    config = PipelineConfig(
+        model=ModelConfig(base_model="tiny"),
+        data=DataConfig(train_path="train.jsonl"),
+    )
+    model = FakeModel()
+
+    _enable_input_grads_for_checkpointing(model, config)
+
+    assert model.enabled is True

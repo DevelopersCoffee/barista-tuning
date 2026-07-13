@@ -34,6 +34,7 @@ def train_model(config: PipelineConfig) -> Path:
 
     model = AutoModelForCausalLM.from_pretrained(config.model.base_model, **model_kwargs)
     model.config.use_cache = False
+    _enable_input_grads_for_checkpointing(model, config)
 
     if config.lora.enabled:
         from peft import LoraConfig, get_peft_model
@@ -146,3 +147,8 @@ class ResponseOnlyDataCollator:
             "attention_mask": torch.tensor(attention_mask, dtype=torch.long),
             "labels": torch.tensor(labels, dtype=torch.long),
         }
+
+
+def _enable_input_grads_for_checkpointing(model: Any, config: PipelineConfig) -> None:
+    if config.training.gradient_checkpointing and hasattr(model, "enable_input_require_grads"):
+        model.enable_input_require_grads()

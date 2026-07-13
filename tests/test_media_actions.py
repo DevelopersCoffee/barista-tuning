@@ -34,6 +34,11 @@ def test_generate_media_action_examples_are_structured() -> None:
     assert any(example.utterance == "Sports in HD only" for example in examples)
     assert any(example.constraints.get("genre") == "business_news" for example in examples)
     assert any(example.constraints.get("subscription") == "free" for example in examples)
+    assert all(
+        "language" in example.constraints
+        for example in examples
+        if example.utterance.startswith("Find religious programs in ")
+    )
 
 
 def test_write_media_actions_jsonl(tmp_path: Path) -> None:

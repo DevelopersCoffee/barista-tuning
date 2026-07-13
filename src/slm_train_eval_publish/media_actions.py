@@ -219,7 +219,7 @@ def _base_templates():
             ]
         )
         constraints: dict[str, Any] = {"genre": "religious"}
-        if label.lower() in utterance:
+        if label.lower() in utterance.lower():
             constraints["language"] = code
         return MediaActionExample(
             utterance=utterance,

@@ -16,6 +16,14 @@ def test_load_starter_config() -> None:
     assert config.publish is not None
 
 
+def test_load_airo_media_actions_smoke_config() -> None:
+    config = load_config(Path("configs/airo_media_actions_smoke_sft.yaml"))
+
+    assert config.data.train_path == "data/processed/airo_media_actions_smoke_train.jsonl"
+    assert config.training.output_dir == "models/airo-media-actions-smollm2-135m-smoke"
+    assert config.eval.max_eval_samples == 8
+
+
 def test_rejects_unknown_keys(tmp_path: Path) -> None:
     config_path = tmp_path / "bad.yaml"
     config_path.write_text(

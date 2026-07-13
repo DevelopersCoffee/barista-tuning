@@ -3,20 +3,19 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Any
 
-from transformers import (
-    AutoModelForCausalLM,
-    AutoTokenizer,
-    DataCollatorForLanguageModeling,
-    Trainer,
-    TrainingArguments,
-    set_seed,
-)
-
 from slm_train_eval_publish.config import PipelineConfig
-from slm_train_eval_publish.data import format_sft_example, load_sft_datasets
+from slm_train_eval_publish.data import format_sft_prompt_and_output, load_sft_datasets
 
 
 def train_model(config: PipelineConfig) -> Path:
+    from transformers import (
+        AutoModelForCausalLM,
+        AutoTokenizer,
+        Trainer,
+        TrainingArguments,
+        set_seed,
+    )
+
     set_seed(config.training.seed)
 
     tokenizer = AutoTokenizer.from_pretrained(
@@ -81,7 +80,7 @@ def train_model(config: PipelineConfig) -> Path:
         args=args,
         train_dataset=train_dataset,
         eval_dataset=eval_dataset,
-        data_collator=DataCollatorForLanguageModeling(tokenizer=tokenizer, mlm=False),
+        data_collator=ResponseOnlyDataCollator(tokenizer),
     )
     trainer.train()
     trainer.save_model(config.training.output_dir)
@@ -92,15 +91,58 @@ def train_model(config: PipelineConfig) -> Path:
 
 def _tokenize_dataset(dataset: Any, tokenizer: Any, config: PipelineConfig) -> Any:
     def tokenize(example: dict[str, Any]) -> dict[str, Any]:
-        text = format_sft_example(example, config.data)
-        if tokenizer.eos_token and not text.endswith(tokenizer.eos_token):
+        prompt, output = format_sft_prompt_and_output(example, config.data)
+        text = f"{prompt}{output}"
+        if tokenizer.eos_token and not output.endswith(tokenizer.eos_token):
             text = f"{text}{tokenizer.eos_token}"
-        return tokenizer(
+
+        tokenized = tokenizer(
             text,
             truncation=True,
             max_length=config.data.max_seq_length,
             padding=False,
         )
+        prompt_ids = tokenizer(
+            prompt,
+            truncation=True,
+            max_length=config.data.max_seq_length,
+            padding=False,
+        )["input_ids"]
+        labels = list(tokenized["input_ids"])
+        prompt_token_count = min(len(prompt_ids), len(labels))
+        labels[:prompt_token_count] = [-100] * prompt_token_count
+        tokenized["labels"] = labels
+        return tokenized
 
     remove_columns = list(getattr(dataset, "column_names", []))
     return dataset.map(tokenize, remove_columns=remove_columns)
+
+
+class ResponseOnlyDataCollator:
+    def __init__(self, tokenizer: Any) -> None:
+        self.tokenizer = tokenizer
+
+    def __call__(self, features: list[dict[str, Any]]) -> dict[str, Any]:
+        import torch
+
+        pad_token_id = self.tokenizer.pad_token_id
+        if pad_token_id is None:
+            pad_token_id = self.tokenizer.eos_token_id
+        if pad_token_id is None:
+            pad_token_id = 0
+
+        max_length = max(len(feature["input_ids"]) for feature in features)
+        input_ids = []
+        attention_mask = []
+        labels = []
+        for feature in features:
+            pad_length = max_length - len(feature["input_ids"])
+            input_ids.append(feature["input_ids"] + [pad_token_id] * pad_length)
+            attention_mask.append(feature["attention_mask"] + [0] * pad_length)
+            labels.append(feature["labels"] + [-100] * pad_length)
+
+        return {
+            "input_ids": torch.tensor(input_ids, dtype=torch.long),
+            "attention_mask": torch.tensor(attention_mask, dtype=torch.long),
+            "labels": torch.tensor(labels, dtype=torch.long),
+        }

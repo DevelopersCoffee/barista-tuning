@@ -5,6 +5,7 @@ from slm_train_eval_publish.media_action_predictions import (
     extract_first_json_object,
     media_action_prompt,
     parse_media_action_completion,
+    validate_media_action_payload,
 )
 
 
@@ -35,3 +36,25 @@ def test_parse_media_action_completion_returns_invalid_placeholder() -> None:
 
     assert payload == INVALID_MEDIA_ACTION
     assert error == "no JSON object found"
+
+
+def test_parse_media_action_completion_requires_media_action_schema() -> None:
+    payload, error = parse_media_action_completion('{"title":"Airo TV"}')
+
+    assert payload == INVALID_MEDIA_ACTION
+    assert error == "missing or invalid intent"
+
+
+def test_validate_media_action_payload_accepts_contract_shape() -> None:
+    error = validate_media_action_payload(
+        {
+            "intent": "search",
+            "tool": "media.search",
+            "confidence": 0.92,
+            "constraints": {"genre": "news"},
+            "missing_fields": [],
+            "clarification_required": False,
+        }
+    )
+
+    assert error is None

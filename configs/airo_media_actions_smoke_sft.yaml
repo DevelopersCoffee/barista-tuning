@@ -1,0 +1,47 @@
+model:
+  base_model: HuggingFaceTB/SmolLM2-135M-Instruct
+  torch_dtype: auto
+  trust_remote_code: false
+  use_flash_attention_2: false
+
+data:
+  train_path: data/processed/airo_media_actions_smoke_train.jsonl
+  eval_path: data/processed/airo_media_actions_smoke_eval.jsonl
+  instruction_field: instruction
+  input_field: input
+  output_field: output
+  max_seq_length: 512
+
+lora:
+  enabled: true
+  r: 16
+  alpha: 32
+  dropout: 0.05
+  target_modules:
+    - q_proj
+    - v_proj
+
+training:
+  output_dir: models/airo-media-actions-smollm2-135m-smoke
+  seed: 42
+  num_train_epochs: 1
+  per_device_train_batch_size: 1
+  per_device_eval_batch_size: 1
+  gradient_accumulation_steps: 1
+  learning_rate: 0.0002
+  warmup_ratio: 0.03
+  weight_decay: 0.0
+  logging_steps: 4
+  save_steps: 24
+  eval_steps: 24
+  save_total_limit: 1
+  gradient_checkpointing: false
+  report_to: []
+
+eval:
+  model_path: models/airo-media-actions-smollm2-135m-smoke
+  output_dir: reports/airo-media-actions-smollm2-135m-smoke
+  max_eval_samples: 8
+  max_new_tokens: 128
+  generation_prompts:
+    - "### Instruction\nTranslate the Airo TV user request into a media action JSON object. Output JSON only. Do not answer conversationally.\n\n### Input\nShow Hindi news\n\n### Response\n"

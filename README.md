@@ -121,6 +121,21 @@ Rows use the existing SFT shape, but the output is strict media action JSON:
 
 The model is trained to emit SDK tool calls, not conversational answers or media
 metadata.
+The trainer masks prompt tokens and optimizes only the JSON response span.
+Prediction reports reject malformed or wrong-schema JSON before scoring exact
+intent, tool, and constraint accuracy.
+
+For a quick local adapter smoke run, generate the small split and train:
+
+```bash
+slm generate-media-action-splits \
+  --train-output data/processed/airo_media_actions_smoke_train.jsonl \
+  --eval-output data/processed/airo_media_actions_smoke_eval.jsonl \
+  --train-count 24 \
+  --eval-count 8
+
+slm train configs/airo_media_actions_smoke_sft.yaml
+```
 
 At runtime, Rust FFI selects the local SLM backend by configuration. The Flutter
 SDK API remains unchanged:

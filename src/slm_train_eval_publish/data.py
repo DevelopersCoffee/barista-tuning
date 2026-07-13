@@ -3,12 +3,12 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Any
 
-from datasets import DatasetDict, load_dataset
-
 from slm_train_eval_publish.config import DataConfig
 
 
 def load_sft_datasets(config: DataConfig) -> tuple[Any, Any | None]:
+    from datasets import DatasetDict, load_dataset
+
     if config.dataset_name:
         dataset = load_dataset(
             config.dataset_name,
@@ -27,11 +27,18 @@ def load_sft_datasets(config: DataConfig) -> tuple[Any, Any | None]:
 
 
 def format_sft_example(example: dict[str, Any], config: DataConfig) -> str:
+    prompt, output = format_sft_prompt_and_output(example, config)
+    return f"{prompt}{output}"
+
+
+def format_sft_prompt_and_output(
+    example: dict[str, Any], config: DataConfig
+) -> tuple[str, str]:
     if config.text_field:
         text = example.get(config.text_field)
         if not text:
             raise ValueError(f"Missing configured text field '{config.text_field}'")
-        return str(text)
+        return "", str(text)
 
     instruction = str(example.get(config.instruction_field, "")).strip()
     input_text = str(example.get(config.input_field, "")).strip()
@@ -41,24 +48,26 @@ def format_sft_example(example: dict[str, Any], config: DataConfig) -> str:
         raise ValueError("Each SFT row needs non-empty instruction and output values")
 
     if input_text:
-        return (
+        prompt = (
             "### Instruction\n"
             f"{instruction}\n\n"
             "### Input\n"
             f"{input_text}\n\n"
             "### Response\n"
-            f"{output}"
         )
+        return prompt, output
 
-    return (
+    prompt = (
         "### Instruction\n"
         f"{instruction}\n\n"
         "### Response\n"
-        f"{output}"
     )
+    return prompt, output
 
 
 def _load_local_dataset(path: str | None) -> Any:
+    from datasets import load_dataset
+
     if not path:
         raise ValueError("Local dataset path is required")
 

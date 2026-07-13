@@ -101,7 +101,26 @@ def parse_media_action_completion(completion: str) -> tuple[dict[str, Any], str 
         return dict(INVALID_MEDIA_ACTION), f"invalid JSON: {error.msg}"
     if not isinstance(parsed, dict):
         return dict(INVALID_MEDIA_ACTION), "JSON payload is not an object"
+    error = validate_media_action_payload(parsed)
+    if error is not None:
+        return dict(INVALID_MEDIA_ACTION), error
     return parsed, None
+
+
+def validate_media_action_payload(payload: dict[str, Any]) -> str | None:
+    required: dict[str, type[Any] | tuple[type[Any], ...]] = {
+        "intent": str,
+        "tool": str,
+        "confidence": (int, float),
+        "constraints": dict,
+        "missing_fields": list,
+        "clarification_required": bool,
+    }
+    for field, expected_type in required.items():
+        value = payload.get(field)
+        if not isinstance(value, expected_type):
+            return f"missing or invalid {field}"
+    return None
 
 
 def extract_first_json_object(text: str) -> str | None:

@@ -102,6 +102,11 @@ After a model produces JSONL predictions with `input` and `output` fields,
 compare its exact tool-call accuracy against the rule baseline:
 
 ```bash
+slm predict-media-actions \
+  data/processed/airo_media_actions_eval.jsonl \
+  models/airo-media-actions-smollm2-135m \
+  --output reports/airo_media_actions_slm_predictions.jsonl
+
 slm compare-media-action-predictions \
   data/processed/airo_media_actions_eval.jsonl \
   reports/airo_media_actions_slm_predictions.jsonl \

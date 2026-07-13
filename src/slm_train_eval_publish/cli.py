@@ -221,6 +221,31 @@ def compare_media_action_predictions(
     )
 
 
+@app.command("predict-media-actions")
+def predict_media_actions(
+    dataset: Annotated[Path, typer.Argument(exists=True, readable=True)],
+    model_path: Annotated[Path, typer.Argument(exists=True, readable=True)],
+    output: Annotated[Path, typer.Option("--output", "-o")] = Path(
+        "reports/airo_media_actions_slm_predictions.jsonl"
+    ),
+    limit: Annotated[int | None, typer.Option("--limit", min=1)] = None,
+    max_new_tokens: Annotated[int, typer.Option("--max-new-tokens", min=1)] = 128,
+) -> None:
+    """Generate media-action JSONL predictions from a local model or PEFT adapter."""
+    from slm_train_eval_publish.media_action_predictions import (
+        predict_media_actions_with_model,
+    )
+
+    path = predict_media_actions_with_model(
+        dataset=dataset,
+        model_path=model_path,
+        output=output,
+        limit=limit,
+        max_new_tokens=max_new_tokens,
+    )
+    console.print(f"Prediction JSONL: {path}")
+
+
 @app.command("package-edge-ffi-android")
 def package_edge_ffi_android(
     airo_app: Annotated[

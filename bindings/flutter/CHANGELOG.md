@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.2.2
+
+- Add `llama.cpp+rule` hybrid intent backend mode for local SLM rollout with
+  deterministic Rust rule fallback on invalid or low-confidence model output.
+- Extend native pack-backed FFI coverage for the natural-language resume query
+  in the Airo definition-of-done flow.
+
 ## 0.2.1
 
 - Add optional `llama.cpp` LoRA adapter configuration for local SLM intent

@@ -33,10 +33,11 @@ pub trait IntentBackend: Send + Sync {
     ) -> IntentFuture<'a, IntentResult>;
 }
 
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum IntentBackendKind {
     Rule,
     LlamaCpp,
+    LlamaCppWithRuleFallback,
 }
 
 impl IntentBackendKind {
@@ -44,6 +45,9 @@ impl IntentBackendKind {
         match value.trim().to_ascii_lowercase().as_str() {
             "" | "rule" | "rules" => Ok(Self::Rule),
             "llama" | "llama.cpp" | "llamacpp" | "slm" => Ok(Self::LlamaCpp),
+            "hybrid" | "llama+rule" | "llama.cpp+rule" | "llamacpp+rule" | "slm+rule" => {
+                Ok(Self::LlamaCppWithRuleFallback)
+            }
             other => Err(EdgeError::new(
                 edge_kernel::errors::EdgeErrorKind::Unsupported,
                 format!("unsupported intent backend: {other}"),
@@ -75,17 +79,21 @@ impl Default for IntentBackendConfig {
 pub enum ConfiguredIntentBackend {
     Rule(RuleIntentBackend),
     LlamaCpp(LlamaCppIntentBackend),
+    LlamaCppWithRuleFallback {
+        primary: LlamaCppIntentBackend,
+        fallback: RuleIntentBackend,
+    },
 }
 
 impl ConfiguredIntentBackend {
     pub fn from_config(config: IntentBackendConfig) -> Self {
         match config.kind {
             IntentBackendKind::Rule => Self::Rule(RuleIntentBackend),
-            IntentBackendKind::LlamaCpp => Self::LlamaCpp(LlamaCppIntentBackend {
-                model_path: config.model_path,
-                executable_path: config.executable_path,
-                lora_path: config.lora_path,
-            }),
+            IntentBackendKind::LlamaCpp => Self::LlamaCpp(llama_backend_from_config(config)),
+            IntentBackendKind::LlamaCppWithRuleFallback => Self::LlamaCppWithRuleFallback {
+                primary: llama_backend_from_config(config),
+                fallback: RuleIntentBackend,
+            },
         }
     }
 
@@ -93,6 +101,12 @@ impl ConfiguredIntentBackend {
         match self {
             Self::Rule(backend) => Ok(backend.parse_sync(request)),
             Self::LlamaCpp(backend) => backend.parse_sync(request),
+            Self::LlamaCppWithRuleFallback { primary, fallback } => {
+                match primary.parse_sync(request.clone()) {
+                    Ok(result) if result.confidence >= 0.5 => Ok(result),
+                    Ok(_) | Err(_) => Ok(fallback.parse_sync(request)),
+                }
+            }
         }
     }
 }
@@ -131,6 +145,14 @@ pub struct LlamaCppIntentBackend {
     pub model_path: Option<String>,
     pub executable_path: Option<String>,
     pub lora_path: Option<String>,
+}
+
+fn llama_backend_from_config(config: IntentBackendConfig) -> LlamaCppIntentBackend {
+    LlamaCppIntentBackend {
+        model_path: config.model_path,
+        executable_path: config.executable_path,
+        lora_path: config.lora_path,
+    }
 }
 
 impl LlamaCppIntentBackend {
@@ -777,6 +799,39 @@ mod tests {
         assert!(error
             .message
             .contains("llama.cpp executable path is required"));
+    }
+
+    #[cfg(unix)]
+    #[test]
+    fn hybrid_llama_cpp_backend_falls_back_to_rules_on_invalid_output() {
+        use std::os::unix::fs::PermissionsExt;
+
+        let temp = tempfile::tempdir().unwrap();
+        let executable = temp.path().join("llama-cli");
+        fs::write(&executable, "#!/bin/sh\nprintf 'not-json'\n").unwrap();
+        let mut permissions = fs::metadata(&executable).unwrap().permissions();
+        permissions.set_mode(0o755);
+        fs::set_permissions(&executable, permissions).unwrap();
+
+        let backend = ConfiguredIntentBackend::from_config(IntentBackendConfig {
+            kind: IntentBackendKind::LlamaCppWithRuleFallback,
+            model_path: Some("models/intent.gguf".to_string()),
+            executable_path: Some(executable.to_string_lossy().to_string()),
+            lora_path: None,
+        });
+
+        let result = backend
+            .parse_sync(IntentRequest {
+                utterance: "Show Hindi news".to_string(),
+            })
+            .unwrap();
+
+        assert_eq!(result.intent, "search");
+        assert_eq!(result.tool.as_deref(), Some("media.search"));
+        assert_eq!(
+            result.constraints,
+            constraints([("genre", "news"), ("live", "true"), ("language", "hi")])
+        );
     }
 
     #[cfg(unix)]

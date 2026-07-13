@@ -134,6 +134,9 @@ EDGE_INTELLIGENCE_INTENT_LORA=/absolute/path/to/airo-media-actions-lora.gguf
 
 `EDGE_INTELLIGENCE_INTENT_LORA` is optional. Without these variables, the
 runtime uses the production rule backend.
+Set `EDGE_INTELLIGENCE_INTENT_BACKEND=llama.cpp+rule` to try llama.cpp first and
+fall back to the Rust rule backend when the local model is unavailable or emits
+an invalid/low-confidence intent.
 
 ## IPTV To Media IR
 

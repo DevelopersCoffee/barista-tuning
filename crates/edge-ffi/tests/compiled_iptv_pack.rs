@@ -47,13 +47,9 @@ fn compiled_iptv_pack_supports_airo_definition_of_done_queries() {
         "https://example.test/sports/hd.m3u8"
     );
 
-    let resume = call(json!({
-        "useCase": "resume",
-        "payload": {}
-    }));
-    assert_eq!(resume["ok"], true);
+    let resume = resolve_query("Continue yesterday's movie");
     assert_eq!(
-        resume["data"]["item"]["streamUri"],
+        resume["streamUri"],
         "https://example.test/marathi/movies.m3u8"
     );
 
@@ -93,6 +89,14 @@ fn resolve_query(utterance: &str) -> Value {
             }));
             assert_eq!(resolve["ok"], true, "{resolve}");
             resolve["data"].clone()
+        }
+        "resume" => {
+            let resume = call(json!({
+                "useCase": "resume",
+                "payload": {}
+            }));
+            assert_eq!(resume["ok"], true, "{resume}");
+            resume["data"]["item"].clone()
         }
         _ => {
             let recommend = call(json!({

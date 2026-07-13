@@ -33,7 +33,7 @@ dependencies:
     git:
       url: https://github.com/DevelopersCoffee/barista-tuning.git
       path: bindings/flutter
-      ref: slm_edge_intelligence-v0.2.1
+      ref: slm_edge_intelligence-v0.2.2
 ```
 
 For local development:
@@ -105,6 +105,9 @@ EDGE_INTELLIGENCE_INTENT_LORA=/absolute/path/to/airo-media-actions-lora.gguf
 ```
 
 `EDGE_INTELLIGENCE_INTENT_LORA` is optional.
+Set `EDGE_INTELLIGENCE_INTENT_BACKEND=llama.cpp+rule` to try llama.cpp first and
+fall back to the Rust rule backend when the local model is unavailable or emits
+an invalid/low-confidence intent.
 
 The native artifact produced by the Rust `edge-ffi` crate must be bundled with
 the app for `EdgeIntelligence.native()` calls. The Flutter app does not need to

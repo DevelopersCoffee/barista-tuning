@@ -55,6 +55,12 @@ void main() {
       'Sports in HD only',
       'https://example.test/sports/hd.m3u8',
     );
+    await expectStream(
+      edge,
+      context,
+      "Continue yesterday's movie",
+      'https://example.test/marathi/movies.m3u8',
+    );
 
     final aajTak = await edge.play(
       context,
@@ -82,6 +88,10 @@ Future<void> expectStream(
   final ResolvedMedia resolved;
   if (intent.intent == 'play') {
     resolved = await edge.play(context, PlayCommand(query: utterance));
+  } else if (intent.intent == 'resume') {
+    final resumed = await edge.resume(context, const ResumeQuery());
+    expect(resumed, isNotNull);
+    resolved = resumed!;
   } else {
     final result = await edge.search(
       context,

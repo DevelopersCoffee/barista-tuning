@@ -1,5 +1,7 @@
 //! Intent backend contract. Implementations may be rules, llama.cpp, ONNX, remote, or hybrid.
 
+pub mod command;
+
 use std::collections::BTreeMap;
 use std::future::Future;
 use std::pin::Pin;

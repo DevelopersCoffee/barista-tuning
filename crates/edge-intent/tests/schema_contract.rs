@@ -41,3 +41,37 @@ fn invalid_fixtures_fail_schema() {
         assert!(!schema.is_valid(&value), "expected invalid: {name}");
     }
 }
+
+use edge_intent::command::IntentCommand;
+
+#[test]
+fn valid_fixtures_round_trip_through_rust_types() {
+    for (name, value) in fixtures("valid") {
+        let cmd: IntentCommand = serde_json::from_value(value.clone())
+            .unwrap_or_else(|e| panic!("{name} must deserialize: {e}"));
+        let back = serde_json::to_value(&cmd).expect("serialize");
+        assert_eq!(value, back, "round-trip drift in {name}");
+    }
+}
+
+#[test]
+fn invalid_fixtures_rejected_by_rust_types() {
+    for (name, value) in fixtures("invalid") {
+        let parsed: Result<IntentCommand, _> = serde_json::from_value(value);
+        assert!(parsed.is_err(), "expected Rust rejection: {name}");
+    }
+}
+
+#[test]
+fn rust_serialization_validates_against_schema() {
+    // Drift check: anything the Rust types emit must satisfy schema.json.
+    let schema = compiled_schema();
+    for (name, value) in fixtures("valid") {
+        let cmd: IntentCommand = serde_json::from_value(value).expect("deserialize");
+        let emitted = serde_json::to_value(&cmd).expect("serialize");
+        assert!(
+            schema.is_valid(&emitted),
+            "Rust output violates schema: {name}"
+        );
+    }
+}

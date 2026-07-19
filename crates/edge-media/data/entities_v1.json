@@ -1,0 +1,43 @@
+{
+  "vocab_version": "1.0",
+  "entities": {
+    "team": [
+      { "id": "team:india", "name": "India", "aliases": ["india", "team india", "ind", "bharat", "india ka", "indian team"] },
+      { "id": "team:pakistan", "name": "Pakistan", "aliases": ["pakistan", "pak"] },
+      { "id": "team:australia", "name": "Australia", "aliases": ["australia", "aus", "aussies"] },
+      { "id": "team:england", "name": "England", "aliases": ["england", "eng"] },
+      { "id": "team:csk", "name": "Chennai Super Kings", "aliases": ["csk", "chennai", "chennai super kings"] },
+      { "id": "team:mi", "name": "Mumbai Indians", "aliases": ["mi", "mumbai", "mumbai indians"] }
+    ],
+    "sport": [
+      { "id": "sport:cricket", "name": "Cricket", "aliases": ["cricket", "match", "cricket match"] },
+      { "id": "sport:football", "name": "Football", "aliases": ["football", "soccer"] },
+      { "id": "sport:tennis", "name": "Tennis", "aliases": ["tennis"] },
+      { "id": "sport:kabaddi", "name": "Kabaddi", "aliases": ["kabaddi"] }
+    ],
+    "league": [
+      { "id": "league:ipl", "name": "IPL", "aliases": ["ipl", "indian premier league"] },
+      { "id": "league:epl", "name": "Premier League", "aliases": ["epl", "premier league", "english premier league"] },
+      { "id": "league:isl", "name": "ISL", "aliases": ["isl", "indian super league"] }
+    ],
+    "genre": [
+      { "id": "genre:comedy", "name": "Comedy", "aliases": ["comedy", "funny", "comedy shows"] },
+      { "id": "genre:drama", "name": "Drama", "aliases": ["drama"] },
+      { "id": "genre:news", "name": "News", "aliases": ["news", "khabar", "samachar"] },
+      { "id": "genre:kids", "name": "Kids", "aliases": ["kids", "cartoon", "cartoons", "bacchon ka"] },
+      { "id": "genre:devotional", "name": "Devotional", "aliases": ["devotional", "bhakti", "bhajan"] }
+    ],
+    "language": [
+      { "id": "lang:hi", "name": "Hindi", "aliases": ["hindi", "hindi me", "hindi mein"] },
+      { "id": "lang:en", "name": "English", "aliases": ["english", "english me", "angrezi"] },
+      { "id": "lang:ta", "name": "Tamil", "aliases": ["tamil"] },
+      { "id": "lang:te", "name": "Telugu", "aliases": ["telugu"] }
+    ],
+    "channel": [
+      { "id": "channel:star_sports", "name": "Star Sports", "aliases": ["star sports", "star sports 1"] },
+      { "id": "channel:sony_sports", "name": "Sony Sports", "aliases": ["sony sports", "sony ten", "ten sports"] },
+      { "id": "channel:dd_national", "name": "DD National", "aliases": ["dd national", "doordarshan"] }
+    ],
+    "title": []
+  }
+}

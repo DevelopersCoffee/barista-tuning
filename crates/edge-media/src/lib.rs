@@ -1,5 +1,7 @@
 //! Media domain contracts built on the generic Edge Intelligence runtime.
 
+pub mod vocab;
+
 use std::collections::{BTreeMap, BTreeSet};
 use std::path::{Path, PathBuf};
 

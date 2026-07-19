@@ -352,6 +352,7 @@ dependencies = [
  "edge-runtime",
  "edge-search",
  "rusqlite",
+ "serde",
  "serde_json",
  "tempfile",
 ]

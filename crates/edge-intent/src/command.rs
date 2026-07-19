@@ -82,3 +82,18 @@ pub enum SortOrder {
     Asc,
     Desc,
 }
+
+/// Terminal non-command outcome. Airo maps every variant to deterministic
+/// search; the variant is telemetry, not a UX branch (spec: Adoption req. 3).
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[serde(tag = "reason", rename_all = "snake_case", deny_unknown_fields)]
+pub enum FallbackReason {
+    InvalidOutput { detail: String },
+    LowConfidence { confidence: f64, threshold: f64 },
+    Timeout,
+    BackendError { detail: String },
+}
+
+/// The total output type of `resolve()`: command or explicit fallback, never
+/// free text.
+pub type ResolveOutcome = Result<IntentCommand, FallbackReason>;

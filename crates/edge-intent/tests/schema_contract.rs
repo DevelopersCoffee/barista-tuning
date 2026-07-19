@@ -75,3 +75,40 @@ fn rust_serialization_validates_against_schema() {
         );
     }
 }
+
+use edge_intent::command::FallbackReason;
+
+#[test]
+fn fallback_reason_serializes_as_tagged_json() {
+    let cases: Vec<(FallbackReason, serde_json::Value)> = vec![
+        (
+            FallbackReason::InvalidOutput {
+                detail: "unparseable".into(),
+            },
+            serde_json::json!({"reason": "invalid_output", "detail": "unparseable"}),
+        ),
+        (
+            FallbackReason::LowConfidence {
+                confidence: 0.31,
+                threshold: 0.62,
+            },
+            serde_json::json!({"reason": "low_confidence", "confidence": 0.31, "threshold": 0.62}),
+        ),
+        (
+            FallbackReason::Timeout,
+            serde_json::json!({"reason": "timeout"}),
+        ),
+        (
+            FallbackReason::BackendError {
+                detail: "ffi panic".into(),
+            },
+            serde_json::json!({"reason": "backend_error", "detail": "ffi panic"}),
+        ),
+    ];
+    for (reason, expected) in cases {
+        let emitted = serde_json::to_value(&reason).expect("serialize");
+        assert_eq!(expected, emitted);
+        let back: FallbackReason = serde_json::from_value(emitted).expect("deserialize");
+        assert_eq!(reason, back);
+    }
+}

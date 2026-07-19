@@ -1,0 +1,13 @@
+{
+  "intent": "search",
+  "entities": [
+    { "type": "genre", "value": "comedy", "grounded_id": "genre:comedy" },
+    { "type": "language", "value": "hindi", "grounded_id": "lang:hi" }
+  ],
+  "filters": [
+    { "field": "kid_safe", "op": "eq", "value": true }
+  ],
+  "sort": { "field": "release_date", "order": "desc" },
+  "confidence": 0.88,
+  "schema_version": "1.0"
+}

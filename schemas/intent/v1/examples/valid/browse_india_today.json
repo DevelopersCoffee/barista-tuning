@@ -1,0 +1,13 @@
+{
+  "intent": "browse",
+  "entities": [
+    { "type": "team", "value": "India", "grounded_id": "team:india" },
+    { "type": "sport", "value": "match", "grounded_id": "sport:cricket" }
+  ],
+  "filters": [
+    { "field": "time", "op": "eq", "value": "today" }
+  ],
+  "sort": null,
+  "confidence": 0.93,
+  "schema_version": "1.0"
+}

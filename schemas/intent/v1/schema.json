@@ -1,25 +1,65 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://edge-intelligence.local/schemas/intent/v1/schema.json",
-  "title": "Intent Result 1.0",
+  "title": "IntentCommand 1.0",
   "type": "object",
-  "required": ["intent", "confidence", "constraints", "missing_fields", "clarification_required"],
+  "required": ["intent", "entities", "filters", "sort", "confidence", "schema_version"],
   "additionalProperties": false,
   "properties": {
-    "intent": { "type": "string", "minLength": 1 },
-    "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
-    "constraints": {
-      "type": "object",
-      "additionalProperties": {
-        "type": ["string", "number", "boolean", "null"]
+    "intent": {
+      "type": "string",
+      "enum": ["browse", "play", "resume", "similar", "search"]
+    },
+    "entities": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["type", "value"],
+        "additionalProperties": false,
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": ["team", "sport", "league", "genre", "language", "channel", "title"]
+          },
+          "value": { "type": "string", "minLength": 1 },
+          "grounded_id": { "type": "string", "minLength": 1 }
+        }
       }
     },
-    "missing_fields": {
+    "filters": {
       "type": "array",
-      "items": { "type": "string" },
-      "uniqueItems": true
+      "items": {
+        "type": "object",
+        "required": ["field", "op", "value"],
+        "additionalProperties": false,
+        "properties": {
+          "field": { "type": "string", "minLength": 1 },
+          "op": {
+            "type": "string",
+            "enum": ["eq", "neq", "lt", "lte", "gt", "gte", "range", "in"]
+          },
+          "value": {
+            "type": ["string", "number", "boolean", "array"],
+            "items": { "type": ["string", "number"] }
+          }
+        }
+      }
     },
-    "clarification_required": { "type": "boolean" }
+    "sort": {
+      "oneOf": [
+        { "type": "null" },
+        {
+          "type": "object",
+          "required": ["field", "order"],
+          "additionalProperties": false,
+          "properties": {
+            "field": { "type": "string", "minLength": 1 },
+            "order": { "type": "string", "enum": ["asc", "desc"] }
+          }
+        }
+      ]
+    },
+    "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+    "schema_version": { "type": "string", "const": "1.0" }
   }
 }
-

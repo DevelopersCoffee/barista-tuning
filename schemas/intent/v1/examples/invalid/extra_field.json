@@ -1,0 +1,9 @@
+{
+  "intent": "browse",
+  "entities": [],
+  "filters": [],
+  "sort": null,
+  "confidence": 0.5,
+  "schema_version": "1.0",
+  "provider": "netflix"
+}

@@ -11,9 +11,29 @@ pub struct IntentCommand {
     pub intent: Intent,
     pub entities: Vec<Entity>,
     pub filters: Vec<Filter>,
+    /// `schema.json` lists `sort` in its top-level `required` array: the key
+    /// must be present (its value may be `null`). Serde's derive treats a
+    /// plain `Option<T>` field as implicitly optional-to-omit, which would
+    /// silently accept a payload missing the `sort` key entirely — the
+    /// opposite of the schema. `deserialize_with` opts out of that implicit
+    /// default handling so a missing key is a deserialization error while
+    /// `"sort": null` still deserializes to `None`.
+    #[serde(deserialize_with = "require_present_nullable")]
     pub sort: Option<Sort>,
     pub confidence: f64,
     pub schema_version: String,
+}
+
+/// Deserializes an `Option<T>` field that must be *present* in the JSON
+/// object (its value may still be `null`). Plain `Option<T>` fields let
+/// serde's derive skip missing keys silently; routing through this function
+/// disables that implicit behavior without otherwise changing semantics.
+fn require_present_nullable<'de, D, T>(deserializer: D) -> Result<Option<T>, D::Error>
+where
+    D: serde::Deserializer<'de>,
+    T: Deserialize<'de>,
+{
+    Option::<T>::deserialize(deserializer)
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]

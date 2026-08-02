@@ -77,6 +77,58 @@ slm train configs/sft.yaml
 
 This writes adapter or model artifacts to the configured `training.output_dir`.
 
+The default `training.backend` is `transformers`, which is appropriate for CUDA
+cloud workers and remains backward compatible. On Apple Silicon, install the MLX
+extra and select `backend: mlx`:
+
+```bash
+pip install -e ".[mlx]"
+slm train configs/enterprise_knowledge_context_mlx_sft.yaml
+```
+
+To move the same local inputs to Colab, Hugging Face, GCP, or another controlled
+runner, create a provider-neutral job directory:
+
+```bash
+slm package-training-job \
+  configs/enterprise_knowledge_context_sft.yaml \
+  --output build/training-jobs/enterprise-context-cuda
+```
+
+Upload that directory, install this package with the appropriate `train` or `mlx`
+extra, verify the SHA-256 values in `job.json`, and run the manifest command from
+the job directory. Packaging never submits a cloud job or includes credentials.
+Enterprise prediction uses `--backend auto` by default and recognizes either a
+PEFT adapter or an MLX adapter, so both paths feed the same scorer.
+
+The cloud quality sweep uses a larger, safety-augmented blueprint dataset and three
+bounded CUDA variants:
+
+```bash
+slm analyze-enterprise-knowledge-errors \
+  data/processed/enterprise_knowledge_benchmark.jsonl \
+  reports/enterprise_knowledge_context_mlx_v4_predictions.jsonl \
+  --catalog examples/enterprise_knowledge/benchmark_catalog.json \
+  --limit 20 \
+  --output reports/enterprise_knowledge_context_mlx_v4_error_analysis.json
+
+slm generate-enterprise-knowledge-splits \
+  examples/enterprise_knowledge/metadata_catalog.json \
+  --train-output data/processed/enterprise_knowledge_cloud_train.jsonl \
+  --eval-output data/processed/enterprise_knowledge_cloud_eval.jsonl \
+  --train-count 2000 \
+  --eval-count 200 \
+  --seed 20260802 \
+  --instruction-mode blueprint \
+  --augmentation-profile safety_v2
+```
+
+Ready configurations are provided for SmolLM2 1.7B rank 16, Qwen2.5 1.5B rank
+16, and Qwen2.5 1.5B rank 32. Package any configuration using the same command
+shown above; cloud submission remains an explicit operator action. The measured
+failure breakdown and experiment matrix are recorded in the
+[cloud sweep preparation report](docs/evaluation/enterprise-knowledge-cloud-sweep-preparation.md).
+
 ## Airo TV Media Actions Dataset
 
 Generate FunctionGemma-style SFT examples for Airo TV media actions:
@@ -169,6 +221,88 @@ make airo-hf-publish \
 `make airo-hf-bundle` writes the Hugging Face upload payload under
 `.cache/hf-publish/airo-media-actions-smollm2-135m`.
 
+## Enterprise Knowledge SLM
+
+The enterprise-knowledge use case teaches an SLM stable request-handling behavior
+over an offline semantic metadata layer. It does not train changing enterprise facts
+or production data into model weights.
+
+The supplied generic catalog models business concepts, capabilities, services, APIs,
+workflows, rules, policies, events, evidence, and approved read-only runtime tools.
+Compile its domain definition first:
+
+```bash
+slm compile examples/enterprise_knowledge/domain.yaml --output build
+```
+
+Generate deterministic training and evaluation splits:
+
+```bash
+slm generate-enterprise-knowledge-splits \
+  examples/enterprise_knowledge/metadata_catalog.json \
+  --train-count 5000 \
+  --eval-count 500
+```
+
+Every output uses a strict Enterprise Knowledge Action v1 JSON envelope. The dataset
+contains four behavior families:
+
+- constrained metadata retrieval planning
+- grounded answers with citations
+- approved read-only live-data tool routing
+- abstention when verified and authorized evidence is unavailable
+
+Validate generated or externally prepared rows before training:
+
+```bash
+slm validate-enterprise-knowledge-data \
+  data/processed/enterprise_knowledge_train.jsonl
+```
+
+Train through the default Transformers/PEFT pipeline:
+
+```bash
+slm train configs/enterprise_knowledge_sft.yaml
+```
+
+The configuration enables the `enterprise_knowledge_v1` validation profile, so
+malformed, unsafe, or internally inconsistent action outputs fail before tokenization
+and training. The training and portable-job paths have no Databricks dependency.
+
+Generate the disjoint, balanced held-out benchmark and evaluate a base model or
+local adapter against versioned release requirements:
+
+```bash
+slm generate-enterprise-knowledge-benchmark \
+  examples/enterprise_knowledge/benchmark_catalog.json \
+  --training-catalog examples/enterprise_knowledge/metadata_catalog.json \
+  --output data/processed/enterprise_knowledge_benchmark.jsonl \
+  --count 100
+
+slm predict-enterprise-knowledge \
+  data/processed/enterprise_knowledge_benchmark.jsonl \
+  HuggingFaceTB/SmolLM2-360M-Instruct \
+  --catalog examples/enterprise_knowledge/benchmark_catalog.json \
+  --prompt-mode blueprint \
+  --output reports/enterprise_knowledge_base_predictions.jsonl
+
+slm score-enterprise-knowledge \
+  data/processed/enterprise_knowledge_benchmark.jsonl \
+  reports/enterprise_knowledge_base_predictions.jsonl \
+  --catalog examples/enterprise_knowledge/benchmark_catalog.json \
+  --requirements examples/enterprise_knowledge/requirements.yaml \
+  --output reports/enterprise_knowledge_base_report.json \
+  --fail-on-requirements
+```
+
+The scorer reports schema, intent, relationship, tool-call, citation, abstention,
+exact-action, unsupported-claim, and unsafe-action metrics. A local smoke evaluation
+of the unadapted 360M model and a one-epoch LoRA adapter found that neither learned
+the required action schema. A four-epoch schema-focused adapter improved held-out
+schema validity to 80% but still failed relationship, tool-grounding, exact-action,
+and zero-unsafe release gates; see the
+[measured baseline](docs/evaluation/enterprise-knowledge-smoke-baseline.md).
+
 ## IPTV To Media IR
 
 Compile the current IPTV channel JSON or an M3U path/URL into Media IR v1:
@@ -255,6 +389,7 @@ tests/
 
 ## Use Cases
 
+- [Offline Enterprise Knowledge Extraction for Grounded SLMs](docs/use-cases/offline-enterprise-knowledge-extraction.md)
 - [Prompt Enhancement and Local Context Augmentation](docs/use-cases/prompt-enhancement-local-context.md)
 - [Indian Splitwise-Style Finance QA](docs/use-cases/indian-splitwise-finance-qa.md)
 - [Federated Enterprise Search with Citations](docs/use-cases/federated-enterprise-search-citations.md)
@@ -265,6 +400,7 @@ tests/
 ## Design
 
 - [Domain Intelligence Platform Design](docs/design/slm-training-sdk.md)
+- [Enterprise Knowledge SLM Training Support](docs/design/enterprise-knowledge-training.md)
 
 ## Research Notes
 

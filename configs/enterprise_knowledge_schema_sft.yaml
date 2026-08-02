@@ -1,0 +1,54 @@
+model:
+  base_model: HuggingFaceTB/SmolLM2-360M-Instruct
+  torch_dtype: auto
+  trust_remote_code: false
+  use_flash_attention_2: false
+
+data:
+  train_path: data/processed/enterprise_knowledge_schema_train.jsonl
+  eval_path: data/processed/enterprise_knowledge_schema_eval.jsonl
+  instruction_field: instruction
+  input_field: input
+  output_field: output
+  validation_profile: enterprise_knowledge_v1
+  validation_context_path: examples/enterprise_knowledge/metadata_catalog.json
+  max_seq_length: 1024
+
+lora:
+  enabled: true
+  r: 16
+  alpha: 32
+  dropout: 0.05
+  target_modules:
+    - q_proj
+    - k_proj
+    - v_proj
+    - o_proj
+    - gate_proj
+    - up_proj
+    - down_proj
+
+training:
+  output_dir: models/enterprise-knowledge-smollm2-360m-schema-v2
+  seed: 42
+  num_train_epochs: 4
+  per_device_train_batch_size: 1
+  per_device_eval_batch_size: 1
+  gradient_accumulation_steps: 4
+  learning_rate: 0.0002
+  warmup_ratio: 0.03
+  weight_decay: 0.0
+  logging_steps: 16
+  save_steps: 64
+  eval_steps: 64
+  save_total_limit: 1
+  gradient_checkpointing: false
+  report_to: []
+
+eval:
+  model_path: models/enterprise-knowledge-smollm2-360m-schema-v2
+  output_dir: reports/enterprise-knowledge-smollm2-360m-schema-v2
+  max_eval_samples: 64
+  max_new_tokens: 256
+  generation_prompts:
+    - "### Instruction\nTranslate the request into enterprise knowledge action JSON. Use only authorized evidence and approved read-only tools. Output JSON only.\n\n### Input\nWhere is the obligation ratio implemented and who owns it?\n\n### Response\n"

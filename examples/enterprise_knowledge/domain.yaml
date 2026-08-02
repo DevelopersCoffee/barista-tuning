@@ -1,0 +1,219 @@
+domain: enterprise_knowledge
+version: 1.0.0
+ir_version: 1.0.0
+description: Governed enterprise implementation knowledge for metadata retrieval, grounded explanation, and safe read-only tool routing.
+
+capabilities:
+  - structured_extraction
+  - retrieval
+  - qa
+  - intent_extraction
+  - tool_calling
+  - policy_checking
+
+policies:
+  - verified_evidence_only
+  - citation_required
+  - authorization_before_retrieval
+  - read_only_tools
+  - no_production_data_in_weights
+  - abstain_on_missing_or_conflicting_evidence
+
+entities:
+  KnowledgeEntity:
+    attributes:
+      entity_id:
+        type: string
+        required: true
+      entity_type:
+        type: string
+        required: true
+      canonical_name:
+        type: string
+        required: true
+      display_name:
+        type: string
+        required: true
+      aliases:
+        type: array
+        items: string
+      owner_team_id:
+        type: string
+        required: true
+      verification_status:
+        type: string
+        required: true
+      source_revision:
+        type: string
+        required: true
+    relationships:
+      connected_by:
+        target: KnowledgeRelationship
+        cardinality: many
+      evidenced_by:
+        target: Evidence
+        cardinality: many
+      available_as:
+        target: RuntimeTool
+        cardinality: many
+    capabilities:
+      - structured_extraction
+      - retrieval
+      - qa
+    policies:
+      - verified_evidence_only
+      - authorization_before_retrieval
+
+  KnowledgeRelationship:
+    attributes:
+      subject_id:
+        type: string
+        required: true
+      predicate:
+        type: string
+        required: true
+      object_id:
+        type: string
+        required: true
+      evidence_id:
+        type: string
+        required: true
+      confidence:
+        type: number
+        required: true
+      verification_status:
+        type: string
+        required: true
+    relationships:
+      supported_by:
+        target: Evidence
+        cardinality: many
+    capabilities:
+      - structured_extraction
+      - retrieval
+    policies:
+      - verified_evidence_only
+
+  Evidence:
+    attributes:
+      evidence_id:
+        type: string
+        required: true
+      citation_label:
+        type: string
+        required: true
+      text:
+        type: string
+        required: true
+      source_uri:
+        type: string
+        required: true
+      source_revision:
+        type: string
+        required: true
+      verification_status:
+        type: string
+        required: true
+    capabilities:
+      - retrieval
+      - qa
+    policies:
+      - verified_evidence_only
+      - citation_required
+
+  RuntimeTool:
+    attributes:
+      tool_id:
+        type: string
+        required: true
+      description:
+        type: string
+        required: true
+      mode:
+        type: string
+        required: true
+      purpose:
+        type: string
+        required: true
+      required_arguments:
+        type: array
+        items: string
+    capabilities:
+      - tool_calling
+      - policy_checking
+    policies:
+      - authorization_before_retrieval
+      - read_only_tools
+
+  KnowledgeQuery:
+    attributes:
+      intent:
+        type: string
+        required: true
+      entities:
+        type: array
+        items: object
+      relationship_types:
+        type: array
+        items: string
+      requires_live_data:
+        type: boolean
+        required: true
+    relationships:
+      resolves_to:
+        target: KnowledgeEntity
+        cardinality: many
+      selects:
+        target: RuntimeTool
+        cardinality: many
+    capabilities:
+      - intent_extraction
+      - retrieval
+      - tool_calling
+    policies:
+      - authorization_before_retrieval
+      - read_only_tools
+
+  EnterpriseAction:
+    attributes:
+      schema_version:
+        type: string
+        required: true
+      intent:
+        type: string
+        required: true
+      evidence_policy:
+        type: object
+        required: true
+      tool_call:
+        type: object
+      answer:
+        type: string
+      citations:
+        type: array
+        items: string
+      abstain:
+        type: boolean
+        required: true
+      reason:
+        type: string
+    relationships:
+      answers:
+        target: KnowledgeQuery
+        cardinality: one
+      cites:
+        target: Evidence
+        cardinality: many
+      invokes:
+        target: RuntimeTool
+        cardinality: one
+    capabilities:
+      - structured_extraction
+      - qa
+      - tool_calling
+      - policy_checking
+    policies:
+      - citation_required
+      - read_only_tools
+      - no_production_data_in_weights
+      - abstain_on_missing_or_conflicting_evidence

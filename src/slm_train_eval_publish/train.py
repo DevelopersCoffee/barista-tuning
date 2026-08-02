@@ -8,6 +8,14 @@ from slm_train_eval_publish.data import format_sft_prompt_and_output, load_sft_d
 
 
 def train_model(config: PipelineConfig) -> Path:
+    if config.training.backend == "mlx":
+        from slm_train_eval_publish.mlx_training import train_model_with_mlx
+
+        return train_model_with_mlx(config)
+    return train_model_with_transformers(config)
+
+
+def train_model_with_transformers(config: PipelineConfig) -> Path:
     from transformers import (
         AutoModelForCausalLM,
         AutoTokenizer,
@@ -69,11 +77,12 @@ def train_model(config: PipelineConfig) -> Path:
         eval_steps=config.training.eval_steps,
         save_total_limit=config.training.save_total_limit,
         gradient_checkpointing=config.training.gradient_checkpointing,
+        use_cpu=config.training.use_cpu,
         report_to=config.training.report_to,
         eval_strategy="steps" if eval_dataset is not None else "no",
         save_strategy="steps",
-        bf16=False,
-        fp16=False,
+        bf16=config.training.bf16,
+        fp16=config.training.fp16,
     )
 
     trainer = Trainer(

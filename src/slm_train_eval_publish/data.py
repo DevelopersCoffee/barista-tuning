@@ -4,6 +4,7 @@ from pathlib import Path
 from typing import Any
 
 from slm_train_eval_publish.config import DataConfig
+from slm_train_eval_publish.dataset_validation import validate_sft_rows
 
 
 def load_sft_datasets(config: DataConfig) -> tuple[Any, Any | None]:
@@ -19,10 +20,32 @@ def load_sft_datasets(config: DataConfig) -> tuple[Any, Any | None]:
 
         train = dataset[config.train_split]
         eval_dataset = dataset[config.eval_split] if config.eval_split in dataset else None
+        validate_sft_rows(
+            train,
+            config.validation_profile,
+            validation_context_path=config.validation_context_path,
+        )
+        if eval_dataset is not None:
+            validate_sft_rows(
+                eval_dataset,
+                config.validation_profile,
+                validation_context_path=config.validation_context_path,
+            )
         return train, eval_dataset
 
     train = _load_local_dataset(config.train_path)
     eval_dataset = _load_local_dataset(config.eval_path) if config.eval_path else None
+    validate_sft_rows(
+        train,
+        config.validation_profile,
+        validation_context_path=config.validation_context_path,
+    )
+    if eval_dataset is not None:
+        validate_sft_rows(
+            eval_dataset,
+            config.validation_profile,
+            validation_context_path=config.validation_context_path,
+        )
     return train, eval_dataset
 
 

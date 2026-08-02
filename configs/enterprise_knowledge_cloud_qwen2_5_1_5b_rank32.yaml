@@ -1,0 +1,49 @@
+model:
+  base_model: Qwen/Qwen2.5-1.5B-Instruct
+  torch_dtype: auto
+  trust_remote_code: false
+  use_flash_attention_2: false
+
+data:
+  train_path: data/processed/enterprise_knowledge_cloud_train.jsonl
+  eval_path: data/processed/enterprise_knowledge_cloud_eval.jsonl
+  instruction_field: instruction
+  input_field: input
+  output_field: output
+  validation_profile: enterprise_knowledge_v1
+  validation_context_path: examples/enterprise_knowledge/metadata_catalog.json
+  max_seq_length: 1024
+
+lora:
+  enabled: true
+  r: 32
+  alpha: 64
+  dropout: 0.05
+  target_modules: [q_proj, k_proj, v_proj, o_proj, gate_proj, up_proj, down_proj]
+
+training:
+  backend: transformers
+  output_dir: models/enterprise-knowledge-qwen2.5-1.5b-cloud-r32
+  seed: 42
+  num_train_epochs: 3
+  per_device_train_batch_size: 1
+  per_device_eval_batch_size: 1
+  gradient_accumulation_steps: 8
+  learning_rate: 0.00015
+  warmup_ratio: 0.03
+  weight_decay: 0.01
+  logging_steps: 10
+  save_steps: 50
+  eval_steps: 50
+  save_total_limit: 2
+  gradient_checkpointing: true
+  fp16: true
+  bf16: false
+  report_to: []
+
+eval:
+  model_path: models/enterprise-knowledge-qwen2.5-1.5b-cloud-r32
+  output_dir: reports/enterprise-knowledge-qwen2.5-1.5b-cloud-r32
+  max_eval_samples: 200
+  max_new_tokens: 256
+  generation_prompts: []

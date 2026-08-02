@@ -27,6 +27,8 @@ class DataConfig:
     input_field: str = "input"
     output_field: str = "output"
     text_field: str | None = None
+    validation_profile: str | None = None
+    validation_context_path: str | None = None
     max_seq_length: int = 2048
 
 
@@ -41,6 +43,7 @@ class LoraConfig:
 
 @dataclass(frozen=True)
 class TrainingConfig:
+    backend: str = "transformers"
     output_dir: str = "models/sft"
     seed: int = 42
     num_train_epochs: float = 1.0
@@ -55,6 +58,10 @@ class TrainingConfig:
     eval_steps: int = 200
     save_total_limit: int = 2
     gradient_checkpointing: bool = True
+    use_cpu: bool = False
+    fp16: bool = False
+    bf16: bool = False
+    mlx_num_layers: int = -1
     report_to: list[str] = field(default_factory=list)
 
 
@@ -91,7 +98,7 @@ def load_config(path: str | Path) -> PipelineConfig:
     if not isinstance(raw, dict):
         raise ValueError(f"Expected mapping at top level in {config_path}")
 
-    return PipelineConfig(
+    config = PipelineConfig(
         model=_build(ModelConfig, raw.get("model", {}), "model"),
         data=_build(DataConfig, raw.get("data", {}), "data"),
         training=_build(TrainingConfig, raw.get("training", {}), "training"),
@@ -99,6 +106,8 @@ def load_config(path: str | Path) -> PipelineConfig:
         eval=_build(EvalConfig, raw.get("eval", {}), "eval"),
         publish=_build(PublishConfig, raw["publish"], "publish") if raw.get("publish") else None,
     )
+    _validate_config(config)
+    return config
 
 
 def _build(cls: type[Any], values: dict[str, Any], section: str) -> Any:
@@ -114,3 +123,25 @@ def _build(cls: type[Any], values: dict[str, Any], section: str) -> Any:
         return cls(**values)
     except TypeError as exc:
         raise ValueError(f"Invalid config section '{section}': {exc}") from exc
+
+
+def _validate_config(config: PipelineConfig) -> None:
+    if config.training.backend not in {"transformers", "mlx"}:
+        raise ValueError("training.backend must be 'transformers' or 'mlx'")
+    if config.training.mlx_num_layers == 0 or config.training.mlx_num_layers < -1:
+        raise ValueError("training.mlx_num_layers must be -1 or a positive integer")
+    if config.training.gradient_accumulation_steps < 1:
+        raise ValueError("training.gradient_accumulation_steps must be positive")
+    if config.training.per_device_train_batch_size < 1:
+        raise ValueError("training.per_device_train_batch_size must be positive")
+    if config.training.fp16 and config.training.bf16:
+        raise ValueError("training.fp16 and bf16 cannot both be enabled")
+    if config.lora.r < 1:
+        raise ValueError("lora.r must be positive")
+    if config.training.backend == "mlx":
+        unsupported_reporters = sorted(set(config.training.report_to) - {"wandb", "swanlab"})
+        if unsupported_reporters:
+            raise ValueError(
+                "MLX report_to supports only wandb and swanlab: "
+                + ", ".join(unsupported_reporters)
+            )

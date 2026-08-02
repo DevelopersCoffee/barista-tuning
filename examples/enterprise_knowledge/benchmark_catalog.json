@@ -1,0 +1,445 @@
+{
+  "schema_version": "1.0",
+  "knowledge_release": "enterprise-operations-benchmark-2026.07.30.1",
+  "entities": [
+    {
+      "entity_id": "concept:pricing:relationship-profitability",
+      "entity_type": "business_concept",
+      "canonical_name": "relationship_profitability",
+      "display_name": "Relationship profitability",
+      "aliases": [
+        "customer profitability",
+        "relationship value"
+      ],
+      "owner_team_id": "team:pricing-strategy",
+      "verification_status": "verified",
+      "source_revision": "pricing-benchmark-1"
+    },
+    {
+      "entity_id": "service:pricing-decision",
+      "entity_type": "service",
+      "canonical_name": "pricing-decision-service",
+      "display_name": "Pricing decision service",
+      "aliases": [
+        "pricing service",
+        "decision pricing"
+      ],
+      "owner_team_id": "team:pricing-platform",
+      "verification_status": "verified",
+      "source_revision": "pricing-benchmark-1"
+    },
+    {
+      "entity_id": "api:pricing:explanation",
+      "entity_type": "api",
+      "canonical_name": "get-pricing-explanation",
+      "display_name": "GET /pricing/explanations/{decision_id}",
+      "aliases": [
+        "pricing explanation API",
+        "pricing reason endpoint"
+      ],
+      "owner_team_id": "team:pricing-platform",
+      "verification_status": "verified",
+      "source_revision": "pricing-benchmark-1"
+    },
+    {
+      "entity_id": "rule:pricing:risk-adjustment-v5",
+      "entity_type": "business_rule",
+      "canonical_name": "risk-adjustment-v5",
+      "display_name": "Pricing risk adjustment rule v5",
+      "aliases": [
+        "risk adjustment rule",
+        "pricing risk rule"
+      ],
+      "owner_team_id": "team:pricing-strategy",
+      "verification_status": "verified",
+      "source_revision": "pricing-rules-benchmark-5"
+    },
+    {
+      "entity_id": "workflow:pricing-review-v2",
+      "entity_type": "workflow",
+      "canonical_name": "pricing-review-v2",
+      "display_name": "Pricing review workflow v2",
+      "aliases": [
+        "pricing review",
+        "price change workflow"
+      ],
+      "owner_team_id": "team:pricing-operations",
+      "verification_status": "verified",
+      "source_revision": "pricing-workflow-benchmark-2"
+    },
+    {
+      "entity_id": "policy:pricing-transparency-2026",
+      "entity_type": "policy",
+      "canonical_name": "pricing-transparency-2026",
+      "display_name": "Pricing transparency policy 2026",
+      "aliases": [
+        "pricing transparency policy",
+        "price explanation policy"
+      ],
+      "owner_team_id": "team:pricing-governance",
+      "verification_status": "verified",
+      "source_revision": "pricing-policy-benchmark-2026"
+    },
+    {
+      "entity_id": "event:pricing-decision-changed-v3",
+      "entity_type": "event",
+      "canonical_name": "pricing-decision-changed-v3",
+      "display_name": "Pricing decision changed event v3",
+      "aliases": [
+        "pricing changed event",
+        "price decision event"
+      ],
+      "owner_team_id": "team:pricing-platform",
+      "verification_status": "verified",
+      "source_revision": "pricing-events-benchmark-3"
+    },
+    {
+      "entity_id": "service:repayment-operations",
+      "entity_type": "service",
+      "canonical_name": "repayment-operations-service",
+      "display_name": "Repayment operations service",
+      "aliases": [
+        "repayment service",
+        "bounce handling service"
+      ],
+      "owner_team_id": "team:repayment-platform",
+      "verification_status": "verified",
+      "source_revision": "repayment-benchmark-4"
+    },
+    {
+      "entity_id": "api:repayment:bounce-details",
+      "entity_type": "api",
+      "canonical_name": "get-bounce-details",
+      "display_name": "GET /repayments/bounces/{bounce_id}",
+      "aliases": [
+        "bounce details API",
+        "repayment failure endpoint"
+      ],
+      "owner_team_id": "team:repayment-platform",
+      "verification_status": "verified",
+      "source_revision": "repayment-benchmark-4"
+    },
+    {
+      "entity_id": "workflow:repayment-bounce-v4",
+      "entity_type": "workflow",
+      "canonical_name": "repayment-bounce-handling-v4",
+      "display_name": "Repayment bounce handling workflow v4",
+      "aliases": [
+        "bounce handling workflow",
+        "failed repayment workflow"
+      ],
+      "owner_team_id": "team:repayment-operations",
+      "verification_status": "verified",
+      "source_revision": "repayment-workflow-benchmark-4"
+    },
+    {
+      "entity_id": "rule:repayment:retry-v3",
+      "entity_type": "business_rule",
+      "canonical_name": "repayment-retry-v3",
+      "display_name": "Repayment retry rule v3",
+      "aliases": [
+        "retry rule",
+        "bounce retry policy"
+      ],
+      "owner_team_id": "team:repayment-operations",
+      "verification_status": "verified",
+      "source_revision": "repayment-rules-benchmark-3"
+    },
+    {
+      "entity_id": "event:repayment-bounced-v2",
+      "entity_type": "event",
+      "canonical_name": "repayment-bounced-v2",
+      "display_name": "Repayment bounced event v2",
+      "aliases": [
+        "bounce event",
+        "failed repayment event"
+      ],
+      "owner_team_id": "team:repayment-platform",
+      "verification_status": "verified",
+      "source_revision": "repayment-events-benchmark-2"
+    },
+    {
+      "entity_id": "service:loan-servicing",
+      "entity_type": "service",
+      "canonical_name": "loan-servicing-service",
+      "display_name": "Loan servicing service",
+      "aliases": [
+        "servicing service",
+        "loan operations service"
+      ],
+      "owner_team_id": "team:loan-servicing",
+      "verification_status": "verified",
+      "source_revision": "servicing-benchmark-6"
+    },
+    {
+      "entity_id": "api:foreclosure:eligibility",
+      "entity_type": "api",
+      "canonical_name": "get-foreclosure-eligibility",
+      "display_name": "GET /loans/{loan_id}/foreclosure-eligibility",
+      "aliases": [
+        "foreclosure eligibility API",
+        "loan closure eligibility endpoint"
+      ],
+      "owner_team_id": "team:loan-servicing",
+      "verification_status": "verified",
+      "source_revision": "servicing-benchmark-6"
+    },
+    {
+      "entity_id": "workflow:foreclosure-request-v2",
+      "entity_type": "workflow",
+      "canonical_name": "foreclosure-request-v2",
+      "display_name": "Foreclosure request workflow v2",
+      "aliases": [
+        "foreclosure workflow",
+        "loan closure workflow"
+      ],
+      "owner_team_id": "team:loan-servicing",
+      "verification_status": "verified",
+      "source_revision": "foreclosure-workflow-benchmark-2"
+    },
+    {
+      "entity_id": "rule:foreclosure:cooling-period-v4",
+      "entity_type": "business_rule",
+      "canonical_name": "foreclosure-cooling-period-v4",
+      "display_name": "Foreclosure cooling period rule v4",
+      "aliases": [
+        "cooling period rule",
+        "foreclosure waiting rule"
+      ],
+      "owner_team_id": "team:lending-policy",
+      "verification_status": "verified",
+      "source_revision": "foreclosure-rules-benchmark-4"
+    },
+    {
+      "entity_id": "policy:loan-closure-2026",
+      "entity_type": "policy",
+      "canonical_name": "loan-closure-2026",
+      "display_name": "Loan closure policy 2026",
+      "aliases": [
+        "loan closure policy",
+        "foreclosure policy"
+      ],
+      "owner_team_id": "team:lending-policy",
+      "verification_status": "verified",
+      "source_revision": "closure-policy-benchmark-2026"
+    }
+  ],
+  "evidence": [
+    {
+      "evidence_id": "evidence:benchmark:pricing-api",
+      "citation_label": "BENCH-PRICING-API-01",
+      "text": "Pricing decision service exposes the pricing explanation API for authorized decision explanations.",
+      "source_uri": "repo://benchmark/pricing/openapi.yaml",
+      "source_revision": "pricing-benchmark-1",
+      "verification_status": "verified"
+    },
+    {
+      "evidence_id": "evidence:benchmark:pricing-rule",
+      "citation_label": "BENCH-PRICING-RULE-02",
+      "text": "Pricing risk adjustment rule v5 reads relationship profitability and is governed by the pricing transparency policy.",
+      "source_uri": "repo://benchmark/pricing/risk-adjustment-v5.yaml",
+      "source_revision": "pricing-rules-benchmark-5",
+      "verification_status": "verified"
+    },
+    {
+      "evidence_id": "evidence:benchmark:pricing-workflow",
+      "citation_label": "BENCH-PRICING-WORKFLOW-03",
+      "text": "Pricing review workflow v2 invokes the pricing explanation API after a decision changes.",
+      "source_uri": "repo://benchmark/pricing/review-v2.yaml",
+      "source_revision": "pricing-workflow-benchmark-2",
+      "verification_status": "verified"
+    },
+    {
+      "evidence_id": "evidence:benchmark:pricing-event",
+      "citation_label": "BENCH-PRICING-EVENT-04",
+      "text": "Pricing decision service produces pricing decision changed event v3.",
+      "source_uri": "catalog://benchmark/events/pricing-decision-changed-v3",
+      "source_revision": "pricing-events-benchmark-3",
+      "verification_status": "verified"
+    },
+    {
+      "evidence_id": "evidence:benchmark:repayment-api",
+      "citation_label": "BENCH-REPAYMENT-API-05",
+      "text": "Repayment operations service exposes the bounce details API.",
+      "source_uri": "repo://benchmark/repayment/openapi.yaml",
+      "source_revision": "repayment-benchmark-4",
+      "verification_status": "verified"
+    },
+    {
+      "evidence_id": "evidence:benchmark:repayment-workflow",
+      "citation_label": "BENCH-REPAYMENT-WORKFLOW-06",
+      "text": "Repayment bounce handling workflow v4 consumes repayment bounced event v2 and invokes the bounce details API.",
+      "source_uri": "repo://benchmark/repayment/bounce-workflow-v4.yaml",
+      "source_revision": "repayment-workflow-benchmark-4",
+      "verification_status": "verified"
+    },
+    {
+      "evidence_id": "evidence:benchmark:repayment-rule",
+      "citation_label": "BENCH-REPAYMENT-RULE-07",
+      "text": "Repayment bounce handling workflow v4 is governed by repayment retry rule v3.",
+      "source_uri": "repo://benchmark/repayment/retry-v3.yaml",
+      "source_revision": "repayment-rules-benchmark-3",
+      "verification_status": "verified"
+    },
+    {
+      "evidence_id": "evidence:benchmark:foreclosure-api",
+      "citation_label": "BENCH-FORECLOSURE-API-08",
+      "text": "Loan servicing service exposes the foreclosure eligibility API.",
+      "source_uri": "repo://benchmark/servicing/openapi.yaml",
+      "source_revision": "servicing-benchmark-6",
+      "verification_status": "verified"
+    },
+    {
+      "evidence_id": "evidence:benchmark:foreclosure-workflow",
+      "citation_label": "BENCH-FORECLOSURE-WORKFLOW-09",
+      "text": "Foreclosure request workflow v2 invokes the foreclosure eligibility API.",
+      "source_uri": "repo://benchmark/servicing/foreclosure-v2.yaml",
+      "source_revision": "foreclosure-workflow-benchmark-2",
+      "verification_status": "verified"
+    },
+    {
+      "evidence_id": "evidence:benchmark:foreclosure-rule",
+      "citation_label": "BENCH-FORECLOSURE-RULE-10",
+      "text": "Foreclosure cooling period rule v4 is governed by loan closure policy 2026.",
+      "source_uri": "repo://benchmark/servicing/cooling-period-v4.yaml",
+      "source_revision": "foreclosure-rules-benchmark-4",
+      "verification_status": "verified"
+    }
+  ],
+  "relationships": [
+    {
+      "subject_id": "service:pricing-decision",
+      "predicate": "EXPOSES",
+      "object_id": "api:pricing:explanation",
+      "evidence_id": "evidence:benchmark:pricing-api",
+      "confidence": 1.0,
+      "verification_status": "verified"
+    },
+    {
+      "subject_id": "rule:pricing:risk-adjustment-v5",
+      "predicate": "READS_FROM",
+      "object_id": "concept:pricing:relationship-profitability",
+      "evidence_id": "evidence:benchmark:pricing-rule",
+      "confidence": 0.99,
+      "verification_status": "verified"
+    },
+    {
+      "subject_id": "rule:pricing:risk-adjustment-v5",
+      "predicate": "GOVERNED_BY",
+      "object_id": "policy:pricing-transparency-2026",
+      "evidence_id": "evidence:benchmark:pricing-rule",
+      "confidence": 1.0,
+      "verification_status": "verified"
+    },
+    {
+      "subject_id": "workflow:pricing-review-v2",
+      "predicate": "INVOKES",
+      "object_id": "api:pricing:explanation",
+      "evidence_id": "evidence:benchmark:pricing-workflow",
+      "confidence": 0.98,
+      "verification_status": "verified"
+    },
+    {
+      "subject_id": "service:pricing-decision",
+      "predicate": "PRODUCES",
+      "object_id": "event:pricing-decision-changed-v3",
+      "evidence_id": "evidence:benchmark:pricing-event",
+      "confidence": 1.0,
+      "verification_status": "verified"
+    },
+    {
+      "subject_id": "service:repayment-operations",
+      "predicate": "EXPOSES",
+      "object_id": "api:repayment:bounce-details",
+      "evidence_id": "evidence:benchmark:repayment-api",
+      "confidence": 1.0,
+      "verification_status": "verified"
+    },
+    {
+      "subject_id": "workflow:repayment-bounce-v4",
+      "predicate": "CONSUMES",
+      "object_id": "event:repayment-bounced-v2",
+      "evidence_id": "evidence:benchmark:repayment-workflow",
+      "confidence": 0.99,
+      "verification_status": "verified"
+    },
+    {
+      "subject_id": "workflow:repayment-bounce-v4",
+      "predicate": "INVOKES",
+      "object_id": "api:repayment:bounce-details",
+      "evidence_id": "evidence:benchmark:repayment-workflow",
+      "confidence": 0.99,
+      "verification_status": "verified"
+    },
+    {
+      "subject_id": "workflow:repayment-bounce-v4",
+      "predicate": "GOVERNED_BY",
+      "object_id": "rule:repayment:retry-v3",
+      "evidence_id": "evidence:benchmark:repayment-rule",
+      "confidence": 0.97,
+      "verification_status": "verified"
+    },
+    {
+      "subject_id": "service:loan-servicing",
+      "predicate": "EXPOSES",
+      "object_id": "api:foreclosure:eligibility",
+      "evidence_id": "evidence:benchmark:foreclosure-api",
+      "confidence": 1.0,
+      "verification_status": "verified"
+    },
+    {
+      "subject_id": "workflow:foreclosure-request-v2",
+      "predicate": "INVOKES",
+      "object_id": "api:foreclosure:eligibility",
+      "evidence_id": "evidence:benchmark:foreclosure-workflow",
+      "confidence": 0.99,
+      "verification_status": "verified"
+    },
+    {
+      "subject_id": "rule:foreclosure:cooling-period-v4",
+      "predicate": "GOVERNED_BY",
+      "object_id": "policy:loan-closure-2026",
+      "evidence_id": "evidence:benchmark:foreclosure-rule",
+      "confidence": 1.0,
+      "verification_status": "verified"
+    }
+  ],
+  "approved_tools": [
+    {
+      "tool_id": "get_pricing_change_summary",
+      "description": "Retrieve the current authorized pricing change summary.",
+      "mode": "read_only",
+      "purpose": "pricing_explanation",
+      "required_arguments": [
+        "decision_id"
+      ],
+      "example_arguments": {
+        "decision_id": "DECISION-REFERENCE"
+      }
+    },
+    {
+      "tool_id": "get_repayment_failure_trace",
+      "description": "Retrieve the current authorized repayment failure trace.",
+      "mode": "read_only",
+      "purpose": "repayment_diagnosis",
+      "required_arguments": [
+        "bounce_id"
+      ],
+      "example_arguments": {
+        "bounce_id": "BOUNCE-REFERENCE"
+      }
+    },
+    {
+      "tool_id": "get_foreclosure_case_summary",
+      "description": "Retrieve the current authorized foreclosure case summary.",
+      "mode": "read_only",
+      "purpose": "foreclosure_explanation",
+      "required_arguments": [
+        "loan_id"
+      ],
+      "example_arguments": {
+        "loan_id": "LOAN-REFERENCE"
+      }
+    }
+  ]
+}

@@ -4,6 +4,8 @@ import json
 from pathlib import Path
 from typing import Any
 
+from slm_train_eval_publish.structured_output import extract_first_json_object
+
 INVALID_MEDIA_ACTION = {
     "intent": "invalid",
     "tool": "media.invalid",
@@ -120,36 +122,6 @@ def validate_media_action_payload(payload: dict[str, Any]) -> str | None:
         value = payload.get(field)
         if not isinstance(value, expected_type):
             return f"missing or invalid {field}"
-    return None
-
-
-def extract_first_json_object(text: str) -> str | None:
-    start = text.find("{")
-    if start < 0:
-        return None
-
-    depth = 0
-    in_string = False
-    escaped = False
-    for index, char in enumerate(text[start:], start=start):
-        if in_string:
-            if escaped:
-                escaped = False
-            elif char == "\\":
-                escaped = True
-            elif char == '"':
-                in_string = False
-            continue
-
-        if char == '"':
-            in_string = True
-        elif char == "{":
-            depth += 1
-        elif char == "}":
-            depth -= 1
-            if depth == 0:
-                return text[start : index + 1]
-
     return None
 
 

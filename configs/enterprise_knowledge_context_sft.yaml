@@ -1,0 +1,49 @@
+model:
+  base_model: HuggingFaceTB/SmolLM2-360M-Instruct
+  torch_dtype: auto
+  trust_remote_code: false
+  use_flash_attention_2: false
+
+data:
+  train_path: data/processed/enterprise_knowledge_context_train.jsonl
+  eval_path: data/processed/enterprise_knowledge_context_eval.jsonl
+  instruction_field: instruction
+  input_field: input
+  output_field: output
+  validation_profile: enterprise_knowledge_v1
+  validation_context_path: examples/enterprise_knowledge/metadata_catalog.json
+  max_seq_length: 1024
+
+lora:
+  enabled: true
+  r: 16
+  alpha: 32
+  dropout: 0.05
+  target_modules:
+    - q_proj
+    - v_proj
+
+training:
+  output_dir: models/enterprise-knowledge-smollm2-360m-context-v3
+  seed: 42
+  num_train_epochs: 2
+  per_device_train_batch_size: 1
+  per_device_eval_batch_size: 1
+  gradient_accumulation_steps: 4
+  learning_rate: 0.0002
+  warmup_ratio: 0.03
+  weight_decay: 0.0
+  logging_steps: 16
+  save_steps: 64
+  eval_steps: 64
+  save_total_limit: 1
+  gradient_checkpointing: false
+  use_cpu: false
+  report_to: []
+
+eval:
+  model_path: models/enterprise-knowledge-smollm2-360m-context-v3
+  output_dir: reports/enterprise-knowledge-smollm2-360m-context-v3
+  max_eval_samples: 64
+  max_new_tokens: 256
+  generation_prompts: []

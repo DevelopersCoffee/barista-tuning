@@ -1,9 +1,14 @@
 from __future__ import annotations
 
+import json
 from dataclasses import replace
+from pathlib import Path
+
+import pytest
 
 from slm_train_eval_publish.config import DataConfig, ModelConfig, PipelineConfig
 from slm_train_eval_publish.data import format_sft_example, format_sft_prompt_and_output
+from slm_train_eval_publish.dataset_validation import validate_sft_rows
 from slm_train_eval_publish.train import _enable_input_grads_for_checkpointing, _tokenize_dataset
 
 
@@ -93,3 +98,59 @@ def test_gradient_checkpointing_enables_input_grads_for_lora() -> None:
     _enable_input_grads_for_checkpointing(model, config)
 
     assert model.enabled is True
+
+
+def test_enterprise_validation_profile_rejects_invalid_output() -> None:
+    rows = [
+        {
+            "instruction": "Return enterprise knowledge action JSON only.",
+            "input": "Run a production update.",
+            "output": '{"intent":"execute_sql"}',
+        }
+    ]
+
+    try:
+        validate_sft_rows(rows, "enterprise_knowledge_v1")
+    except ValueError as error:
+        assert "row 1" in str(error)
+    else:
+        raise AssertionError("enterprise validation should reject invalid output")
+
+
+def test_enterprise_validation_profile_rejects_tool_outside_catalog() -> None:
+    catalog_path = Path("examples/enterprise_knowledge/metadata_catalog.json")
+    action = {
+        "schema_version": "1.0",
+        "intent": "live_data_lookup",
+        "entities": [],
+        "relationship_types": [],
+        "requires_live_data": True,
+        "evidence_policy": {
+            "minimum_status": "verified",
+            "citations_required": True,
+        },
+        "tool_call": {
+            "tool": "unregistered_read_tool",
+            "arguments": {"case_id": "CASE-REFERENCE"},
+            "purpose": "case_explanation",
+            "mode": "read_only",
+        },
+        "answer": None,
+        "citations": [],
+        "abstain": False,
+        "reason": None,
+    }
+    rows = [
+        {
+            "instruction": "Return enterprise knowledge action JSON only.",
+            "input": "Get a live case summary.",
+            "output": json.dumps(action),
+        }
+    ]
+
+    with pytest.raises(ValueError, match="approved tool catalog"):
+        validate_sft_rows(
+            rows,
+            "enterprise_knowledge_v1",
+            validation_context_path=catalog_path,
+        )

@@ -67,6 +67,216 @@ def generate_media_action_splits(
     console.print(f"Generated {eval_count} eval examples: {eval_path}")
 
 
+@app.command("generate-enterprise-knowledge-splits")
+def generate_enterprise_knowledge_splits(
+    catalog: Annotated[Path, typer.Argument(exists=True, readable=True)],
+    train_output: Annotated[Path, typer.Option("--train-output")] = Path(
+        "data/processed/enterprise_knowledge_train.jsonl"
+    ),
+    eval_output: Annotated[Path, typer.Option("--eval-output")] = Path(
+        "data/processed/enterprise_knowledge_eval.jsonl"
+    ),
+    train_count: Annotated[int, typer.Option("--train-count", min=1)] = 5000,
+    eval_count: Annotated[int, typer.Option("--eval-count", min=1)] = 500,
+    seed: Annotated[int, typer.Option("--seed")] = 42,
+    instruction_mode: Annotated[
+        str,
+        typer.Option("--instruction-mode", help="Use 'basic' or 'blueprint'."),
+    ] = "basic",
+    augmentation_profile: Annotated[
+        str,
+        typer.Option(
+            "--augmentation-profile",
+            help="Use 'standard' or the stronger 'safety_v2' correction mix.",
+        ),
+    ] = "standard",
+) -> None:
+    """Generate governed enterprise-knowledge SFT train/eval splits."""
+    from slm_train_eval_publish.enterprise_knowledge import (
+        write_enterprise_knowledge_split,
+    )
+
+    train_path, eval_path = write_enterprise_knowledge_split(
+        catalog_path=catalog,
+        train_output=train_output,
+        eval_output=eval_output,
+        train_count=train_count,
+        eval_count=eval_count,
+        seed=seed,
+        instruction_mode=instruction_mode,
+        augmentation_profile=augmentation_profile,
+    )
+    console.print(f"Generated {train_count} train examples: {train_path}")
+    console.print(f"Generated {eval_count} eval examples: {eval_path}")
+
+
+@app.command("validate-enterprise-knowledge-data")
+def validate_enterprise_knowledge_data(
+    dataset: Annotated[Path, typer.Argument(exists=True, readable=True)],
+    catalog: Annotated[
+        Path,
+        typer.Option("--catalog", exists=True, readable=True),
+    ] = Path("examples/enterprise_knowledge/metadata_catalog.json"),
+) -> None:
+    """Validate enterprise-knowledge SFT JSONL and structured action outputs."""
+    from slm_train_eval_publish.enterprise_knowledge import (
+        validate_enterprise_knowledge_jsonl,
+    )
+
+    row_count = validate_enterprise_knowledge_jsonl(dataset, catalog_path=catalog)
+    console.print(f"Valid enterprise-knowledge dataset: {dataset}")
+    console.print(f"Rows: {row_count}")
+
+
+@app.command("generate-enterprise-knowledge-benchmark")
+def generate_enterprise_knowledge_benchmark(
+    benchmark_catalog: Annotated[Path, typer.Argument(exists=True, readable=True)],
+    training_catalog: Annotated[
+        Path,
+        typer.Option("--training-catalog", exists=True, readable=True),
+    ] = Path("examples/enterprise_knowledge/metadata_catalog.json"),
+    output: Annotated[Path, typer.Option("--output", "-o")] = Path(
+        "data/processed/enterprise_knowledge_benchmark.jsonl"
+    ),
+    count: Annotated[int, typer.Option("--count", min=4)] = 100,
+    seed: Annotated[int, typer.Option("--seed")] = 2026,
+) -> None:
+    """Generate a held-out enterprise-knowledge benchmark from a disjoint catalog."""
+    from slm_train_eval_publish.enterprise_knowledge_evaluation import (
+        write_enterprise_knowledge_benchmark,
+    )
+
+    path = write_enterprise_knowledge_benchmark(
+        benchmark_catalog_path=benchmark_catalog,
+        training_catalog_path=training_catalog,
+        output=output,
+        count=count,
+        seed=seed,
+    )
+    console.print(f"Generated {count} held-out benchmark examples: {path}")
+
+
+@app.command("predict-enterprise-knowledge")
+def predict_enterprise_knowledge(
+    dataset: Annotated[Path, typer.Argument(exists=True, readable=True)],
+    model: Annotated[str, typer.Argument(help="Hugging Face model ID or local model path.")],
+    catalog: Annotated[
+        Path,
+        typer.Option("--catalog", exists=True, readable=True),
+    ] = Path("examples/enterprise_knowledge/benchmark_catalog.json"),
+    output: Annotated[Path, typer.Option("--output", "-o")] = Path(
+        "reports/enterprise_knowledge_predictions.jsonl"
+    ),
+    limit: Annotated[int | None, typer.Option("--limit", min=1)] = None,
+    max_new_tokens: Annotated[int, typer.Option("--max-new-tokens", min=1)] = 512,
+    prompt_mode: Annotated[
+        str,
+        typer.Option(
+            "--prompt-mode",
+            help="Use 'blueprint' for base models or 'sft' for adapters.",
+        ),
+    ] = "blueprint",
+    backend: Annotated[
+        str,
+        typer.Option("--backend", help="Use 'auto', 'transformers', or 'mlx'."),
+    ] = "auto",
+) -> None:
+    """Generate validated enterprise-knowledge predictions from a model."""
+    from slm_train_eval_publish.enterprise_knowledge_evaluation import (
+        predict_enterprise_knowledge_with_model,
+    )
+
+    console.print(f"Loading model: {model}")
+    path = predict_enterprise_knowledge_with_model(
+        dataset=dataset,
+        model_name_or_path=model,
+        catalog_path=catalog,
+        output=output,
+        limit=limit,
+        max_new_tokens=max_new_tokens,
+        prompt_mode=prompt_mode,
+        backend=backend,
+    )
+    console.print(f"Prediction JSONL: {path}")
+
+
+@app.command("score-enterprise-knowledge")
+def score_enterprise_knowledge(
+    benchmark: Annotated[Path, typer.Argument(exists=True, readable=True)],
+    predictions: Annotated[Path, typer.Argument(exists=True, readable=True)],
+    catalog: Annotated[
+        Path,
+        typer.Option("--catalog", exists=True, readable=True),
+    ] = Path("examples/enterprise_knowledge/benchmark_catalog.json"),
+    requirements: Annotated[
+        Path,
+        typer.Option("--requirements", exists=True, readable=True),
+    ] = Path("examples/enterprise_knowledge/requirements.yaml"),
+    output: Annotated[Path, typer.Option("--output", "-o")] = Path(
+        "reports/enterprise_knowledge_report.json"
+    ),
+    limit: Annotated[int | None, typer.Option("--limit", min=1)] = None,
+    fail_on_requirements: Annotated[
+        bool,
+        typer.Option("--fail-on-requirements"),
+    ] = False,
+) -> None:
+    """Score enterprise predictions and evaluate release requirements."""
+    import json
+
+    from slm_train_eval_publish.enterprise_knowledge_evaluation import (
+        score_enterprise_knowledge_predictions,
+    )
+
+    report = score_enterprise_knowledge_predictions(
+        expected_path=benchmark,
+        predictions_path=predictions,
+        catalog_path=catalog,
+        requirements_path=requirements,
+        limit=limit,
+    )
+    output.parent.mkdir(parents=True, exist_ok=True)
+    output.write_text(json.dumps(report, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    console.print(f"Evaluation report: {output}")
+    for name, value in report["metrics"].items():
+        console.print(f"{name}: {value:.3f}")
+    verdict = "PASS" if report["requirements"]["passed"] else "FAIL"
+    console.print(f"Requirements: {verdict}")
+    if fail_on_requirements and not report["requirements"]["passed"]:
+        raise typer.Exit(1)
+
+
+@app.command("analyze-enterprise-knowledge-errors")
+def analyze_enterprise_knowledge_errors_command(
+    expected: Annotated[Path, typer.Argument(exists=True, readable=True)],
+    predictions: Annotated[Path, typer.Argument(exists=True, readable=True)],
+    catalog: Annotated[
+        Path,
+        typer.Option("--catalog", exists=True, readable=True),
+    ] = Path("examples/enterprise_knowledge/benchmark_catalog.json"),
+    output: Annotated[Path, typer.Option("--output", "-o")] = Path(
+        "reports/enterprise_knowledge_error_analysis.json"
+    ),
+    max_examples: Annotated[int, typer.Option("--max-examples", min=0)] = 3,
+    limit: Annotated[int | None, typer.Option("--limit", min=1)] = None,
+) -> None:
+    """Classify overlapping schema, semantic, grounding, and safety errors."""
+    from slm_train_eval_publish.enterprise_knowledge_error_analysis import (
+        analyze_enterprise_knowledge_errors,
+    )
+
+    report = analyze_enterprise_knowledge_errors(
+        expected_path=expected,
+        predictions_path=predictions,
+        catalog_path=catalog,
+        output_path=output,
+        max_examples_per_category=max_examples,
+        limit=limit,
+    )
+    console.print(f"Error analysis: {output}")
+    console.print(f"Rows: {report['total']}")
+
+
 @app.command("compile-iptv")
 def compile_iptv(
     source: Annotated[str, typer.Argument()],
@@ -303,6 +513,18 @@ def train(config: Annotated[Path, typer.Argument(exists=True, readable=True)]) -
 
     output_dir = train_model(load_config(config))
     console.print(f"Training complete: {output_dir}")
+
+
+@app.command("package-training-job")
+def package_training_job_command(
+    config: Annotated[Path, typer.Argument(exists=True, readable=True)],
+    output: Annotated[Path, typer.Option("--output", "-o")],
+) -> None:
+    """Package local training inputs for a provider-neutral remote runner."""
+    from slm_train_eval_publish.training_job import package_training_job
+
+    job_dir = package_training_job(config, output)
+    console.print(f"Portable training job: {job_dir}")
 
 
 @app.command()

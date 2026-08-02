@@ -1,0 +1,229 @@
+{
+  "schema_version": "1.0",
+  "knowledge_release": "enterprise-credit-2026.07.29.1",
+  "entities": [
+    {
+      "entity_id": "concept:credit:obligation_ratio",
+      "entity_type": "business_concept",
+      "canonical_name": "obligation_ratio",
+      "display_name": "Fixed obligation to income ratio",
+      "aliases": [
+        "FOIR",
+        "fixed obligation ratio",
+        "obligation ratio"
+      ],
+      "owner_team_id": "team:credit-risk",
+      "verification_status": "verified",
+      "source_revision": "risk-platform-7f83c1"
+    },
+    {
+      "entity_id": "capability:credit:eligibility-assessment",
+      "entity_type": "business_capability",
+      "canonical_name": "credit_eligibility_assessment",
+      "display_name": "Credit eligibility assessment",
+      "aliases": [
+        "eligibility assessment",
+        "credit assessment"
+      ],
+      "owner_team_id": "team:credit-risk",
+      "verification_status": "verified",
+      "source_revision": "capability-catalog-2026.07"
+    },
+    {
+      "entity_id": "service:underwriting-risk",
+      "entity_type": "service",
+      "canonical_name": "underwriting-risk-service",
+      "display_name": "Underwriting risk service",
+      "aliases": [
+        "risk service",
+        "underwriting service"
+      ],
+      "owner_team_id": "team:credit-risk",
+      "verification_status": "verified",
+      "source_revision": "risk-platform-7f83c1"
+    },
+    {
+      "entity_id": "api:underwriting-risk:foir",
+      "entity_type": "api",
+      "canonical_name": "post-risk-foir",
+      "display_name": "POST /risk/foir",
+      "aliases": [
+        "/risk/foir",
+        "FOIR API"
+      ],
+      "owner_team_id": "team:credit-risk",
+      "verification_status": "verified",
+      "source_revision": "risk-platform-7f83c1"
+    },
+    {
+      "entity_id": "rule:foir-eligibility-v7",
+      "entity_type": "business_rule",
+      "canonical_name": "foir-eligibility-v7",
+      "display_name": "Obligation ratio eligibility rule v7",
+      "aliases": [
+        "FOIR rule",
+        "eligibility rule v7"
+      ],
+      "owner_team_id": "team:credit-policy",
+      "verification_status": "verified",
+      "source_revision": "credit-rules-2026.04"
+    },
+    {
+      "entity_id": "workflow:retail-underwriting-v3",
+      "entity_type": "workflow",
+      "canonical_name": "retail-underwriting-v3",
+      "display_name": "Retail underwriting workflow v3",
+      "aliases": [
+        "retail underwriting",
+        "underwriting workflow"
+      ],
+      "owner_team_id": "team:credit-platform",
+      "verification_status": "verified",
+      "source_revision": "workflow-4c21a9"
+    },
+    {
+      "entity_id": "event:credit-assessment-completed-v2",
+      "entity_type": "event",
+      "canonical_name": "credit-assessment-completed-v2",
+      "display_name": "Credit assessment completed event v2",
+      "aliases": [
+        "assessment completed event",
+        "credit decision event"
+      ],
+      "owner_team_id": "team:credit-platform",
+      "verification_status": "verified",
+      "source_revision": "event-catalog-2026.06"
+    },
+    {
+      "entity_id": "policy:retail-credit-eligibility-2026",
+      "entity_type": "policy",
+      "canonical_name": "retail-credit-eligibility-2026",
+      "display_name": "Retail credit eligibility policy 2026",
+      "aliases": [
+        "credit eligibility policy",
+        "retail credit policy"
+      ],
+      "owner_team_id": "team:credit-policy",
+      "verification_status": "verified",
+      "source_revision": "policy-2026.3"
+    }
+  ],
+  "evidence": [
+    {
+      "evidence_id": "evidence:capability:credit-assessment",
+      "citation_label": "CAPABILITY-CREDIT-12",
+      "text": "Credit eligibility assessment includes calculation of the fixed obligation to income ratio.",
+      "source_uri": "catalog://business-capabilities/credit-eligibility",
+      "source_revision": "capability-catalog-2026.07",
+      "verification_status": "verified"
+    },
+    {
+      "evidence_id": "evidence:openapi:risk:foir",
+      "citation_label": "API-RISK-FOIR-17",
+      "text": "Underwriting risk service exposes POST /risk/foir for fixed obligation to income ratio calculation.",
+      "source_uri": "repo://risk-platform/openapi/risk.yaml",
+      "source_revision": "risk-platform-7f83c1",
+      "verification_status": "verified"
+    },
+    {
+      "evidence_id": "evidence:rules:foir-v7",
+      "citation_label": "RULE-FOIR-V7-04",
+      "text": "Obligation ratio eligibility rule v7 computes the fixed obligation to income ratio and is governed by the retail credit eligibility policy.",
+      "source_uri": "repo://credit-rules/eligibility/foir-v7.yaml",
+      "source_revision": "credit-rules-2026.04",
+      "verification_status": "verified"
+    },
+    {
+      "evidence_id": "evidence:workflow:retail-v3",
+      "citation_label": "WORKFLOW-RETAIL-V3-08",
+      "text": "Retail underwriting workflow v3 invokes POST /risk/foir during eligibility assessment.",
+      "source_uri": "repo://credit-workflows/retail-underwriting-v3.yaml",
+      "source_revision": "workflow-4c21a9",
+      "verification_status": "verified"
+    },
+    {
+      "evidence_id": "evidence:event:assessment-completed-v2",
+      "citation_label": "EVENT-ASSESSMENT-V2-03",
+      "text": "Underwriting risk service produces the credit assessment completed event v2 after assessment.",
+      "source_uri": "catalog://events/credit-assessment-completed-v2",
+      "source_revision": "event-catalog-2026.06",
+      "verification_status": "verified"
+    }
+  ],
+  "relationships": [
+    {
+      "subject_id": "service:underwriting-risk",
+      "predicate": "IMPLEMENTS",
+      "object_id": "capability:credit:eligibility-assessment",
+      "evidence_id": "evidence:capability:credit-assessment",
+      "confidence": 0.99,
+      "verification_status": "verified"
+    },
+    {
+      "subject_id": "service:underwriting-risk",
+      "predicate": "EXPOSES",
+      "object_id": "api:underwriting-risk:foir",
+      "evidence_id": "evidence:openapi:risk:foir",
+      "confidence": 1.0,
+      "verification_status": "verified"
+    },
+    {
+      "subject_id": "rule:foir-eligibility-v7",
+      "predicate": "COMPUTES",
+      "object_id": "concept:credit:obligation_ratio",
+      "evidence_id": "evidence:rules:foir-v7",
+      "confidence": 1.0,
+      "verification_status": "verified"
+    },
+    {
+      "subject_id": "workflow:retail-underwriting-v3",
+      "predicate": "INVOKES",
+      "object_id": "api:underwriting-risk:foir",
+      "evidence_id": "evidence:workflow:retail-v3",
+      "confidence": 0.99,
+      "verification_status": "verified"
+    },
+    {
+      "subject_id": "rule:foir-eligibility-v7",
+      "predicate": "GOVERNED_BY",
+      "object_id": "policy:retail-credit-eligibility-2026",
+      "evidence_id": "evidence:rules:foir-v7",
+      "confidence": 1.0,
+      "verification_status": "verified"
+    },
+    {
+      "subject_id": "service:underwriting-risk",
+      "predicate": "PRODUCES",
+      "object_id": "event:credit-assessment-completed-v2",
+      "evidence_id": "evidence:event:assessment-completed-v2",
+      "confidence": 0.98,
+      "verification_status": "verified"
+    }
+  ],
+  "approved_tools": [
+    {
+      "tool_id": "get_credit_assessment_summary",
+      "description": "Retrieve the current authorized credit assessment summary for a case.",
+      "mode": "read_only",
+      "purpose": "case_explanation",
+      "required_arguments": [
+        "case_id"
+      ],
+      "example_arguments": {
+        "case_id": "CASE-REFERENCE"
+      }
+    },
+    {
+      "tool_id": "get_underwriting_workflow_trace",
+      "description": "Retrieve the current authorized underwriting workflow trace for a case.",
+      "mode": "read_only",
+      "purpose": "workflow_diagnosis",
+      "required_arguments": [
+        "case_id"
+      ],
+      "example_arguments": {
+        "case_id": "CASE-REFERENCE"
+      }
+    }
+  ]
+}

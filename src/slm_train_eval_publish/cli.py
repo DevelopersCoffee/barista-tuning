@@ -26,6 +26,20 @@ def compile(
     console.print(f"Compiler manifest: {result.compiler_manifest}")
 
 
+@app.command("compile-code-index")
+def compile_code_index(
+    export: Annotated[Path, typer.Argument(exists=True, readable=True)],
+    output: Annotated[Path, typer.Option("--output", "-o")] = Path(
+        "build/code-index"
+    ),
+) -> None:
+    """Compile a vendor-neutral code-index export into governed metadata."""
+    from slm_train_eval_publish.code_index_ingestion import compile_code_index_export
+
+    catalog = compile_code_index_export(export, output)
+    console.print(f"Metadata catalog: {catalog}")
+
+
 @app.command("generate-media-actions")
 def generate_media_actions(
     output: Annotated[Path, typer.Option("--output", "-o")] = Path(

@@ -176,6 +176,19 @@
 
 - [x] Config, dataset, CLI, full-test, and lint checks pass.
 
+## Task 21: Add code-index ingestion boundary
+
+**Acceptance criteria:**
+
+- [x] Code Index Export v1 is vendor-neutral and contains no raw code.
+- [x] Invalid paths, predicates, duplicate IDs, and broken references are rejected.
+- [x] Valid input deterministically compiles into the governed metadata catalog.
+
+**Verification:**
+
+- [x] Focused tests and CLI compilation pass.
+- [x] Full tests and lint pass.
+
 ## Task 6: Define evaluation contracts
 
 **Acceptance criteria:**

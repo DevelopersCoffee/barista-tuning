@@ -303,6 +303,24 @@ schema validity to 80% but still failed relationship, tool-grounding, exact-acti
 and zero-unsafe release gates; see the
 [measured baseline](docs/evaluation/enterprise-knowledge-smoke-baseline.md).
 
+## Code Index Ingestion
+
+Compile a vendor-neutral Code Index Export v1 into the governed metadata catalog:
+
+```bash
+slm compile-code-index examples/code_index/export.json \
+  --output build/code-index
+```
+
+The ingestion boundary accepts symbol metadata and typed relationships, but not raw
+source code. It validates relative repository paths, line ranges, identifiers,
+predicates, references, confidence, and verification status before writing output.
+The generated `metadata_catalog.json` includes deterministic evidence identifiers,
+repository citations, ownership, and extractor lineage for downstream dataset
+generation and runtime retrieval. See the
+[format design](docs/design/code-index-ingestion.md) and
+[boundary decision](docs/adr/0017-code-index-ingestion-boundary.md).
+
 ## IPTV To Media IR
 
 Compile the current IPTV channel JSON or an M3U path/URL into Media IR v1:

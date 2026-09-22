@@ -5,6 +5,7 @@ members = [
     "crates/edge-storage",
     "crates/edge-search",
     "crates/edge-intent",
+    "crates/edge-decision",
     "crates/edge-profile",
     "crates/edge-runtime",
     "crates/edge-compiler",

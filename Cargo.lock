@@ -307,9 +307,14 @@ dependencies = [
 name = "edge-compiler"
 version = "0.1.0"
 dependencies = [
+ "edge-decision",
  "edge-kernel",
  "edge-pack",
 ]
+
+[[package]]
+name = "edge-decision"
+version = "0.1.0"
 
 [[package]]
 name = "edge-ffi"
@@ -381,6 +386,8 @@ dependencies = [
 name = "edge-runtime"
 version = "0.1.0"
 dependencies = [
+ "edge-compiler",
+ "edge-decision",
  "edge-kernel",
  "edge-search",
 ]

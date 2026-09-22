@@ -1,10 +1,92 @@
 use std::collections::BTreeMap;
 
 use edge_decision::{
+    assert_backend_conformance, validate_decision_input, validate_decision_item_result,
     BooleanResult, ChoiceResult, DecisionBackend, DecisionInput, DecisionItemResult,
     DecisionKind, DecisionOutput, DecisionQuestion, DecisionState, DecisionStatus,
     DeterministicDecisionBackend, Probability, ScoreResult,
 };
+
+#[test]
+fn test_deterministic_backend_identity() {
+    let backend = DeterministicDecisionBackend::new();
+    assert_eq!(backend.id(), "deterministic");
+}
+
+#[test]
+fn test_deterministic_backend_conformance() {
+    let mut backend = DeterministicDecisionBackend::new();
+
+    let item_q1 = DecisionItemResult {
+        question_id: "media.route".to_string(),
+        output: DecisionOutput::Choice(ChoiceResult {
+            selected: "youtube".to_string(),
+            probabilities: vec![Probability {
+                option: "youtube".to_string(),
+                probability: 0.94,
+            }],
+        }),
+        confidence: 0.94,
+        status: DecisionStatus::Accepted,
+    };
+
+    backend.register(item_q1);
+
+    let sample_input = DecisionInput {
+        state: DecisionState::default(),
+        questions: vec![DecisionQuestion {
+            id: "media.route".to_string(),
+            kind: DecisionKind::Choice,
+            options: vec!["youtube".to_string()],
+        }],
+    };
+
+    assert!(assert_backend_conformance(&backend, sample_input).is_ok());
+}
+
+#[test]
+fn test_contract_validation_rejects_invalid_inputs_and_results() {
+    // Duplicate question IDs
+    let dup_input = DecisionInput {
+        state: DecisionState::default(),
+        questions: vec![
+            DecisionQuestion {
+                id: "dup".to_string(),
+                kind: DecisionKind::Boolean,
+                options: vec![],
+            },
+            DecisionQuestion {
+                id: "dup".to_string(),
+                kind: DecisionKind::Boolean,
+                options: vec![],
+            },
+        ],
+    };
+    assert!(validate_decision_input(&dup_input).is_err());
+
+    // Invalid confidence range (> 1.0)
+    let bad_item = DecisionItemResult {
+        question_id: "q1".to_string(),
+        output: DecisionOutput::Boolean(BooleanResult { probability: 0.5 }),
+        confidence: 1.5,
+        status: DecisionStatus::Accepted,
+    };
+    assert!(validate_decision_item_result(&bad_item, None).is_err());
+
+    // Kind mismatch
+    let choice_q = DecisionQuestion {
+        id: "q1".to_string(),
+        kind: DecisionKind::Choice,
+        options: vec!["opt1".to_string()],
+    };
+    let score_item = DecisionItemResult {
+        question_id: "q1".to_string(),
+        output: DecisionOutput::Score(ScoreResult { value: 0.8 }),
+        confidence: 0.8,
+        status: DecisionStatus::Accepted,
+    };
+    assert!(validate_decision_item_result(&score_item, Some(&choice_q)).is_err());
+}
 
 #[test]
 fn test_multi_question_single_pass_batch_evaluation() {

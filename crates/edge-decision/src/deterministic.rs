@@ -3,6 +3,7 @@ use std::collections::HashMap;
 use crate::backend::DecisionBackend;
 use crate::error::DecisionError;
 use crate::types::{DecisionInput, DecisionItemResult, DecisionResult};
+use crate::validation::validate_decision_input;
 
 #[derive(Debug, Default)]
 pub struct DeterministicDecisionBackend {
@@ -25,7 +26,13 @@ impl DeterministicDecisionBackend {
 }
 
 impl DecisionBackend for DeterministicDecisionBackend {
+    fn id(&self) -> &str {
+        "deterministic"
+    }
+
     fn decide(&self, input: DecisionInput) -> Result<DecisionResult, DecisionError> {
+        validate_decision_input(&input)?;
+
         let mut results = Vec::with_capacity(input.questions.len());
 
         for q in &input.questions {

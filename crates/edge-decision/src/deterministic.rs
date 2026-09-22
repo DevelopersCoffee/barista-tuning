@@ -2,11 +2,11 @@ use std::collections::HashMap;
 
 use crate::backend::DecisionBackend;
 use crate::error::DecisionError;
-use crate::types::{DecisionInput, DecisionResult};
+use crate::types::{DecisionInput, DecisionItemResult, DecisionResult};
 
 #[derive(Debug, Default)]
 pub struct DeterministicDecisionBackend {
-    responses: HashMap<String, DecisionResult>,
+    responses: HashMap<String, DecisionItemResult>,
 }
 
 impl DeterministicDecisionBackend {
@@ -14,25 +14,31 @@ impl DeterministicDecisionBackend {
         Self::default()
     }
 
-    pub fn with_response(mut self, question_id: impl Into<String>, result: DecisionResult) -> Self {
-        self.responses.insert(question_id.into(), result);
+    pub fn with_response(mut self, item: DecisionItemResult) -> Self {
+        self.responses.insert(item.question_id.clone(), item);
         self
     }
 
-    pub fn register(&mut self, question_id: impl Into<String>, result: DecisionResult) {
-        self.responses.insert(question_id.into(), result);
+    pub fn register(&mut self, item: DecisionItemResult) {
+        self.responses.insert(item.question_id.clone(), item);
     }
 }
 
 impl DecisionBackend for DeterministicDecisionBackend {
     fn decide(&self, input: DecisionInput) -> Result<DecisionResult, DecisionError> {
-        if let Some(res) = self.responses.get(&input.question.id) {
-            Ok(res.clone())
-        } else {
-            Err(DecisionError::new(format!(
-                "No deterministic response registered for question_id: '{}'",
-                input.question.id
-            )))
+        let mut results = Vec::with_capacity(input.questions.len());
+
+        for q in &input.questions {
+            if let Some(res) = self.responses.get(&q.id) {
+                results.push(res.clone());
+            } else {
+                return Err(DecisionError::new(format!(
+                    "No deterministic response registered for question_id: '{}'",
+                    q.id
+                )));
+            }
         }
+
+        Ok(DecisionResult { results })
     }
 }

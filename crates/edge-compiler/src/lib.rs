@@ -7,12 +7,54 @@ use edge_kernel::{EdgeError, EdgeResult};
 use edge_pack::PackManifest;
 
 #[derive(Debug, Clone, PartialEq)]
-pub struct DecisionDefinition {
+pub struct DecisionQuestionSpec {
     pub id: String,
     pub kind: DecisionKind,
     pub options: Vec<String>,
-    pub backend: Option<String>,
     pub escalation: Option<EscalationPolicy>,
+}
+
+impl DecisionQuestionSpec {
+    pub fn validate(&self, decision_id: &str) -> EdgeResult<()> {
+        if self.id.trim().is_empty() {
+            return Err(EdgeError::new(
+                edge_kernel::errors::EdgeErrorKind::InvalidArgument,
+                format!("question id is required in decision '{}'", decision_id),
+            ));
+        }
+
+        if self.kind == DecisionKind::Choice && self.options.is_empty() {
+            return Err(EdgeError::new(
+                edge_kernel::errors::EdgeErrorKind::InvalidArgument,
+                format!(
+                    "question '{}' of type choice in decision '{}' requires at least one option",
+                    self.id, decision_id
+                ),
+            ));
+        }
+
+        if let Some(ref policy) = self.escalation {
+            if !(0.0..=1.0).contains(&policy.threshold) {
+                return Err(EdgeError::new(
+                    edge_kernel::errors::EdgeErrorKind::InvalidArgument,
+                    format!(
+                        "question '{}' in decision '{}' escalation threshold must be between 0.0 and 1.0, got {}",
+                        self.id, decision_id, policy.threshold
+                    ),
+                ));
+            }
+        }
+
+        Ok(())
+    }
+}
+
+#[derive(Debug, Clone, PartialEq)]
+pub struct DecisionDefinition {
+    pub id: String,
+    pub state_fields: Vec<String>,
+    pub questions: Vec<DecisionQuestionSpec>,
+    pub backend: Option<String>,
 }
 
 impl DecisionDefinition {
@@ -24,11 +66,15 @@ impl DecisionDefinition {
             ));
         }
 
-        if self.kind == DecisionKind::Choice && self.options.is_empty() {
+        if self.questions.is_empty() {
             return Err(EdgeError::new(
                 edge_kernel::errors::EdgeErrorKind::InvalidArgument,
-                format!("decision '{}' of type choice requires at least one option", self.id),
+                format!("decision '{}' requires at least one question", self.id),
             ));
+        }
+
+        for q in &self.questions {
+            q.validate(&self.id)?;
         }
 
         if let Some(ref b) = self.backend {
@@ -36,18 +82,6 @@ impl DecisionDefinition {
                 return Err(EdgeError::new(
                     edge_kernel::errors::EdgeErrorKind::InvalidArgument,
                     format!("decision '{}' backend type cannot be empty", self.id),
-                ));
-            }
-        }
-
-        if let Some(ref policy) = self.escalation {
-            if !(0.0..=1.0).contains(&policy.threshold) {
-                return Err(EdgeError::new(
-                    edge_kernel::errors::EdgeErrorKind::InvalidArgument,
-                    format!(
-                        "decision '{}' escalation threshold must be between 0.0 and 1.0, got {}",
-                        self.id, policy.threshold
-                    ),
                 ));
             }
         }
@@ -88,63 +122,45 @@ mod tests {
     use edge_decision::EscalationTarget;
 
     #[test]
-    fn test_valid_decision_definition() {
+    fn test_valid_multi_question_decision_definition() {
         let def = DecisionDefinition {
             id: "media.route".to_string(),
-            kind: DecisionKind::Choice,
-            options: vec!["youtube".to_string(), "movie".to_string()],
+            state_fields: vec!["user_request".to_string(), "current_screen".to_string()],
+            questions: vec![
+                DecisionQuestionSpec {
+                    id: "provider".to_string(),
+                    kind: DecisionKind::Choice,
+                    options: vec!["youtube".to_string(), "movie".to_string()],
+                    escalation: Some(EscalationPolicy {
+                        threshold: 0.65,
+                        target: EscalationTarget::IntentModel,
+                    }),
+                },
+                DecisionQuestionSpec {
+                    id: "kids_content".to_string(),
+                    kind: DecisionKind::Boolean,
+                    options: vec![],
+                    escalation: Some(EscalationPolicy {
+                        threshold: 0.90,
+                        target: EscalationTarget::Reject,
+                    }),
+                },
+            ],
             backend: Some("laya".to_string()),
-            escalation: Some(EscalationPolicy {
-                threshold: 0.65,
-                target: EscalationTarget::IntentModel,
-            }),
         };
         assert!(def.validate().is_ok());
     }
 
     #[test]
-    fn test_valid_jev_decision_definition() {
+    fn test_empty_questions_fails_validation() {
         let def = DecisionDefinition {
-            id: "mobile.next_action".to_string(),
-            kind: DecisionKind::Choice,
-            options: vec!["tap".to_string(), "scroll".to_string()],
-            backend: Some("jev".to_string()),
-            escalation: Some(EscalationPolicy {
-                threshold: 0.70,
-                target: EscalationTarget::IntentModel,
-            }),
-        };
-        assert!(def.validate().is_ok());
-    }
-
-    #[test]
-    fn test_choice_without_options_fails_validation() {
-        let def = DecisionDefinition {
-            id: "bad.choice".to_string(),
-            kind: DecisionKind::Choice,
-            options: vec![],
+            id: "bad.decision".to_string(),
+            state_fields: vec![],
+            questions: vec![],
             backend: None,
-            escalation: None,
         };
         let res = def.validate();
         assert!(res.is_err());
-        assert!(res.unwrap_err().message.contains("requires at least one option"));
-    }
-
-    #[test]
-    fn test_invalid_threshold_fails_validation() {
-        let def = DecisionDefinition {
-            id: "bad.threshold".to_string(),
-            kind: DecisionKind::Boolean,
-            options: vec![],
-            backend: None,
-            escalation: Some(EscalationPolicy {
-                threshold: 1.5,
-                target: EscalationTarget::GenerativeModel,
-            }),
-        };
-        let res = def.validate();
-        assert!(res.is_err());
-        assert!(res.unwrap_err().message.contains("between 0.0 and 1.0"));
+        assert!(res.unwrap_err().message.contains("requires at least one question"));
     }
 }

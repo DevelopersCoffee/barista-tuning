@@ -1,3 +1,5 @@
+use std::collections::BTreeMap;
+
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum DecisionKind {
     Choice,
@@ -41,10 +43,16 @@ pub enum DecisionStatus {
 }
 
 #[derive(Debug, Clone, PartialEq)]
-pub struct DecisionResult {
+pub struct DecisionItemResult {
+    pub question_id: String,
     pub output: DecisionOutput,
     pub confidence: f32,
     pub status: DecisionStatus,
+}
+
+#[derive(Debug, Clone, PartialEq)]
+pub struct DecisionResult {
+    pub results: Vec<DecisionItemResult>,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -68,8 +76,17 @@ pub struct DecisionQuestion {
     pub options: Vec<String>,
 }
 
+/// Structured evidence state provided to decision backends.
+/// `attributes` holds key-value metadata, and `payload` holds the opaque
+/// serialized evidence boundary (e.g. JSON, CBOR, or MessagePack string).
+#[derive(Debug, Clone, PartialEq, Eq, Default)]
+pub struct DecisionState {
+    pub attributes: BTreeMap<String, String>,
+    pub payload: String,
+}
+
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct DecisionInput {
-    pub question: DecisionQuestion,
-    pub payload: String,
+    pub state: DecisionState,
+    pub questions: Vec<DecisionQuestion>,
 }

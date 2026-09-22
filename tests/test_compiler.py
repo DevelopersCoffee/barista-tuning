@@ -92,17 +92,19 @@ decisions:
     assert len(ir["decisions"]) == 2
 
     route_dec = next(d for d in ir["decisions"] if d["id"] == "media.route")
-    assert route_dec["type"] == "choice"
-    assert route_dec["options"] == ["live_tv", "movie", "series", "youtube"]
     assert route_dec["backend"] == {"type": "laya"}
-    assert route_dec["escalation"] == {"threshold": 0.65, "target": "intent_model"}
+    assert len(route_dec["questions"]) == 1
+    assert route_dec["questions"][0]["type"] == "choice"
+    assert route_dec["questions"][0]["options"] == ["live_tv", "movie", "series", "youtube"]
+    assert route_dec["questions"][0]["escalation"] == {"threshold": 0.65, "target": "intent_model"}
 
     safety_dec = next(d for d in ir["decisions"] if d["id"] == "safety.check")
-    assert safety_dec["type"] == "boolean"
-    assert safety_dec["escalation"] == {"threshold": 0.95, "target": "reject"}
+    assert len(safety_dec["questions"]) == 1
+    assert safety_dec["questions"][0]["type"] == "boolean"
+    assert safety_dec["questions"][0]["escalation"] == {"threshold": 0.95, "target": "reject"}
 
 
-def test_compile_domain_with_jev_backend(tmp_path: Path) -> None:
+def test_compile_domain_with_multi_question_jev_backend(tmp_path: Path) -> None:
     ddl = tmp_path / "mobile.yaml"
     ddl.write_text(
         """
@@ -114,18 +116,24 @@ entities:
       name: string
 decisions:
   mobile.next_action:
-    type: choice
-    options:
-      - tap
-      - type
-      - scroll
-      - back
-      - wait
+    state:
+      fields:
+        - screen
+        - elements
+    questions:
+      - id: action
+        type: choice
+        options: [tap, type, scroll, back, wait]
+        escalation:
+          threshold: 0.70
+          target: intent_model
+      - id: is_safe
+        type: boolean
+        escalation:
+          threshold: 0.90
+          target: reject
     backend:
       type: jev
-    escalation:
-      threshold: 0.70
-      target: intent_model
 """.strip()
     )
 
@@ -135,12 +143,22 @@ decisions:
     assert "decisions" in ir
     assert len(ir["decisions"]) == 1
 
-    action_dec = ir["decisions"][0]
-    assert action_dec["id"] == "mobile.next_action"
-    assert action_dec["type"] == "choice"
-    assert action_dec["options"] == ["tap", "type", "scroll", "back", "wait"]
-    assert action_dec["backend"] == {"type": "jev"}
-    assert action_dec["escalation"] == {"threshold": 0.70, "target": "intent_model"}
+    dec = ir["decisions"][0]
+    assert dec["id"] == "mobile.next_action"
+    assert dec["backend"] == {"type": "jev"}
+    assert dec["state"] == {"fields": ["screen", "elements"]}
+
+    assert len(dec["questions"]) == 2
+    q1 = dec["questions"][0]
+    assert q1["id"] == "action"
+    assert q1["type"] == "choice"
+    assert q1["options"] == ["tap", "type", "scroll", "back", "wait"]
+    assert q1["escalation"] == {"threshold": 0.70, "target": "intent_model"}
+
+    q2 = dec["questions"][1]
+    assert q2["id"] == "is_safe"
+    assert q2["type"] == "boolean"
+    assert q2["escalation"] == {"threshold": 0.90, "target": "reject"}
 
 
 def test_compile_rejects_unknown_relationship_target(tmp_path: Path) -> None:

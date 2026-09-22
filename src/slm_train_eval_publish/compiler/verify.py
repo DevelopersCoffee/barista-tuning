@@ -39,27 +39,34 @@ def verify_domain_ir(ir: DomainIR) -> list[str]:
 
     for dec in ir.decisions:
         dec_id = dec.get("id", "")
-        dec_type = dec.get("type", "").lower()
-        if dec_type not in VALID_DECISION_TYPES:
-            errors.append(
-                f"decision '{dec_id}' type '{dec_type}' is invalid, must be one of {sorted(VALID_DECISION_TYPES)}"
-            )
+        questions = dec.get("questions", [])
+        if not questions:
+            errors.append(f"decision '{dec_id}' requires at least one question")
+            continue
 
-        if dec_type == "choice" and not dec.get("options"):
-            errors.append(f"decision '{dec_id}' of type 'choice' requires at least one option")
-
-        escalation = dec.get("escalation")
-        if isinstance(escalation, dict):
-            threshold = escalation.get("threshold")
-            if threshold is not None and not (0.0 <= float(threshold) <= 1.0):
+        for q in questions:
+            q_id = q.get("id", dec_id)
+            q_type = q.get("type", "").lower()
+            if q_type not in VALID_DECISION_TYPES:
                 errors.append(
-                    f"decision '{dec_id}' escalation threshold must be between 0.0 and 1.0, got {threshold}"
+                    f"question '{q_id}' in decision '{dec_id}' type '{q_type}' is invalid, must be one of {sorted(VALID_DECISION_TYPES)}"
                 )
 
-            target = escalation.get("target")
-            if target is not None and target not in VALID_ESCALATION_TARGETS:
-                errors.append(
-                    f"decision '{dec_id}' escalation target '{target}' is invalid, must be one of {sorted(VALID_ESCALATION_TARGETS)}"
-                )
+            if q_type == "choice" and not q.get("options"):
+                errors.append(f"question '{q_id}' in decision '{dec_id}' of type 'choice' requires at least one option")
+
+            escalation = q.get("escalation")
+            if isinstance(escalation, dict):
+                threshold = escalation.get("threshold")
+                if threshold is not None and not (0.0 <= float(threshold) <= 1.0):
+                    errors.append(
+                        f"question '{q_id}' in decision '{dec_id}' escalation threshold must be between 0.0 and 1.0, got {threshold}"
+                    )
+
+                target = escalation.get("target")
+                if target is not None and target not in VALID_ESCALATION_TARGETS:
+                    errors.append(
+                        f"question '{q_id}' in decision '{dec_id}' escalation target '{target}' is invalid, must be one of {sorted(VALID_ESCALATION_TARGETS)}"
+                    )
 
     return errors

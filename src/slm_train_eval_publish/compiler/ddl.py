@@ -33,13 +33,20 @@ class EntityDefinition:
 
 
 @dataclass(frozen=True)
-class DecisionDefinition:
+class DecisionQuestionSpec:
     id: str
     kind: str = "choice"
     options: list[str] = field(default_factory=list)
-    backend_type: str | None = None
     escalation_threshold: float | None = None
     escalation_target: str | None = None
+
+
+@dataclass(frozen=True)
+class DecisionDefinition:
+    id: str
+    state_fields: list[str] = field(default_factory=list)
+    questions: list[DecisionQuestionSpec] = field(default_factory=list)
+    backend_type: str | None = None
 
 
 @dataclass(frozen=True)
@@ -135,14 +142,10 @@ def _parse_decision(decision_id: str, raw: Any) -> DecisionDefinition:
     if not isinstance(raw, dict):
         raise ValueError(f"Decision '{decision_id}' must be a mapping")
 
-    kind = str(raw.get("type", raw.get("kind", "choice"))).lower()
-    options_raw = raw.get("options", [])
-    if isinstance(options_raw, str):
-        options = [options_raw]
-    elif isinstance(options_raw, list):
-        options = [str(opt) for opt in options_raw]
-    else:
-        options = []
+    state_raw = raw.get("state", {})
+    state_fields: list[str] = []
+    if isinstance(state_raw, dict):
+        state_fields = _string_list(state_raw.get("fields", []), f"decision.{decision_id}.state.fields")
 
     backend_raw = raw.get("backend")
     backend_type: str | None = None
@@ -152,23 +155,52 @@ def _parse_decision(decision_id: str, raw: Any) -> DecisionDefinition:
         if "type" in backend_raw:
             backend_type = str(backend_raw["type"]).lower()
 
-    escalation_raw = raw.get("escalation")
-    threshold: float | None = None
-    target: str | None = None
+    questions: list[DecisionQuestionSpec] = []
+    if "questions" in raw and isinstance(raw["questions"], list):
+        for q_raw in raw["questions"]:
+            if isinstance(q_raw, dict):
+                q_id = str(q_raw.get("id", "q"))
+                q_kind = str(q_raw.get("type", q_raw.get("kind", "choice"))).lower()
+                opts_raw = q_raw.get("options", [])
+                opts = [opts_raw] if isinstance(opts_raw, str) else [str(o) for o in opts_raw]
+                
+                esc_raw = q_raw.get("escalation", {})
+                thresh = float(esc_raw["threshold"]) if isinstance(esc_raw, dict) and "threshold" in esc_raw else None
+                targ = str(esc_raw["target"]).lower() if isinstance(esc_raw, dict) and "target" in esc_raw else None
 
-    if isinstance(escalation_raw, dict):
-        if "threshold" in escalation_raw:
-            threshold = float(escalation_raw["threshold"])
-        if "target" in escalation_raw:
-            target = str(escalation_raw["target"]).lower()
+                questions.append(
+                    DecisionQuestionSpec(
+                        id=q_id,
+                        kind=q_kind,
+                        options=opts,
+                        escalation_threshold=thresh,
+                        escalation_target=targ,
+                    )
+                )
+    else:
+        # Legacy single question format fallback
+        kind = str(raw.get("type", raw.get("kind", "choice"))).lower()
+        options_raw = raw.get("options", [])
+        opts = [options_raw] if isinstance(options_raw, str) else [str(o) for o in options_raw]
+        esc_raw = raw.get("escalation")
+        thresh = float(esc_raw["threshold"]) if isinstance(esc_raw, dict) and "threshold" in esc_raw else None
+        targ = str(esc_raw["target"]).lower() if isinstance(esc_raw, dict) and "target" in esc_raw else None
+
+        questions.append(
+            DecisionQuestionSpec(
+                id=decision_id,
+                kind=kind,
+                options=opts,
+                escalation_threshold=thresh,
+                escalation_target=targ,
+            )
+        )
 
     return DecisionDefinition(
         id=str(decision_id),
-        kind=kind,
-        options=options,
+        state_fields=state_fields,
+        questions=questions,
         backend_type=backend_type,
-        escalation_threshold=threshold,
-        escalation_target=target,
     )
 
 

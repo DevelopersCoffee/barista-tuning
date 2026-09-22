@@ -56,19 +56,30 @@ def build_domain_ir(definition: DomainDefinition) -> DomainIR:
 
     decisions = []
     for decision in definition.decisions:
+        questions_ir = []
+        for q in decision.questions:
+            q_dict: dict[str, Any] = {
+                "id": q.id,
+                "type": q.kind,
+                "options": q.options,
+            }
+            if q.escalation_threshold is not None or q.escalation_target is not None:
+                q_dict["escalation"] = {
+                    "threshold": q.escalation_threshold,
+                    "target": q.escalation_target,
+                }
+            questions_ir.append(q_dict)
+
         dec_dict: dict[str, Any] = {
             "kind": "Decision",
             "id": decision.id,
-            "type": decision.kind,
-            "options": decision.options,
+            "questions": questions_ir,
         }
+        if decision.state_fields:
+            dec_dict["state"] = {"fields": decision.state_fields}
         if decision.backend_type:
             dec_dict["backend"] = {"type": decision.backend_type}
-        if decision.escalation_threshold is not None or decision.escalation_target is not None:
-            dec_dict["escalation"] = {
-                "threshold": decision.escalation_threshold,
-                "target": decision.escalation_target,
-            }
+
         decisions.append(dec_dict)
 
     return DomainIR(

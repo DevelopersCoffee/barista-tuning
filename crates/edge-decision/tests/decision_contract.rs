@@ -1,206 +1,163 @@
+use std::collections::BTreeMap;
+
 use edge_decision::{
-    BooleanResult, ChoiceResult, DecisionBackend, DecisionInput, DecisionKind, DecisionOutput,
-    DecisionQuestion, DecisionResult, DecisionStatus, DeterministicDecisionBackend, Probability,
-    ScoreResult,
+    BooleanResult, ChoiceResult, DecisionBackend, DecisionInput, DecisionItemResult,
+    DecisionKind, DecisionOutput, DecisionQuestion, DecisionState, DecisionStatus,
+    DeterministicDecisionBackend, Probability, ScoreResult,
 };
 
 #[test]
-fn test_choice_accepted() {
+fn test_multi_question_single_pass_batch_evaluation() {
     let mut backend = DeterministicDecisionBackend::new();
-    let question_id = "media.route";
 
-    let expected_result = DecisionResult {
+    let item_q1 = DecisionItemResult {
+        question_id: "media.route".to_string(),
         output: DecisionOutput::Choice(ChoiceResult {
             selected: "youtube".to_string(),
             probabilities: vec![
                 Probability {
                     option: "youtube".to_string(),
-                    probability: 0.92,
+                    probability: 0.94,
                 },
                 Probability {
                     option: "movie".to_string(),
-                    probability: 0.08,
+                    probability: 0.06,
                 },
             ],
         }),
-        confidence: 0.92,
+        confidence: 0.94,
         status: DecisionStatus::Accepted,
     };
 
-    backend.register(question_id, expected_result.clone());
-
-    let input = DecisionInput {
-        question: DecisionQuestion {
-            id: question_id.to_string(),
-            kind: DecisionKind::Choice,
-            options: vec!["youtube".to_string(), "movie".to_string()],
-        },
-        payload: "Play something fun".to_string(),
-    };
-
-    let result = backend.decide(input).unwrap();
-    assert_eq!(result, expected_result);
-    assert_eq!(result.status, DecisionStatus::Accepted);
-    assert!(result.confidence >= 0.90);
-}
-
-#[test]
-fn test_choice_abstained() {
-    let mut backend = DeterministicDecisionBackend::new();
-    let question_id = "media.route.ambiguous";
-
-    let expected_result = DecisionResult {
-        output: DecisionOutput::Choice(ChoiceResult {
-            selected: "movie".to_string(),
-            probabilities: vec![
-                Probability {
-                    option: "movie".to_string(),
-                    probability: 0.45,
-                },
-                Probability {
-                    option: "series".to_string(),
-                    probability: 0.40,
-                },
-            ],
-        }),
-        confidence: 0.45,
-        status: DecisionStatus::Abstained,
-    };
-
-    backend.register(question_id, expected_result.clone());
-
-    let input = DecisionInput {
-        question: DecisionQuestion {
-            id: question_id.to_string(),
-            kind: DecisionKind::Choice,
-            options: vec!["movie".to_string(), "series".to_string()],
-        },
-        payload: "Show that thing from last week".to_string(),
-    };
-
-    let result = backend.decide(input).unwrap();
-    assert_eq!(result, expected_result);
-    assert_eq!(result.status, DecisionStatus::Abstained);
-}
-
-#[test]
-fn test_score_accepted() {
-    let mut backend = DeterministicDecisionBackend::new();
-    let question_id = "relevance.score";
-
-    let expected_result = DecisionResult {
-        output: DecisionOutput::Score(ScoreResult { value: 0.88 }),
-        confidence: 0.95,
+    let item_q2 = DecisionItemResult {
+        question_id: "kids.check".to_string(),
+        output: DecisionOutput::Boolean(BooleanResult { probability: 0.98 }),
+        confidence: 0.98,
         status: DecisionStatus::Accepted,
     };
 
-    backend.register(question_id, expected_result.clone());
-
-    let input = DecisionInput {
-        question: DecisionQuestion {
-            id: question_id.to_string(),
-            kind: DecisionKind::Score,
-            options: vec![],
-        },
-        payload: "Score document relevance".to_string(),
-    };
-
-    let result = backend.decide(input).unwrap();
-    assert_eq!(result, expected_result);
-    assert_eq!(result.status, DecisionStatus::Accepted);
-}
-
-#[test]
-fn test_score_abstained() {
-    let mut backend = DeterministicDecisionBackend::new();
-    let question_id = "relevance.score.uncertain";
-
-    let expected_result = DecisionResult {
-        output: DecisionOutput::Score(ScoreResult { value: 0.50 }),
-        confidence: 0.30,
+    let item_q3 = DecisionItemResult {
+        question_id: "urgency.score".to_string(),
+        output: DecisionOutput::Score(ScoreResult { value: 0.42 }),
+        confidence: 0.42,
         status: DecisionStatus::Abstained,
     };
 
-    backend.register(question_id, expected_result.clone());
+    backend.register(item_q1.clone());
+    backend.register(item_q2.clone());
+    backend.register(item_q3.clone());
+
+    let mut attributes = BTreeMap::new();
+    attributes.insert("current_screen".to_string(), "home".to_string());
+    attributes.insert("user_profile".to_string(), "kids".to_string());
 
     let input = DecisionInput {
-        question: DecisionQuestion {
-            id: question_id.to_string(),
-            kind: DecisionKind::Score,
-            options: vec![],
+        state: DecisionState {
+            attributes,
+            payload: r#"{"user_request":"play something for kids"}"#.to_string(),
         },
-        payload: "Score vague search query".to_string(),
+        questions: vec![
+            DecisionQuestion {
+                id: "media.route".to_string(),
+                kind: DecisionKind::Choice,
+                options: vec!["youtube".to_string(), "movie".to_string()],
+            },
+            DecisionQuestion {
+                id: "kids.check".to_string(),
+                kind: DecisionKind::Boolean,
+                options: vec!["true".to_string(), "false".to_string()],
+            },
+            DecisionQuestion {
+                id: "urgency.score".to_string(),
+                kind: DecisionKind::Score,
+                options: vec![],
+            },
+        ],
     };
 
     let result = backend.decide(input).unwrap();
-    assert_eq!(result, expected_result);
-    assert_eq!(result.status, DecisionStatus::Abstained);
+    assert_eq!(result.results.len(), 3);
+    assert_eq!(result.results[0], item_q1);
+    assert_eq!(result.results[1], item_q2);
+    assert_eq!(result.results[2], item_q3);
+
+    assert_eq!(result.results[0].status, DecisionStatus::Accepted);
+    assert_eq!(result.results[1].status, DecisionStatus::Accepted);
+    assert_eq!(result.results[2].status, DecisionStatus::Abstained);
 }
 
 #[test]
-fn test_boolean_accepted() {
+fn test_question_ordering_and_association_preserved() {
     let mut backend = DeterministicDecisionBackend::new();
-    let question_id = "safety.check";
 
-    let expected_result = DecisionResult {
-        output: DecisionOutput::Boolean(BooleanResult { probability: 0.99 }),
-        confidence: 0.99,
+    let item_a = DecisionItemResult {
+        question_id: "question.a".to_string(),
+        output: DecisionOutput::Boolean(BooleanResult { probability: 0.90 }),
+        confidence: 0.90,
         status: DecisionStatus::Accepted,
     };
 
-    backend.register(question_id, expected_result.clone());
-
-    let input = DecisionInput {
-        question: DecisionQuestion {
-            id: question_id.to_string(),
-            kind: DecisionKind::Boolean,
-            options: vec!["true".to_string(), "false".to_string()],
-        },
-        payload: "Is content suitable for kids?".to_string(),
+    let item_b = DecisionItemResult {
+        question_id: "question.b".to_string(),
+        output: DecisionOutput::Score(ScoreResult { value: 0.75 }),
+        confidence: 0.75,
+        status: DecisionStatus::Accepted,
     };
 
-    let result = backend.decide(input).unwrap();
-    assert_eq!(result, expected_result);
-    assert_eq!(result.status, DecisionStatus::Accepted);
-}
+    backend.register(item_a.clone());
+    backend.register(item_b.clone());
 
-#[test]
-fn test_boolean_abstained() {
-    let mut backend = DeterministicDecisionBackend::new();
-    let question_id = "safety.check.uncertain";
-
-    let expected_result = DecisionResult {
-        output: DecisionOutput::Boolean(BooleanResult { probability: 0.52 }),
-        confidence: 0.52,
-        status: DecisionStatus::Abstained,
+    let input_forward = DecisionInput {
+        state: DecisionState::default(),
+        questions: vec![
+            DecisionQuestion {
+                id: "question.a".to_string(),
+                kind: DecisionKind::Boolean,
+                options: vec![],
+            },
+            DecisionQuestion {
+                id: "question.b".to_string(),
+                kind: DecisionKind::Score,
+                options: vec![],
+            },
+        ],
     };
 
-    backend.register(question_id, expected_result.clone());
+    let res_forward = backend.decide(input_forward).unwrap();
+    assert_eq!(res_forward.results[0].question_id, "question.a");
+    assert_eq!(res_forward.results[1].question_id, "question.b");
 
-    let input = DecisionInput {
-        question: DecisionQuestion {
-            id: question_id.to_string(),
-            kind: DecisionKind::Boolean,
-            options: vec!["true".to_string(), "false".to_string()],
-        },
-        payload: "Is content suitable for general audience?".to_string(),
+    let input_reverse = DecisionInput {
+        state: DecisionState::default(),
+        questions: vec![
+            DecisionQuestion {
+                id: "question.b".to_string(),
+                kind: DecisionKind::Score,
+                options: vec![],
+            },
+            DecisionQuestion {
+                id: "question.a".to_string(),
+                kind: DecisionKind::Boolean,
+                options: vec![],
+            },
+        ],
     };
 
-    let result = backend.decide(input).unwrap();
-    assert_eq!(result, expected_result);
-    assert_eq!(result.status, DecisionStatus::Abstained);
+    let res_reverse = backend.decide(input_reverse).unwrap();
+    assert_eq!(res_reverse.results[0].question_id, "question.b");
+    assert_eq!(res_reverse.results[1].question_id, "question.a");
 }
 
 #[test]
 fn test_unregistered_question_error() {
     let backend = DeterministicDecisionBackend::new();
     let input = DecisionInput {
-        question: DecisionQuestion {
+        state: DecisionState::default(),
+        questions: vec![DecisionQuestion {
             id: "unknown.question".to_string(),
             kind: DecisionKind::Choice,
             options: vec![],
-        },
-        payload: "test".to_string(),
+        }],
     };
 
     let result = backend.decide(input);

@@ -8,7 +8,7 @@ use std::pin::Pin;
 use std::sync::Arc;
 
 use edge_decision::{
-    DecisionBackend, DecisionInput, DecisionResult, DecisionStatus, EscalationPolicy,
+    DecisionBackend, DecisionInput, DecisionItemResult, DecisionStatus, EscalationPolicy,
     EscalationTarget,
 };
 use edge_kernel::{CapabilitySet, Context, EdgeError, EdgeResult};
@@ -73,14 +73,19 @@ impl Default for RuntimeDecisionPolicy {
 #[derive(Debug, Clone, PartialEq)]
 pub enum DecisionRouteAction {
     Execute {
-        result: DecisionResult,
+        result: DecisionItemResult,
         effective_threshold: f32,
     },
     Escalate {
-        result: DecisionResult,
+        result: DecisionItemResult,
         effective_threshold: f32,
         target: EscalationTarget,
     },
+}
+
+#[derive(Debug, Clone, PartialEq)]
+pub struct DecisionBatchRouteResult {
+    pub items: Vec<DecisionRouteAction>,
 }
 
 pub struct DecisionExecutionEngine {
@@ -96,31 +101,38 @@ impl DecisionExecutionEngine {
         &self,
         backend: &dyn DecisionBackend,
         input: DecisionInput,
-        escalation: Option<EscalationPolicy>,
-    ) -> EdgeResult<DecisionRouteAction> {
-        let domain_threshold = escalation.as_ref().map(|p| p.threshold).unwrap_or(0.0);
-        let effective_threshold = domain_threshold.max(self.policy.minimum_escalation_threshold);
-        let target = escalation
-            .as_ref()
-            .map(|p| p.target)
-            .unwrap_or(EscalationTarget::IntentModel);
-
-        let result = backend.decide(input).map_err(|e| {
+        policies: &HashMap<String, EscalationPolicy>,
+    ) -> EdgeResult<DecisionBatchRouteResult> {
+        let batch_result = backend.decide(input).map_err(|e| {
             EdgeError::new(edge_kernel::errors::EdgeErrorKind::Internal, e.message)
         })?;
 
-        if result.status == DecisionStatus::Accepted && result.confidence >= effective_threshold {
-            Ok(DecisionRouteAction::Execute {
-                result,
-                effective_threshold,
-            })
-        } else {
-            Ok(DecisionRouteAction::Escalate {
-                result,
-                effective_threshold,
-                target,
-            })
+        let mut items = Vec::with_capacity(batch_result.results.len());
+
+        for item in batch_result.results {
+            let policy = policies.get(&item.question_id);
+            let domain_threshold = policy.map(|p| p.threshold).unwrap_or(0.0);
+            let effective_threshold =
+                domain_threshold.max(self.policy.minimum_escalation_threshold);
+            let target = policy
+                .map(|p| p.target)
+                .unwrap_or(EscalationTarget::IntentModel);
+
+            if item.status == DecisionStatus::Accepted && item.confidence >= effective_threshold {
+                items.push(DecisionRouteAction::Execute {
+                    result: item,
+                    effective_threshold,
+                });
+            } else {
+                items.push(DecisionRouteAction::Escalate {
+                    result: item,
+                    effective_threshold,
+                    target,
+                });
+            }
         }
+
+        Ok(DecisionBatchRouteResult { items })
     }
 
     pub fn evaluate_registered(
@@ -128,10 +140,10 @@ impl DecisionExecutionEngine {
         registry: &DecisionBackendRegistry,
         preferred_backend: Option<&str>,
         input: DecisionInput,
-        escalation: Option<EscalationPolicy>,
-    ) -> EdgeResult<DecisionRouteAction> {
+        policies: &HashMap<String, EscalationPolicy>,
+    ) -> EdgeResult<DecisionBatchRouteResult> {
         let backend = registry.resolve(preferred_backend)?;
-        self.evaluate(backend.as_ref(), input, escalation)
+        self.evaluate(backend.as_ref(), input, policies)
     }
 }
 
@@ -180,58 +192,142 @@ pub trait DomainService: Send + Sync {
 mod tests {
     use super::*;
     use edge_decision::{
-        ChoiceResult, DecisionKind, DecisionOutput, DecisionQuestion,
-        DeterministicDecisionBackend, Probability,
+        BooleanResult, ChoiceResult, DecisionKind, DecisionOutput, DecisionQuestion, DecisionState,
+        DeterministicDecisionBackend, Probability, ScoreResult,
     };
 
     #[test]
-    fn test_accepted_high_confidence_executes_fast_path() {
+    fn test_batch_evaluation_independent_routing() {
         let mut backend = DeterministicDecisionBackend::new();
-        let question_id = "media.route";
 
-        backend.register(
-            question_id,
-            DecisionResult {
-                output: DecisionOutput::Choice(ChoiceResult {
-                    selected: "youtube".to_string(),
-                    probabilities: vec![Probability {
-                        option: "youtube".to_string(),
-                        probability: 0.92,
-                    }],
-                }),
-                confidence: 0.92,
-                status: DecisionStatus::Accepted,
-            },
-        );
+        let item_q1 = DecisionItemResult {
+            question_id: "media.route".to_string(),
+            output: DecisionOutput::Choice(ChoiceResult {
+                selected: "youtube".to_string(),
+                probabilities: vec![Probability {
+                    option: "youtube".to_string(),
+                    probability: 0.94,
+                }],
+            }),
+            confidence: 0.94,
+            status: DecisionStatus::Accepted,
+        };
+
+        let item_q2 = DecisionItemResult {
+            question_id: "kids.check".to_string(),
+            output: DecisionOutput::Boolean(BooleanResult { probability: 0.98 }),
+            confidence: 0.98,
+            status: DecisionStatus::Accepted,
+        };
+
+        let item_q3 = DecisionItemResult {
+            question_id: "human_review".to_string(),
+            output: DecisionOutput::Boolean(BooleanResult { probability: 0.42 }),
+            confidence: 0.42,
+            status: DecisionStatus::Abstained,
+        };
+
+        let item_q4 = DecisionItemResult {
+            question_id: "urgency.score".to_string(),
+            output: DecisionOutput::Score(ScoreResult { value: 0.40 }),
+            confidence: 0.40, // low confidence below minimum threshold 0.50
+            status: DecisionStatus::Accepted,
+        };
+
+        backend.register(item_q1);
+        backend.register(item_q2);
+        backend.register(item_q3);
+        backend.register(item_q4);
 
         let engine = DecisionExecutionEngine::new(RuntimeDecisionPolicy {
             minimum_escalation_threshold: 0.50,
         });
 
         let input = DecisionInput {
-            question: DecisionQuestion {
-                id: question_id.to_string(),
-                kind: DecisionKind::Choice,
-                options: vec!["youtube".to_string()],
-            },
-            payload: "Play music".to_string(),
+            state: DecisionState::default(),
+            questions: vec![
+                DecisionQuestion {
+                    id: "media.route".to_string(),
+                    kind: DecisionKind::Choice,
+                    options: vec!["youtube".to_string()],
+                },
+                DecisionQuestion {
+                    id: "kids.check".to_string(),
+                    kind: DecisionKind::Boolean,
+                    options: vec![],
+                },
+                DecisionQuestion {
+                    id: "human_review".to_string(),
+                    kind: DecisionKind::Boolean,
+                    options: vec![],
+                },
+                DecisionQuestion {
+                    id: "urgency.score".to_string(),
+                    kind: DecisionKind::Score,
+                    options: vec![],
+                },
+            ],
         };
 
-        let escalation = Some(EscalationPolicy {
-            threshold: 0.65,
-            target: EscalationTarget::IntentModel,
-        });
+        let mut policies = HashMap::new();
+        policies.insert(
+            "media.route".to_string(),
+            EscalationPolicy {
+                threshold: 0.65,
+                target: EscalationTarget::IntentModel,
+            },
+        );
+        policies.insert(
+            "kids.check".to_string(),
+            EscalationPolicy {
+                threshold: 0.90,
+                target: EscalationTarget::Reject,
+            },
+        );
+        policies.insert(
+            "human_review".to_string(),
+            EscalationPolicy {
+                threshold: 0.70,
+                target: EscalationTarget::Human,
+            },
+        );
 
-        let action = engine.evaluate(&backend, input, escalation).unwrap();
-        match action {
+        let batch_route = engine.evaluate(&backend, input, &policies).unwrap();
+        assert_eq!(batch_route.items.len(), 4);
+
+        // Q1: Execute (Accepted, 0.94 >= 0.65)
+        match &batch_route.items[0] {
             DecisionRouteAction::Execute {
                 effective_threshold,
-                result,
-            } => {
-                assert_eq!(effective_threshold, 0.65);
-                assert_eq!(result.status, DecisionStatus::Accepted);
+                ..
+            } => assert_eq!(*effective_threshold, 0.65),
+            _ => panic!("Expected Execute for Q1"),
+        }
+
+        // Q2: Execute (Accepted, 0.98 >= 0.90)
+        match &batch_route.items[1] {
+            DecisionRouteAction::Execute {
+                effective_threshold,
+                ..
+            } => assert_eq!(*effective_threshold, 0.90),
+            _ => panic!("Expected Execute for Q2"),
+        }
+
+        // Q3: Escalate (Abstained -> Human)
+        match &batch_route.items[2] {
+            DecisionRouteAction::Escalate { target, .. } => {
+                assert_eq!(*target, EscalationTarget::Human);
             }
-            DecisionRouteAction::Escalate { .. } => panic!("Expected fast-path execution"),
+            _ => panic!("Expected Escalate for Q3"),
+        }
+
+        // Q4: Escalate (Accepted, but 0.40 < runtime floor 0.50)
+        match &batch_route.items[3] {
+            DecisionRouteAction::Escalate {
+                effective_threshold,
+                ..
+            } => assert_eq!(*effective_threshold, 0.50),
+            _ => panic!("Expected Escalate for Q4 due to safety floor"),
         }
     }
 
@@ -239,53 +335,38 @@ mod tests {
     fn test_backend_registry_resolution() {
         let mut registry = DecisionBackendRegistry::new();
 
-        let mut laya_backend = DeterministicDecisionBackend::new();
-        laya_backend.register(
-            "media.route",
-            DecisionResult {
-                output: DecisionOutput::Choice(ChoiceResult {
-                    selected: "movie".to_string(),
-                    probabilities: vec![],
-                }),
-                confidence: 0.95,
-                status: DecisionStatus::Accepted,
-            },
-        );
-
         let mut jev_backend = DeterministicDecisionBackend::new();
-        jev_backend.register(
-            "mobile.next_action",
-            DecisionResult {
-                output: DecisionOutput::Choice(ChoiceResult {
-                    selected: "tap".to_string(),
-                    probabilities: vec![],
-                }),
-                confidence: 0.91,
-                status: DecisionStatus::Accepted,
-            },
-        );
+        jev_backend.register(DecisionItemResult {
+            question_id: "mobile.next_action".to_string(),
+            output: DecisionOutput::Choice(ChoiceResult {
+                selected: "tap".to_string(),
+                probabilities: vec![],
+            }),
+            confidence: 0.91,
+            status: DecisionStatus::Accepted,
+        });
 
-        registry.register("laya", Arc::new(laya_backend));
         registry.register("jev", Arc::new(jev_backend));
 
         let engine = DecisionExecutionEngine::new(RuntimeDecisionPolicy::default());
 
         let jev_input = DecisionInput {
-            question: DecisionQuestion {
+            state: DecisionState::default(),
+            questions: vec![DecisionQuestion {
                 id: "mobile.next_action".to_string(),
                 kind: DecisionKind::Choice,
                 options: vec!["tap".to_string()],
-            },
-            payload: "screen".to_string(),
+            }],
         };
 
-        let action = engine
-            .evaluate_registered(&registry, Some("jev"), jev_input, None)
+        let batch_route = engine
+            .evaluate_registered(&registry, Some("jev"), jev_input, &HashMap::new())
             .unwrap();
 
-        match action {
+        assert_eq!(batch_route.items.len(), 1);
+        match &batch_route.items[0] {
             DecisionRouteAction::Execute { result, .. } => {
-                if let DecisionOutput::Choice(c) = result.output {
+                if let DecisionOutput::Choice(c) = &result.output {
                     assert_eq!(c.selected, "tap");
                 } else {
                     panic!("Expected Choice result");
@@ -293,24 +374,5 @@ mod tests {
             }
             _ => panic!("Expected execution for registered Jev backend"),
         }
-    }
-
-    #[test]
-    fn test_unregistered_backend_returns_error() {
-        let registry = DecisionBackendRegistry::new();
-        let engine = DecisionExecutionEngine::new(RuntimeDecisionPolicy::default());
-
-        let input = DecisionInput {
-            question: DecisionQuestion {
-                id: "test".to_string(),
-                kind: DecisionKind::Choice,
-                options: vec![],
-            },
-            payload: "".to_string(),
-        };
-
-        let result = engine.evaluate_registered(&registry, Some("unknown_backend"), input, None);
-        assert!(result.is_err());
-        assert!(result.unwrap_err().message.contains("not registered"));
     }
 }

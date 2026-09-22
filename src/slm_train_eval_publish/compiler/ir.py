@@ -12,6 +12,7 @@ class DomainIR:
     domain: str
     version: str
     entities: list[dict[str, Any]]
+    decisions: list[dict[str, Any]] = field(default_factory=list)
     policies: list[dict[str, Any]] = field(default_factory=list)
     capabilities: list[str] = field(default_factory=list)
 
@@ -53,11 +54,27 @@ def build_domain_ir(definition: DomainDefinition) -> DomainIR:
             }
         )
 
+    decisions = []
+    for decision in definition.decisions:
+        dec_dict: dict[str, Any] = {
+            "kind": "Decision",
+            "id": decision.id,
+            "type": decision.kind,
+            "options": decision.options,
+        }
+        if decision.escalation_threshold is not None or decision.escalation_target is not None:
+            dec_dict["escalation"] = {
+                "threshold": decision.escalation_threshold,
+                "target": decision.escalation_target,
+            }
+        decisions.append(dec_dict)
+
     return DomainIR(
         ir_version=definition.ir_version,
         domain=definition.domain,
         version=definition.version,
         entities=entities,
+        decisions=decisions,
         policies=[{"kind": "Policy", "name": policy} for policy in definition.policies],
         capabilities=sorted(set(definition.capabilities)),
     )

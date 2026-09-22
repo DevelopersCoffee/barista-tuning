@@ -89,6 +89,14 @@ metadata and action contracts
 - [x] Package and checksum all three provider-neutral jobs.
 - [x] Run full tests, lint, data audits, and the five-axis review.
 
+## Phase 7: Code Index Ingestion
+
+- [x] Define the vendor-neutral Code Index Export v1 contract and ADR.
+- [x] Add failing validation and deterministic compilation tests.
+- [x] Implement the export validator and metadata-catalog compiler.
+- [x] Expose `slm compile-code-index` with a generic example export.
+- [x] Run full tests, lint, deterministic rebuild, and five-axis review.
+
 ## Risks and Mitigations
 
 | Risk | Impact | Mitigation |

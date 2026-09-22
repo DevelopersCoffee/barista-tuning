@@ -7,6 +7,8 @@ license.workspace = true
 [dependencies]
 edge-kernel = { path = "../edge-kernel" }
 edge-search = { path = "../edge-search" }
+edge-decision = { path = "../edge-decision" }
+edge-compiler = { path = "../edge-compiler" }
 
 [lib]
 path = "src/lib.rs"

@@ -1,0 +1,47 @@
+{
+  "schema_version": "1.0",
+  "knowledge_release": "code-index-example-1",
+  "source_revision": "commit-example-abc123",
+  "extractor": {
+    "id": "generic-index-adapter",
+    "version": "1.0.0"
+  },
+  "symbols": [
+    {
+      "symbol_id": "service:risk",
+      "kind": "service",
+      "name": "Risk service",
+      "qualified_name": "internal.risk.RiskService",
+      "language": "java",
+      "path": "services/risk/src/RiskService.java",
+      "line_start": 12,
+      "line_end": 88,
+      "owner_team_id": "team:risk",
+      "verification_status": "verified"
+    },
+    {
+      "symbol_id": "api:risk:ratio",
+      "kind": "api_operation",
+      "name": "POST /risk/ratio",
+      "qualified_name": "internal.risk.RiskController.calculateRatio",
+      "language": "java",
+      "path": "services/risk/src/RiskController.java",
+      "line_start": 41,
+      "line_end": 63,
+      "owner_team_id": "team:risk",
+      "verification_status": "verified"
+    }
+  ],
+  "relationships": [
+    {
+      "subject_id": "service:risk",
+      "predicate": "EXPOSES",
+      "object_id": "api:risk:ratio",
+      "source_path": "services/risk/src/RiskController.java",
+      "line_start": 41,
+      "line_end": 63,
+      "confidence": 1.0,
+      "verification_status": "verified"
+    }
+  ]
+}

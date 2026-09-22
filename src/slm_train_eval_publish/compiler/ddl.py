@@ -33,12 +33,22 @@ class EntityDefinition:
 
 
 @dataclass(frozen=True)
+class DecisionDefinition:
+    id: str
+    kind: str = "choice"
+    options: list[str] = field(default_factory=list)
+    escalation_threshold: float | None = None
+    escalation_target: str | None = None
+
+
+@dataclass(frozen=True)
 class DomainDefinition:
     domain: str
     version: str
     ir_version: str = "1.0.0"
     description: str | None = None
     entities: list[EntityDefinition] = field(default_factory=list)
+    decisions: list[DecisionDefinition] = field(default_factory=list)
     policies: list[str] = field(default_factory=list)
     capabilities: list[str] = field(default_factory=list)
 
@@ -53,6 +63,7 @@ def load_domain_definition(path: str | Path) -> DomainDefinition:
     version = str(raw.get("version", "0.1.0"))
     ir_version = str(raw.get("ir_version", "1.0.0"))
     entities = _parse_entities(raw)
+    decisions = _parse_decisions(raw)
 
     return DomainDefinition(
         domain=domain,
@@ -60,6 +71,7 @@ def load_domain_definition(path: str | Path) -> DomainDefinition:
         ir_version=ir_version,
         description=raw.get("description"),
         entities=entities,
+        decisions=decisions,
         policies=_string_list(raw.get("policies", []), "policies"),
         capabilities=_string_list(raw.get("capabilities", []), "capabilities"),
     )
@@ -98,6 +110,55 @@ def _parse_entity(name: str, raw: Any) -> EntityDefinition:
             raw.get("capabilities", []),
             f"entities.{name}.capabilities",
         ),
+    )
+
+
+def _parse_decisions(raw: dict[str, Any]) -> list[DecisionDefinition]:
+    if "decisions" in raw:
+        decisions_raw = raw["decisions"]
+        if not isinstance(decisions_raw, dict):
+            raise ValueError("'decisions' must be a mapping")
+        return [_parse_decision(did, value or {}) for did, value in decisions_raw.items()]
+
+    if "decision" in raw:
+        decision_raw = raw["decision"]
+        if not isinstance(decision_raw, dict):
+            raise ValueError("'decision' must be a mapping")
+        decision_id = str(decision_raw.get("id", "default.decision"))
+        return [_parse_decision(decision_id, decision_raw)]
+
+    return []
+
+
+def _parse_decision(decision_id: str, raw: Any) -> DecisionDefinition:
+    if not isinstance(raw, dict):
+        raise ValueError(f"Decision '{decision_id}' must be a mapping")
+
+    kind = str(raw.get("type", raw.get("kind", "choice"))).lower()
+    options_raw = raw.get("options", [])
+    if isinstance(options_raw, str):
+        options = [options_raw]
+    elif isinstance(options_raw, list):
+        options = [str(opt) for opt in options_raw]
+    else:
+        options = []
+
+    escalation_raw = raw.get("escalation")
+    threshold: float | None = None
+    target: str | None = None
+
+    if isinstance(escalation_raw, dict):
+        if "threshold" in escalation_raw:
+            threshold = float(escalation_raw["threshold"])
+        if "target" in escalation_raw:
+            target = str(escalation_raw["target"]).lower()
+
+    return DecisionDefinition(
+        id=str(decision_id),
+        kind=kind,
+        options=options,
+        escalation_threshold=threshold,
+        escalation_target=target,
     )
 
 

@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
+import pytest
 import yaml
 
 from slm_train_eval_publish.compiler import compile_domain
@@ -54,6 +55,51 @@ def test_compile_food_domain(tmp_path: Path) -> None:
     assert manifest["artifacts"]["runtime"] is None
 
 
+def test_compile_domain_with_decisions(tmp_path: Path) -> None:
+    ddl = tmp_path / "media.yaml"
+    ddl.write_text(
+        """
+domain: media
+version: 1.0.0
+entities:
+  MediaItem:
+    attributes:
+      title: string
+decisions:
+  media.route:
+    type: choice
+    options:
+      - live_tv
+      - movie
+      - series
+      - youtube
+    escalation:
+      threshold: 0.65
+      target: intent_model
+  safety.check:
+    type: boolean
+    escalation:
+      threshold: 0.95
+      target: reject
+""".strip()
+    )
+
+    result = compile_domain(ddl, tmp_path / "out")
+    ir = json.loads(result.domain_ir.read_text())
+
+    assert "decisions" in ir
+    assert len(ir["decisions"]) == 2
+
+    route_dec = next(d for d in ir["decisions"] if d["id"] == "media.route")
+    assert route_dec["type"] == "choice"
+    assert route_dec["options"] == ["live_tv", "movie", "series", "youtube"]
+    assert route_dec["escalation"] == {"threshold": 0.65, "target": "intent_model"}
+
+    safety_dec = next(d for d in ir["decisions"] if d["id"] == "safety.check")
+    assert safety_dec["type"] == "boolean"
+    assert safety_dec["escalation"] == {"threshold": 0.95, "target": "reject"}
+
+
 def test_compile_rejects_unknown_relationship_target(tmp_path: Path) -> None:
     ddl = tmp_path / "bad.yaml"
     ddl.write_text(
@@ -67,9 +113,29 @@ entities:
 """.strip()
     )
 
-    try:
+    with pytest.raises(ValueError, match="targets unknown entity"):
         compile_domain(ddl, tmp_path / "out")
-    except ValueError as error:
-        assert "targets unknown entity" in str(error)
-    else:
-        raise AssertionError("compile_domain should reject invalid relationship targets")
+
+
+def test_compile_rejects_invalid_decision_threshold(tmp_path: Path) -> None:
+    ddl = tmp_path / "bad_dec.yaml"
+    ddl.write_text(
+        """
+domain: bad_dec
+entities:
+  Item:
+    attributes:
+      name: string
+decisions:
+  bad.route:
+    type: choice
+    options:
+      - opt1
+    escalation:
+      threshold: 1.5
+      target: intent_model
+""".strip()
+    )
+
+    with pytest.raises(ValueError, match="between 0.0 and 1.0"):
+        compile_domain(ddl, tmp_path / "out")

@@ -11,6 +11,7 @@ pub struct DecisionDefinition {
     pub id: String,
     pub kind: DecisionKind,
     pub options: Vec<String>,
+    pub backend: Option<String>,
     pub escalation: Option<EscalationPolicy>,
 }
 
@@ -28,6 +29,15 @@ impl DecisionDefinition {
                 edge_kernel::errors::EdgeErrorKind::InvalidArgument,
                 format!("decision '{}' of type choice requires at least one option", self.id),
             ));
+        }
+
+        if let Some(ref b) = self.backend {
+            if b.trim().is_empty() {
+                return Err(EdgeError::new(
+                    edge_kernel::errors::EdgeErrorKind::InvalidArgument,
+                    format!("decision '{}' backend type cannot be empty", self.id),
+                ));
+            }
         }
 
         if let Some(ref policy) = self.escalation {
@@ -83,8 +93,24 @@ mod tests {
             id: "media.route".to_string(),
             kind: DecisionKind::Choice,
             options: vec!["youtube".to_string(), "movie".to_string()],
+            backend: Some("laya".to_string()),
             escalation: Some(EscalationPolicy {
                 threshold: 0.65,
+                target: EscalationTarget::IntentModel,
+            }),
+        };
+        assert!(def.validate().is_ok());
+    }
+
+    #[test]
+    fn test_valid_jev_decision_definition() {
+        let def = DecisionDefinition {
+            id: "mobile.next_action".to_string(),
+            kind: DecisionKind::Choice,
+            options: vec!["tap".to_string(), "scroll".to_string()],
+            backend: Some("jev".to_string()),
+            escalation: Some(EscalationPolicy {
+                threshold: 0.70,
                 target: EscalationTarget::IntentModel,
             }),
         };
@@ -97,6 +123,7 @@ mod tests {
             id: "bad.choice".to_string(),
             kind: DecisionKind::Choice,
             options: vec![],
+            backend: None,
             escalation: None,
         };
         let res = def.validate();
@@ -110,6 +137,7 @@ mod tests {
             id: "bad.threshold".to_string(),
             kind: DecisionKind::Boolean,
             options: vec![],
+            backend: None,
             escalation: Some(EscalationPolicy {
                 threshold: 1.5,
                 target: EscalationTarget::GenerativeModel,

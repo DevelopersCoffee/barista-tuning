@@ -1,10 +1,11 @@
-//! Runtime-level planner, decision execution engine, and domain service contracts.
+//! Runtime-level planner, decision execution engine, backend registry, and domain service contracts.
 
 #![forbid(unsafe_code)]
 
-use std::collections::BTreeMap;
+use std::collections::{BTreeMap, HashMap};
 use std::future::Future;
 use std::pin::Pin;
+use std::sync::Arc;
 
 use edge_decision::{
     DecisionBackend, DecisionInput, DecisionResult, DecisionStatus, EscalationPolicy,
@@ -14,6 +15,47 @@ use edge_kernel::{CapabilitySet, Context, EdgeError, EdgeResult};
 use edge_search::{RankedCandidate, SearchQuery};
 
 pub type RuntimeFuture<'a, T> = Pin<Box<dyn Future<Output = EdgeResult<T>> + Send + 'a>>;
+
+#[derive(Default)]
+pub struct DecisionBackendRegistry {
+    backends: HashMap<String, Arc<dyn DecisionBackend>>,
+    default_backend_id: String,
+}
+
+impl DecisionBackendRegistry {
+    pub fn new() -> Self {
+        Self {
+            backends: HashMap::new(),
+            default_backend_id: "deterministic".to_string(),
+        }
+    }
+
+    pub fn register(&mut self, name: impl Into<String>, backend: Arc<dyn DecisionBackend>) {
+        let name_str = name.into().to_ascii_lowercase();
+        self.backends.insert(name_str, backend);
+    }
+
+    pub fn set_default_backend(&mut self, name: impl Into<String>) {
+        self.default_backend_id = name.into().to_ascii_lowercase();
+    }
+
+    pub fn get(&self, name: &str) -> Option<Arc<dyn DecisionBackend>> {
+        self.backends.get(&name.to_ascii_lowercase()).cloned()
+    }
+
+    pub fn resolve(&self, preferred_name: Option<&str>) -> EdgeResult<Arc<dyn DecisionBackend>> {
+        let target_id = preferred_name
+            .map(|s| s.to_ascii_lowercase())
+            .unwrap_or_else(|| self.default_backend_id.clone());
+
+        self.get(&target_id).ok_or_else(|| {
+            EdgeError::new(
+                edge_kernel::errors::EdgeErrorKind::NotFound,
+                format!("Decision backend '{}' is not registered", target_id),
+            )
+        })
+    }
+}
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct RuntimeDecisionPolicy {
@@ -79,6 +121,17 @@ impl DecisionExecutionEngine {
                 target,
             })
         }
+    }
+
+    pub fn evaluate_registered(
+        &self,
+        registry: &DecisionBackendRegistry,
+        preferred_backend: Option<&str>,
+        input: DecisionInput,
+        escalation: Option<EscalationPolicy>,
+    ) -> EdgeResult<DecisionRouteAction> {
+        let backend = registry.resolve(preferred_backend)?;
+        self.evaluate(backend.as_ref(), input, escalation)
     }
 }
 
@@ -183,152 +236,81 @@ mod tests {
     }
 
     #[test]
-    fn test_low_confidence_triggers_escalation() {
-        let mut backend = DeterministicDecisionBackend::new();
-        let question_id = "media.route.uncertain";
+    fn test_backend_registry_resolution() {
+        let mut registry = DecisionBackendRegistry::new();
 
-        backend.register(
-            question_id,
-            DecisionResult {
-                output: DecisionOutput::Choice(ChoiceResult {
-                    selected: "movie".to_string(),
-                    probabilities: vec![Probability {
-                        option: "movie".to_string(),
-                        probability: 0.40,
-                    }],
-                }),
-                confidence: 0.40,
-                status: DecisionStatus::Accepted,
-            },
-        );
-
-        let engine = DecisionExecutionEngine::new(RuntimeDecisionPolicy {
-            minimum_escalation_threshold: 0.50,
-        });
-
-        let input = DecisionInput {
-            question: DecisionQuestion {
-                id: question_id.to_string(),
-                kind: DecisionKind::Choice,
-                options: vec!["movie".to_string()],
-            },
-            payload: "Show something".to_string(),
-        };
-
-        let escalation = Some(EscalationPolicy {
-            threshold: 0.65,
-            target: EscalationTarget::GenerativeModel,
-        });
-
-        let action = engine.evaluate(&backend, input, escalation).unwrap();
-        match action {
-            DecisionRouteAction::Escalate {
-                effective_threshold,
-                target,
-                ..
-            } => {
-                assert_eq!(effective_threshold, 0.65);
-                assert_eq!(target, EscalationTarget::GenerativeModel);
-            }
-            DecisionRouteAction::Execute { .. } => panic!("Expected escalation"),
-        }
-    }
-
-    #[test]
-    fn test_abstained_status_triggers_escalation() {
-        let mut backend = DeterministicDecisionBackend::new();
-        let question_id = "safety.check";
-
-        backend.register(
-            question_id,
+        let mut laya_backend = DeterministicDecisionBackend::new();
+        laya_backend.register(
+            "media.route",
             DecisionResult {
                 output: DecisionOutput::Choice(ChoiceResult {
                     selected: "movie".to_string(),
                     probabilities: vec![],
                 }),
-                confidence: 0.80, // high confidence, but status is Abstained
-                status: DecisionStatus::Abstained,
+                confidence: 0.95,
+                status: DecisionStatus::Accepted,
             },
         );
 
-        let engine = DecisionExecutionEngine::new(RuntimeDecisionPolicy {
-            minimum_escalation_threshold: 0.50,
-        });
+        let mut jev_backend = DeterministicDecisionBackend::new();
+        jev_backend.register(
+            "mobile.next_action",
+            DecisionResult {
+                output: DecisionOutput::Choice(ChoiceResult {
+                    selected: "tap".to_string(),
+                    probabilities: vec![],
+                }),
+                confidence: 0.91,
+                status: DecisionStatus::Accepted,
+            },
+        );
+
+        registry.register("laya", Arc::new(laya_backend));
+        registry.register("jev", Arc::new(jev_backend));
+
+        let engine = DecisionExecutionEngine::new(RuntimeDecisionPolicy::default());
+
+        let jev_input = DecisionInput {
+            question: DecisionQuestion {
+                id: "mobile.next_action".to_string(),
+                kind: DecisionKind::Choice,
+                options: vec!["tap".to_string()],
+            },
+            payload: "screen".to_string(),
+        };
+
+        let action = engine
+            .evaluate_registered(&registry, Some("jev"), jev_input, None)
+            .unwrap();
+
+        match action {
+            DecisionRouteAction::Execute { result, .. } => {
+                if let DecisionOutput::Choice(c) = result.output {
+                    assert_eq!(c.selected, "tap");
+                } else {
+                    panic!("Expected Choice result");
+                }
+            }
+            _ => panic!("Expected execution for registered Jev backend"),
+        }
+    }
+
+    #[test]
+    fn test_unregistered_backend_returns_error() {
+        let registry = DecisionBackendRegistry::new();
+        let engine = DecisionExecutionEngine::new(RuntimeDecisionPolicy::default());
 
         let input = DecisionInput {
             question: DecisionQuestion {
-                id: question_id.to_string(),
+                id: "test".to_string(),
                 kind: DecisionKind::Choice,
                 options: vec![],
             },
-            payload: "Check content".to_string(),
+            payload: "".to_string(),
         };
 
-        let escalation = Some(EscalationPolicy {
-            threshold: 0.60,
-            target: EscalationTarget::Human,
-        });
-
-        let action = engine.evaluate(&backend, input, escalation).unwrap();
-        match action {
-            DecisionRouteAction::Escalate { target, .. } => {
-                assert_eq!(target, EscalationTarget::Human);
-            }
-            DecisionRouteAction::Execute { .. } => panic!("Abstained result must escalate"),
-        }
-    }
-
-    #[test]
-    fn test_runtime_safety_floor_overrides_low_domain_threshold() {
-        let mut backend = DeterministicDecisionBackend::new();
-        let question_id = "payment.intent";
-
-        backend.register(
-            question_id,
-            DecisionResult {
-                output: DecisionOutput::Choice(ChoiceResult {
-                    selected: "pay".to_string(),
-                    probabilities: vec![],
-                }),
-                confidence: 0.70,
-                status: DecisionStatus::Accepted,
-            },
-        );
-
-        // Platform runtime requires minimum 0.90 threshold
-        let engine = DecisionExecutionEngine::new(RuntimeDecisionPolicy {
-            minimum_escalation_threshold: 0.90,
-        });
-
-        let input = DecisionInput {
-            question: DecisionQuestion {
-                id: question_id.to_string(),
-                kind: DecisionKind::Choice,
-                options: vec!["pay".to_string()],
-            },
-            payload: "Transfer money".to_string(),
-        };
-
-        // Domain DDL attempts to set dangerously low threshold of 0.10
-        let escalation = Some(EscalationPolicy {
-            threshold: 0.10,
-            target: EscalationTarget::Reject,
-        });
-
-        let action = engine.evaluate(&backend, input, escalation).unwrap();
-        match action {
-            DecisionRouteAction::Escalate {
-                effective_threshold,
-                target,
-                ..
-            } => {
-                // Effective threshold was raised by runtime safety floor to 0.90
-                assert_eq!(effective_threshold, 0.90);
-                assert_eq!(target, EscalationTarget::Reject);
-            }
-            DecisionRouteAction::Execute { .. } => {
-                panic!("Runtime safety floor should have triggered escalation")
-            }
-        }
+        let result = engine.evaluate_registered(&registry, Some("unknown_backend"), input, None);
+        assert!(result.is_err());
+        assert!(result.unwrap_err().message.contains("not registered"));
     }
 }

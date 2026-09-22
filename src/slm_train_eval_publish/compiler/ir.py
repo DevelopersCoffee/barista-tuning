@@ -62,6 +62,8 @@ def build_domain_ir(definition: DomainDefinition) -> DomainIR:
             "type": decision.kind,
             "options": decision.options,
         }
+        if decision.backend_type:
+            dec_dict["backend"] = {"type": decision.backend_type}
         if decision.escalation_threshold is not None or decision.escalation_target is not None:
             dec_dict["escalation"] = {
                 "threshold": decision.escalation_threshold,

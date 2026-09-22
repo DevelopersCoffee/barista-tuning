@@ -73,6 +73,7 @@ decisions:
       - movie
       - series
       - youtube
+    backend: laya
     escalation:
       threshold: 0.65
       target: intent_model
@@ -93,11 +94,53 @@ decisions:
     route_dec = next(d for d in ir["decisions"] if d["id"] == "media.route")
     assert route_dec["type"] == "choice"
     assert route_dec["options"] == ["live_tv", "movie", "series", "youtube"]
+    assert route_dec["backend"] == {"type": "laya"}
     assert route_dec["escalation"] == {"threshold": 0.65, "target": "intent_model"}
 
     safety_dec = next(d for d in ir["decisions"] if d["id"] == "safety.check")
     assert safety_dec["type"] == "boolean"
     assert safety_dec["escalation"] == {"threshold": 0.95, "target": "reject"}
+
+
+def test_compile_domain_with_jev_backend(tmp_path: Path) -> None:
+    ddl = tmp_path / "mobile.yaml"
+    ddl.write_text(
+        """
+domain: mobile
+version: 1.0.0
+entities:
+  Screen:
+    attributes:
+      name: string
+decisions:
+  mobile.next_action:
+    type: choice
+    options:
+      - tap
+      - type
+      - scroll
+      - back
+      - wait
+    backend:
+      type: jev
+    escalation:
+      threshold: 0.70
+      target: intent_model
+""".strip()
+    )
+
+    result = compile_domain(ddl, tmp_path / "out")
+    ir = json.loads(result.domain_ir.read_text())
+
+    assert "decisions" in ir
+    assert len(ir["decisions"]) == 1
+
+    action_dec = ir["decisions"][0]
+    assert action_dec["id"] == "mobile.next_action"
+    assert action_dec["type"] == "choice"
+    assert action_dec["options"] == ["tap", "type", "scroll", "back", "wait"]
+    assert action_dec["backend"] == {"type": "jev"}
+    assert action_dec["escalation"] == {"threshold": 0.70, "target": "intent_model"}
 
 
 def test_compile_rejects_unknown_relationship_target(tmp_path: Path) -> None:

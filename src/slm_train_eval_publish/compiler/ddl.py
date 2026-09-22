@@ -37,6 +37,7 @@ class DecisionDefinition:
     id: str
     kind: str = "choice"
     options: list[str] = field(default_factory=list)
+    backend_type: str | None = None
     escalation_threshold: float | None = None
     escalation_target: str | None = None
 
@@ -143,6 +144,14 @@ def _parse_decision(decision_id: str, raw: Any) -> DecisionDefinition:
     else:
         options = []
 
+    backend_raw = raw.get("backend")
+    backend_type: str | None = None
+    if isinstance(backend_raw, str):
+        backend_type = backend_raw.lower()
+    elif isinstance(backend_raw, dict):
+        if "type" in backend_raw:
+            backend_type = str(backend_raw["type"]).lower()
+
     escalation_raw = raw.get("escalation")
     threshold: float | None = None
     target: str | None = None
@@ -157,6 +166,7 @@ def _parse_decision(decision_id: str, raw: Any) -> DecisionDefinition:
         id=str(decision_id),
         kind=kind,
         options=options,
+        backend_type=backend_type,
         escalation_threshold=threshold,
         escalation_target=target,
     )

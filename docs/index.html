@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>slm - Model-Neutral Edge Intelligence Platform in Rust | DevelopersCoffee</title>
+  <meta name="description" content="High-performance edge AI, typed decision engine (Laya + Jev), local vector search, intent router, and Rust runtime workspace.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root { --bg-dark: #090d16; --bg-card: #111827; --accent-primary: #38bdf8; --accent-purple: #a855f7; --text-main: #f3f4f6; --text-muted: #9ca3af; --border-color: #1f2937; --code-bg: #030712; --radius: 12px; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: var(--bg-dark); color: var(--text-main); line-height: 1.6; }
+    header { border-bottom: 1px solid var(--border-color); background: rgba(9, 13, 22, 0.85); backdrop-filter: blur(12px); position: sticky; top: 0; z-index: 100; }
+    .nav-container { max-width: 1200px; margin: 0 auto; padding: 1rem 1.5rem; display: flex; justify-content: space-between; align-items: center; }
+    .brand { display: flex; align-items: center; gap: 0.75rem; text-decoration: none; color: var(--text-main); font-weight: 700; font-size: 1.25rem; }
+    .brand-logo { width: 36px; height: 36px; background: linear-gradient(135deg, var(--accent-primary), var(--accent-purple)); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 800; color: #fff; }
+    .nav-links { display: flex; gap: 1.5rem; align-items: center; list-style: none; }
+    .nav-links a { color: var(--text-muted); text-decoration: none; font-weight: 500; font-size: 0.95rem; transition: color 0.2s; }
+    .nav-links a:hover { color: var(--accent-primary); }
+    .btn-github { background: var(--border-color); color: var(--text-main); padding: 0.5rem 1rem; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 0.9rem; }
+    .container { max-width: 1200px; margin: 0 auto; padding: 3rem 1.5rem; }
+    .hero { text-align: center; padding: 2rem 0 3.5rem; max-width: 900px; margin: 0 auto; }
+    .badge-bar { display: flex; justify-content: center; gap: 0.75rem; flex-wrap: wrap; margin-bottom: 1.5rem; }
+    .badge { background: var(--bg-card); border: 1px solid var(--border-color); padding: 0.35rem 0.85rem; border-radius: 20px; font-size: 0.85rem; color: var(--accent-primary); font-weight: 600; }
+    .hero h1 { font-size: 3.25rem; font-weight: 800; margin-bottom: 1.25rem; background: linear-gradient(135deg, #ffffff 40%, var(--accent-primary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .hero p { font-size: 1.2rem; color: var(--text-muted); margin-bottom: 2rem; }
+    .prompt-box { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius); padding: 1.25rem 1.5rem; text-align: left; margin: 0 auto 2.5rem; max-width: 800px; }
+    .prompt-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; }
+    .prompt-title { font-size: 0.85rem; font-weight: 700; text-transform: uppercase; color: var(--accent-purple); }
+    .prompt-code-wrap { display: flex; align-items: center; background: var(--code-bg); border: 1px solid var(--border-color); border-radius: 8px; padding: 0.75rem 1rem; gap: 1rem; }
+    .prompt-code { font-family: 'JetBrains Mono', monospace; font-size: 0.9rem; color: #e5e7eb; flex: 1; }
+    .btn-copy { background: var(--accent-primary); color: var(--bg-dark); border: none; padding: 0.45rem 0.9rem; border-radius: 6px; font-weight: 700; cursor: pointer; }
+    .section-title { font-size: 2rem; font-weight: 700; margin-bottom: 2rem; text-align: center; }
+    .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.5rem; margin-bottom: 4rem; }
+    .feature-card { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius); padding: 1.75rem; }
+    .feature-icon { width: 44px; height: 44px; background: rgba(56, 189, 248, 0.1); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: var(--accent-primary); font-size: 1.3rem; margin-bottom: 1.25rem; }
+    .feature-card h3 { font-size: 1.2rem; font-weight: 700; margin-bottom: 0.5rem; }
+    .feature-card p { color: var(--text-muted); font-size: 0.95rem; }
+    .cta-banner { background: linear-gradient(135deg, rgba(56, 189, 248, 0.1), rgba(168, 85, 247, 0.1)); border: 1px solid var(--accent-primary); border-radius: var(--radius); padding: 3rem 2rem; text-align: center; margin-bottom: 4rem; }
+    .cta-banner h2 { font-size: 2.25rem; font-weight: 800; margin-bottom: 1rem; }
+    .cta-banner p { max-width: 700px; margin: 0 auto 2rem; color: var(--text-muted); font-size: 1.1rem; }
+    .btn-primary { background: var(--accent-primary); color: var(--bg-dark); padding: 0.85rem 1.75rem; border-radius: 8px; text-decoration: none; font-weight: 700; }
+    .btn-secondary { background: transparent; border: 1px solid var(--border-color); color: var(--text-main); padding: 0.85rem 1.75rem; border-radius: 8px; text-decoration: none; font-weight: 600; }
+    footer { border-top: 1px solid var(--border-color); padding: 3rem 1.5rem; text-align: center; color: var(--text-muted); font-size: 0.9rem; }
+    footer a { color: var(--accent-primary); text-decoration: none; }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="nav-container">
+      <a href="https://developerscoffee.com" class="brand">
+        <div class="brand-logo">DC</div>
+        <span>DevelopersCoffee</span>
+      </a>
+      <ul class="nav-links">
+        <li><a href="https://developerscoffee.github.io/">DevelopersCoffee Hub</a></li>
+        <li><a href="#features">Architecture</a></li>
+        <li><a href="https://crates.io/crates/edge-kernel" target="_blank">crates.io</a></li>
+      </ul>
+      <a href="https://github.com/DevelopersCoffee/slm" class="btn-github" target="_blank">GitHub Repo</a>
+    </div>
+  </header>
+
+  <div class="container">
+    <section class="hero">
+      <div class="badge-bar">
+        <span class="badge">crates.io v0.1.0</span>
+        <span class="badge">Rust 2021</span>
+        <span class="badge">Zero Unsafe Code</span>
+        <span class="badge">Model Neutral</span>
+        <span class="badge">MIT License</span>
+      </div>
+      <h1>slm</h1>
+      <p>High-performance Edge Intelligence platform, model-neutral decision engine (Laya + Jev), vector search, intent classification, and Rust runtime workspace.</p>
+
+      <div class="prompt-box">
+        <div class="prompt-header">
+          <span class="prompt-title">✨ AI Agent Skill Prompt (`skill.sh` compatible)</span>
+        </div>
+        <div class="prompt-code-wrap">
+          <div class="prompt-code" id="cmd-text">Run `cargo check --workspace`</div>
+          <button class="btn-copy" onclick="copyPrompt()">Copy Prompt</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="features">
+      <h2 class="section-title">Edge Intelligence Architecture</h2>
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon">🎯</div>
+          <h3>edge-decision</h3>
+          <p>Zero-dependency std-only decision contract supporting Choice, Score, and Boolean evaluation over structured state in a single pass.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">⚡</div>
+          <h3>edge-runtime & Registry</h3>
+          <p>Execution planner with DecisionBackendRegistry resolving Laya, Jev, and deterministic rule backends with automated escalation routing.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🛠️</div>
+          <h3>edge-compiler & DDL</h3>
+          <p>Domain Description Language compiler emitting Domain IR, schema specifications, and immutable knowledge packs.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🔍</div>
+          <h3>edge-search & edge-intent</h3>
+          <p>Local vector retrieval engine and zero-latency intent parser running entirely on edge hardware without cloud dependencies.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">⚙️</div>
+          <h3>edge-kernel & edge-pack</h3>
+          <p>Boring kernel lifecycle primitives, event bus, and tamper-proof ZIP pack contract verification.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">📱</div>
+          <h3>edge-ffi & edge-cli</h3>
+          <p>Cross-platform FFI bindings for mobile/desktop (Android, macOS, Apple Silicon) and command-line compilation utilities.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="cta-banner">
+      <h2>Part of the DevelopersCoffee Open-Source Ecosystem</h2>
+      <p>DevelopersCoffee builds production-grade open-source packages and custom Flutter, Rust, and Edge AI solutions. We welcome community pull requests, feature suggestions, and enterprise consulting partnerships.</p>
+      <div class="cta-buttons" style="display: flex; gap: 1rem; justify-content: center; margin-top: 1rem; flex-wrap: wrap;">
+        <a href="https://developerscoffee.github.io/slm/" class="btn-primary">Explore SLM Live Docs</a>
+        <a href="https://developerscoffee.github.io/" class="btn-secondary" target="_blank">DevelopersCoffee GitHub Portal</a>
+        <a href="https://github.com/DevelopersCoffee/slm" class="btn-secondary" target="_blank">GitHub Repository</a>
+      </div>
+    </section>
+  </div>
+
+  <footer>
+    <p>Maintained with ❤️ by <a href="https://developerscoffee.com" target="_blank">DevelopersCoffee</a>. Part of <a href="https://developerscoffee.github.io/" target="_blank">developerscoffee.github.io</a>. Released under the MIT License.</p>
+  </footer>
+
+  <script>
+    function copyPrompt() {
+      const text = document.getElementById('cmd-text').innerText;
+      navigator.clipboard.writeText(text).then(() => {
+        const btn = document.querySelector('.btn-copy');
+        btn.innerText = 'Copied! ✓';
+        setTimeout(() => { btn.innerText = 'Copy Prompt'; }, 2000);
+      });
+    }
+  </script>
+</body>
+</html>

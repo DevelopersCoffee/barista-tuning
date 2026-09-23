@@ -1,0 +1,12 @@
+{
+  "id": "decision_backend_model",
+  "backend": "laya",
+  "configuration": {
+    "threshold": 0.85,
+    "fast_path_fallback": "deterministic"
+  },
+  "questions": [
+    "is_action_item",
+    "urgency_score"
+  ]
+}

@@ -1,0 +1,36 @@
+{
+  "id": "exp-7f3b9403",
+  "dataset_id": "snap_default",
+  "adaptation_plan": {
+    "method": "decision",
+    "backend": "laya",
+    "configuration": {
+      "threshold": 0.85,
+      "fast_path_fallback": "deterministic"
+    },
+    "reasons": [
+      "Evaluated capability 'Structured Decision' (structured_decision).",
+      "Task is structured decision/action selection.",
+      "Target latency P95 requirement (100.0ms) favours fast non-autoregressive decision engine.",
+      "Standard decision example volume selects Laya backend."
+    ]
+  },
+  "metrics": {
+    "accuracy": 0.92,
+    "f1": 0.915,
+    "latency_p50_ms": 2.5,
+    "latency_p95_ms": 4.5,
+    "memory_mb": 32.0
+  },
+  "git_commit": "ae4f6a8",
+  "base_model": "Qwen/Qwen2.5-1.5B-Instruct",
+  "hyperparameters": {
+    "threshold": 0.85,
+    "fast_path_fallback": "deterministic"
+  },
+  "hardware": {
+    "device": "auto"
+  },
+  "provenance": {},
+  "created_at": "2026-09-23T20:23:07Z"
+}

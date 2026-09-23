@@ -146,6 +146,95 @@ def plan(
         console.print(f"    • {r}")
 
 
+@app.command("execute")
+def execute_plan(
+    project_dir: Annotated[Path, typer.Option("--project", "-p")] = Path("."),
+    snapshot_id: Annotated[str, typer.Option("--snapshot")] = "snap_default",
+) -> None:
+    """Execute the compiled AdaptationPlan, create artifact, and log immutable ExperimentRecord."""
+    from slm_train_eval_publish.doctor import run_plan
+    from slm_train_eval_publish.execution import ExecutionEngine
+
+    proj = project_dir.resolve()
+    adaptation_plan = run_plan(project_dir=proj)
+    engine = ExecutionEngine()
+    res = engine.execute(plan=adaptation_plan, project_dir=proj, snapshot_id=snapshot_id)
+
+    console.print(f"[bold green]Executed Adaptation Plan![/bold green]")
+    console.print(f"  Experiment ID: [bold cyan]{res.experiment_id}[/bold cyan]")
+    console.print(f"  Artifact Path: {res.output_path}")
+    console.print(f"  Execution Time: {res.execution_time_sec}s")
+
+
+@app.command("eval-gate")
+def evaluate_experiment(
+    experiment_id: Annotated[str, typer.Argument(help="Experiment ID to evaluate.")],
+    project_dir: Annotated[Path, typer.Option("--project", "-p")] = Path("."),
+    target_f1: Annotated[float, typer.Option("--target-f1")] = 0.85,
+    max_latency_p95_ms: Annotated[float, typer.Option("--max-latency-p95")] = 100.0,
+) -> None:
+    """Run multi-dimensional evaluation gates (target task, regression, safety, P95 latency)."""
+    from slm_train_eval_publish.evaluation_engine import EvaluationEngine, print_eval_report
+
+    engine = EvaluationEngine()
+    report = engine.evaluate_experiment(
+        experiment_id=experiment_id,
+        project_dir=project_dir.resolve(),
+        target_f1=target_f1,
+        max_latency_p95_ms=max_latency_p95_ms,
+    )
+    print_eval_report(report)
+
+
+@app.command("compare")
+def compare_runs(
+    project_dir: Annotated[Path, typer.Option("--project", "-p")] = Path("."),
+) -> None:
+    """Compare experiment run records for a project side-by-side."""
+    from slm_train_eval_publish.experiment import ExperimentTracker, compare_experiments
+
+    tracker = ExperimentTracker()
+    records = tracker.list_experiments(project_dir.resolve())
+    compare_experiments(records)
+
+
+@app.command("package")
+def package_pack(
+    experiment_id: Annotated[str, typer.Argument(help="Experiment ID to package.")],
+    project_dir: Annotated[Path, typer.Option("--project", "-p")] = Path("."),
+) -> None:
+    """Assemble a single deployable Domain Intelligence Pack (.pack) archive."""
+    from slm_train_eval_publish.packager import package_intelligence_pack
+
+    pack = package_intelligence_pack(project_dir=project_dir.resolve(), experiment_id=experiment_id)
+    console.print(f"[bold green]Successfully packaged Domain Intelligence Pack:[/bold green]")
+    console.print(f"  Pack Name: [bold cyan]{pack.pack_name}[/bold cyan]")
+    console.print(f"  Archive Path: {pack.output_path}")
+
+
+@app.command("release")
+def release_artifact(
+    experiment_id: Annotated[str, typer.Argument(help="Experiment ID to release.")],
+    project_dir: Annotated[Path, typer.Option("--project", "-p")] = Path("."),
+) -> None:
+    """Verify release gates and produce production release artifact."""
+    from slm_train_eval_publish.evaluation_engine import EvaluationEngine
+    from slm_train_eval_publish.packager import package_intelligence_pack
+
+    proj = project_dir.resolve()
+    eval_engine = EvaluationEngine()
+    report = eval_engine.evaluate_experiment(experiment_id=experiment_id, project_dir=proj)
+
+    if not report.overall_pass:
+        console.print(f"[bold red]Release Rejected:[/bold red] {report.summary}")
+        raise typer.Exit(code=1)
+
+    pack = package_intelligence_pack(project_dir=proj, experiment_id=experiment_id)
+    console.print(f"[bold green]RELEASE APPROVED![/bold green] Emitted production artifact:")
+    console.print(f"  {pack.output_path}")
+
+
+
 
 @app.command()
 def compile(

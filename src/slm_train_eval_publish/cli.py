@@ -8,8 +8,143 @@ from rich.console import Console
 
 from slm_train_eval_publish.config import load_config
 
-app = typer.Typer(help="Train, evaluate, and publish small language models.")
+app = typer.Typer(help="Model Adaptation & Domain Intelligence Platform.")
 console = Console()
+
+
+@app.command("init")
+def init_project(
+    name: Annotated[str, typer.Argument(help="Project directory name to scaffold.")],
+    target_dir: Annotated[Path, typer.Option("--path", "-p")] = Path("."),
+) -> None:
+    """Scaffold standard SLM project structure (slm.yaml, data/, schema/, domain/)."""
+    proj_path = target_dir / name
+    proj_path.mkdir(parents=True, exist_ok=True)
+
+    (proj_path / "data").mkdir(exist_ok=True)
+    (proj_path / "schema").mkdir(exist_ok=True)
+    (proj_path / "domain").mkdir(exist_ok=True)
+
+    slm_yaml_content = f"""domain:
+  name: {name}
+  version: "0.1.0"
+
+task:
+  id: {name}.main_task
+  type: decision
+  capability: structured_decision
+
+adaptation:
+  strategy: auto
+
+constraints:
+  target_f1: 0.85
+  max_latency_p95_ms: 50.0
+"""
+    (proj_path / "slm.yaml").write_text(slm_yaml_content, encoding="utf-8")
+    (proj_path / "data" / "train.jsonl").write_text("", encoding="utf-8")
+    (proj_path / "data" / "eval.jsonl").write_text("", encoding="utf-8")
+    (proj_path / "schema" / "output.json").write_text("{\n}\n", encoding="utf-8")
+
+    console.print(f"[bold green]Scaffolded SLM project at:[/bold green] {proj_path.resolve()}")
+
+
+@app.command("doctor")
+def doctor(
+    project_dir: Annotated[Path, typer.Option("--project", "-p")] = Path("."),
+) -> None:
+    """Run project health diagnostics, dataset checks, and adaptation strategy recommendation."""
+    from slm_train_eval_publish.doctor import print_doctor_report, run_doctor
+
+    report = run_doctor(project_dir.resolve())
+    print_doctor_report(report)
+
+
+@app.command("data-inspect")
+def data_inspect(
+    source: Annotated[Path, typer.Argument(exists=True, readable=True)],
+    eval_file: Annotated[Path | None, typer.Option("--eval")] = None,
+    schema_file: Annotated[Path | None, typer.Option("--schema")] = None,
+) -> None:
+    """Completely read-only audit of a dataset (duplicates, leakage, tokens, schema validity)."""
+    from slm_train_eval_publish.dataset_engine import inspect_dataset
+
+    profile = inspect_dataset(source_path=source, eval_path=eval_file, schema_path=schema_file)
+    console.print(f"[bold cyan]Dataset Profile for {source.name}:[/bold cyan]")
+    console.print(f"  Total Examples: {profile.total_examples}")
+    console.print(f"  Valid Examples: {profile.valid_examples}")
+    console.print(f"  Duplicates: {profile.duplicate_count}")
+    console.print(f"  Exact Leakage: {profile.exact_leakage_count}")
+    console.print(f"  Normalized Leakage: {profile.normalized_leakage_count}")
+    console.print(f"  Schema Validity: {profile.schema_validity * 100:.1f}%")
+
+    if profile.quality_warnings:
+        console.print("\n[bold yellow]Quality Warnings:[/bold yellow]")
+        for w in profile.quality_warnings:
+            console.print(f"  • {w}")
+
+
+@app.command("prepare")
+def prepare(
+    source: Annotated[Path, typer.Argument(exists=True, readable=True)],
+    output: Annotated[Path, typer.Option("--output", "-o")] = Path("."),
+    train_ratio: Annotated[float, typer.Option("--train-ratio")] = 0.8,
+    val_ratio: Annotated[float, typer.Option("--val-ratio")] = 0.1,
+    test_ratio: Annotated[float, typer.Option("--test-ratio")] = 0.1,
+    seed: Annotated[int, typer.Option("--seed")] = 42,
+    leakage_policy: Annotated[str, typer.Option("--leakage-policy")] = "fail",
+) -> None:
+    """Generate an immutable DatasetSnapshot under .slm/datasets/<dataset_id>/."""
+    from slm_train_eval_publish.dataset_engine import DatasetPreparationConfig, prepare_dataset
+
+    cfg = DatasetPreparationConfig(
+        train_ratio=train_ratio,
+        val_ratio=val_ratio,
+        test_ratio=test_ratio,
+        seed=seed,
+        leakage_policy=leakage_policy,
+    )
+    res = prepare_dataset(source_path=source, output_dir=output, config=cfg)
+    console.print(f"[bold green]Created immutable DatasetSnapshot:[/bold green] {res['dataset_id']}")
+    console.print(f"  Snapshot path: {res['snapshot_dir']}")
+
+
+@app.command("baseline")
+def baseline(
+    source: Annotated[Path, typer.Argument(exists=True, readable=True)],
+    task_id: Annotated[str, typer.Option("--task")] = "main_task",
+) -> None:
+    """Run pre-adaptation baselines (rule, prompt, decision) to establish benchmark starting point."""
+    import json
+    from slm_train_eval_publish.baseline import BaselineEngine
+
+    lines = [json.loads(l) for l in source.read_text(encoding="utf-8").splitlines() if l.strip()]
+    engine = BaselineEngine()
+    results = engine.run_baselines(task_id=task_id, dataset_id="cli_base", examples=lines)
+
+    console.print(f"[bold cyan]Baseline Benchmarks for task '{task_id}':[/bold cyan]")
+    for r in results:
+        f1 = r.metrics.get("f1", 0.0)
+        console.print(
+            f"  • [bold blue]{r.backend:<12}[/bold blue] | F1: {f1:.4f} | P95 Latency: {r.latency_p95_ms}ms | Memory: {r.memory_mb}MB"
+        )
+
+
+@app.command("plan")
+def plan(
+    project_dir: Annotated[Path, typer.Option("--project", "-p")] = Path("."),
+) -> None:
+    """Display the evidence-driven AdaptationPlan compiled from task, dataset, and baseline results."""
+    from slm_train_eval_publish.doctor import run_plan
+
+    adaptation_plan = run_plan(project_dir=project_dir.resolve())
+    console.print("[bold cyan]Compiled Adaptation Plan:[/bold cyan]")
+    console.print(f"  Method: [bold green]{adaptation_plan.method}[/bold green]")
+    console.print(f"  Backend: [bold blue]{adaptation_plan.backend}[/bold blue]")
+    console.print("  Rationale:")
+    for r in adaptation_plan.reasons:
+        console.print(f"    • {r}")
+
 
 
 @app.command()

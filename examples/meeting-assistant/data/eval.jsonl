@@ -1,0 +1,2 @@
+{"input": "Eve: I will prepare the weekly status report for the team.", "output": "action_item", "action": "create_report", "assignee": "Eve", "due_date": "Weekly"}
+{"input": "Frank: The server deployment completed successfully.", "output": "discussion", "action": "none", "assignee": "", "due_date": ""}

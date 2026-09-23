@@ -1,0 +1,5 @@
+{"input": "Alice: Let us make sure the Q3 roadmap is finalized by Friday.", "output": "action_item", "action": "create_task", "assignee": "Alice", "due_date": "Friday"}
+{"input": "Bob: I will send out the updated slide deck after this call.", "output": "action_item", "action": "send_email", "assignee": "Bob", "due_date": "Today"}
+{"input": "Charlie: What time is our sync tomorrow?", "output": "discussion", "action": "none", "assignee": "", "due_date": ""}
+{"input": "Alice: David please review PR #42 before EOD.", "output": "action_item", "action": "code_review", "assignee": "David", "due_date": "EOD"}
+{"input": "Bob: Good morning everyone, thanks for joining.", "output": "discussion", "action": "none", "assignee": "", "due_date": ""}

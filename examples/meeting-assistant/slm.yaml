@@ -1,0 +1,34 @@
+domain:
+  name: meeting-assistant
+  version: "0.1.0"
+  description: "Domain Intelligence specification for Meeting Action Detection and Summarization."
+
+tasks:
+  - id: meeting.action_detection
+    type: decision
+    capability: structured_decision
+    adaptation:
+      strategy: auto
+    constraints:
+      target_f1: 0.85
+      max_latency_p95_ms: 50.0
+      max_memory_mb: 256.0
+
+  - id: meeting.summary
+    type: generation
+    capability: structured_generation
+    adaptation:
+      strategy: auto
+    constraints:
+      target_f1: 0.80
+      max_latency_p95_ms: 1500.0
+      max_memory_mb: 4096.0
+
+artifacts:
+  - id: meeting-decision.pack
+    task: meeting.action_detection
+    backends: ["deterministic", "laya", "jev"]
+
+  - id: meeting-language.pack
+    task: meeting.summary
+    backends: ["mlx", "transformers"]

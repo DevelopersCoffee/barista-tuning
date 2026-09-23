@@ -2,9 +2,9 @@ use std::collections::BTreeMap;
 
 use edge_decision::{
     assert_backend_conformance, validate_decision_input, validate_decision_item_result,
-    BooleanResult, ChoiceResult, DecisionBackend, DecisionInput, DecisionItemResult,
-    DecisionKind, DecisionOutput, DecisionQuestion, DecisionState, DecisionStatus,
-    DeterministicDecisionBackend, Probability, ScoreResult,
+    BooleanResult, ChoiceResult, DecisionBackend, DecisionInput, DecisionItemResult, DecisionKind,
+    DecisionOutput, DecisionQuestion, DecisionState, DecisionStatus, DeterministicDecisionBackend,
+    Probability, ScoreResult,
 };
 
 #[test]

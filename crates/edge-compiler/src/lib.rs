@@ -161,6 +161,9 @@ mod tests {
         };
         let res = def.validate();
         assert!(res.is_err());
-        assert!(res.unwrap_err().message.contains("requires at least one question"));
+        assert!(res
+            .unwrap_err()
+            .message
+            .contains("requires at least one question"));
     }
 }

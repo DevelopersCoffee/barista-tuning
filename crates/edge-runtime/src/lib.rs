@@ -35,7 +35,11 @@ impl DecisionBackendRegistry {
         self.backends.insert(name_str, backend);
     }
 
-    pub fn register_with_name(&mut self, name: impl Into<String>, backend: Arc<dyn DecisionBackend>) {
+    pub fn register_with_name(
+        &mut self,
+        name: impl Into<String>,
+        backend: Arc<dyn DecisionBackend>,
+    ) {
         let name_str = name.into().to_ascii_lowercase();
         self.backends.insert(name_str, backend);
     }
@@ -108,9 +112,9 @@ impl DecisionExecutionEngine {
         input: DecisionInput,
         policies: &HashMap<String, EscalationPolicy>,
     ) -> EdgeResult<DecisionBatchRouteResult> {
-        let batch_result = backend.decide(input).map_err(|e| {
-            EdgeError::new(edge_kernel::errors::EdgeErrorKind::Internal, e.message)
-        })?;
+        let batch_result = backend
+            .decide(input)
+            .map_err(|e| EdgeError::new(edge_kernel::errors::EdgeErrorKind::Internal, e.message))?;
 
         let mut items = Vec::with_capacity(batch_result.results.len());
 

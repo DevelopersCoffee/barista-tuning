@@ -22,7 +22,9 @@ pub fn validate_decision_question(question: &DecisionQuestion) -> Result<(), Dec
 
 pub fn validate_decision_input(input: &DecisionInput) -> Result<(), DecisionError> {
     if input.questions.is_empty() {
-        return Err(DecisionError::new("DecisionInput requires at least one question"));
+        return Err(DecisionError::new(
+            "DecisionInput requires at least one question",
+        ));
     }
 
     let mut seen_ids = HashSet::new();
@@ -45,7 +47,9 @@ pub fn validate_decision_item_result(
     expected_question: Option<&DecisionQuestion>,
 ) -> Result<(), DecisionError> {
     if item.question_id.trim().is_empty() {
-        return Err(DecisionError::new("DecisionItemResult question_id must not be empty"));
+        return Err(DecisionError::new(
+            "DecisionItemResult question_id must not be empty",
+        ));
     }
 
     if !(0.0..=1.0).contains(&item.confidence) {

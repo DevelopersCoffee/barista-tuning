@@ -1,0 +1,378 @@
+{"instruction": "What's the current date and time?", "input": "", "output": "<get_current_date_time>{}</get_current_date_time>"}
+{"instruction": "What time is it right now?", "input": "", "output": "<get_current_date_time>{}</get_current_date_time>"}
+{"instruction": "What is today's date?", "input": "", "output": "<get_current_date_time>{}</get_current_date_time>"}
+{"instruction": "Current timezone and time please.", "input": "", "output": "<get_current_date_time>{}</get_current_date_time>"}
+{"instruction": "Tell me what day of the week it is.", "input": "", "output": "<get_current_date_time>{}</get_current_date_time>"}
+{"instruction": "What day is today?", "input": "", "output": "<get_current_date_time>{}</get_current_date_time>"}
+{"instruction": "Check the exact local time.", "input": "", "output": "<get_current_date_time>{}</get_current_date_time>"}
+{"instruction": "Could you tell me the current time?", "input": "", "output": "<get_current_date_time>{}</get_current_date_time>"}
+{"instruction": "What's the date today?", "input": "", "output": "<get_current_date_time>{}</get_current_date_time>"}
+{"instruction": "What is the current time and day?", "input": "", "output": "<get_current_date_time>{}</get_current_date_time>"}
+{"instruction": "Tell me today's date and the weekday.", "input": "", "output": "<get_current_date_time>{}</get_current_date_time>"}
+{"instruction": "I need the current local date and time.", "input": "", "output": "<get_current_date_time>{}</get_current_date_time>"}
+{"instruction": "Can you check what time it is?", "input": "", "output": "<get_current_date_time>{}</get_current_date_time>"}
+{"instruction": "What is the present time and timezone?", "input": "", "output": "<get_current_date_time>{}</get_current_date_time>"}
+{"instruction": "Current time please.", "input": "", "output": "<get_current_date_time>{}</get_current_date_time>"}
+{"instruction": "Show current time and date.", "input": "", "output": "<get_current_date_time>{}</get_current_date_time>"}
+{"instruction": "What weekday is it today?", "input": "", "output": "<get_current_date_time>{}</get_current_date_time>"}
+{"instruction": "What's today's full date?", "input": "", "output": "<get_current_date_time>{}</get_current_date_time>"}
+{"instruction": "Check local time right now.", "input": "", "output": "<get_current_date_time>{}</get_current_date_time>"}
+{"instruction": "Give me the current timestamp.", "input": "", "output": "<get_current_date_time>{}</get_current_date_time>"}
+{"instruction": "What time and date is it at this moment?", "input": "", "output": "<get_current_date_time>{}</get_current_date_time>"}
+{"instruction": "Could you check the current date?", "input": "", "output": "<get_current_date_time>{}</get_current_date_time>"}
+{"instruction": "Tell me the time right now.", "input": "", "output": "<get_current_date_time>{}</get_current_date_time>"}
+{"instruction": "Please provide the current date and time.", "input": "", "output": "<get_current_date_time>{}</get_current_date_time>"}
+{"instruction": "Abhi kya time ho raha hai?", "input": "", "output": "<get_current_date_time>{}</get_current_date_time>"}
+{"instruction": "Aaj ki date kya hai?", "input": "", "output": "<get_current_date_time>{}</get_current_date_time>"}
+{"instruction": "Aaj kaun sa din hai?", "input": "", "output": "<get_current_date_time>{}</get_current_date_time>"}
+{"instruction": "Time kya hua hai abhi?", "input": "", "output": "<get_current_date_time>{}</get_current_date_time>"}
+{"instruction": "Samay kya hua hai?", "input": "", "output": "<get_current_date_time>{}</get_current_date_time>"}
+{"instruction": "Aaj konsi taarikh hai?", "input": "", "output": "<get_current_date_time>{}</get_current_date_time>"}
+{"instruction": "Kitne baje hain abhi?", "input": "", "output": "<get_current_date_time>{}</get_current_date_time>"}
+{"instruction": "Current date aur time batao.", "input": "", "output": "<get_current_date_time>{}</get_current_date_time>"}
+{"instruction": "Mera local time check karo.", "input": "", "output": "<get_current_date_time>{}</get_current_date_time>"}
+{"instruction": "Aaj ka din kaun sa hai batao.", "input": "", "output": "<get_current_date_time>{}</get_current_date_time>"}
+{"instruction": "Abhi kitne baj rahe hain?", "input": "", "output": "<get_current_date_time>{}</get_current_date_time>"}
+{"instruction": "Mujhe aaj ki taarikh aur samay chahiye.", "input": "", "output": "<get_current_date_time>{}</get_current_date_time>"}
+{"instruction": "Aaj ka date bataiye please.", "input": "", "output": "<get_current_date_time>{}</get_current_date_time>"}
+{"instruction": "Current timezone aur time kya hai?", "input": "", "output": "<get_current_date_time>{}</get_current_date_time>"}
+{"instruction": "Abhi exact time kya chal raha hai?", "input": "", "output": "<get_current_date_time>{}</get_current_date_time>"}
+{"instruction": "Aaj kaun sa vaar hai?", "input": "", "output": "<get_current_date_time>{}</get_current_date_time>"}
+{"instruction": "Check karo abhi kya time hai.", "input": "", "output": "<get_current_date_time>{}</get_current_date_time>"}
+{"instruction": "Batao abhi kitna baje hain.", "input": "", "output": "<get_current_date_time>{}</get_current_date_time>"}
+{"instruction": "Aaj ki date aur day confirm karo.", "input": "", "output": "<get_current_date_time>{}</get_current_date_time>"}
+{"instruction": "Kya time hua hai abhi ke waqt?", "input": "", "output": "<get_current_date_time>{}</get_current_date_time>"}
+{"instruction": "Abhi ka samay aur taarikh batao.", "input": "", "output": "<get_current_date_time>{}</get_current_date_time>"}
+{"instruction": "What's on my calendar tomorrow?", "input": "Today is Friday, 2026-10-16", "output": "<read_calendar_events>{date:2026-10-17}</read_calendar_events>"}
+{"instruction": "What events do I have scheduled for today?", "input": "Today is Friday, 2026-10-16", "output": "<read_calendar_events>{date:2026-10-16}</read_calendar_events>"}
+{"instruction": "Check my calendar for tomorrow morning.", "input": "Today is Friday, 2026-10-16", "output": "<read_calendar_events>{date:2026-10-17}</read_calendar_events>"}
+{"instruction": "Do I have any meetings tomorrow?", "input": "Today is Friday, 2026-10-16", "output": "<read_calendar_events>{date:2026-10-17}</read_calendar_events>"}
+{"instruction": "What is on my schedule for today?", "input": "Today is Friday, 2026-10-16", "output": "<read_calendar_events>{date:2026-10-16}</read_calendar_events>"}
+{"instruction": "Show my calendar events for 2026-10-20.", "input": "", "output": "<read_calendar_events>{date:2026-10-20}</read_calendar_events>"}
+{"instruction": "What do I have scheduled on 2026-10-22?", "input": "", "output": "<read_calendar_events>{date:2026-10-22}</read_calendar_events>"}
+{"instruction": "Read calendar events for 2026-11-05.", "input": "", "output": "<read_calendar_events>{date:2026-11-05}</read_calendar_events>"}
+{"instruction": "Check my agenda for 2026-10-28.", "input": "", "output": "<read_calendar_events>{date:2026-10-28}</read_calendar_events>"}
+{"instruction": "Any appointments on 2026-12-01?", "input": "", "output": "<read_calendar_events>{date:2026-12-01}</read_calendar_events>"}
+{"instruction": "Show meetings on 2026-11-15.", "input": "", "output": "<read_calendar_events>{date:2026-11-15}</read_calendar_events>"}
+{"instruction": "What is booked on 2026-10-25?", "input": "", "output": "<read_calendar_events>{date:2026-10-25}</read_calendar_events>"}
+{"instruction": "Check my schedule on 2026-10-31.", "input": "", "output": "<read_calendar_events>{date:2026-10-31}</read_calendar_events>"}
+{"instruction": "Read my schedule for 2026-11-20.", "input": "", "output": "<read_calendar_events>{date:2026-11-20}</read_calendar_events>"}
+{"instruction": "What events are listed for 2026-10-19?", "input": "", "output": "<read_calendar_events>{date:2026-10-19}</read_calendar_events>"}
+{"instruction": "Show appointments between 2026-10-20 and 2026-10-24.", "input": "", "output": "<read_calendar_events>{date:2026-10-20,end_date:2026-10-24}</read_calendar_events>"}
+{"instruction": "Check my calendar from 2026-11-01 to 2026-11-07.", "input": "", "output": "<read_calendar_events>{date:2026-11-01,end_date:2026-11-07}</read_calendar_events>"}
+{"instruction": "What meetings do I have between 2026-10-26 and 2026-10-30?", "input": "", "output": "<read_calendar_events>{date:2026-10-26,end_date:2026-10-30}</read_calendar_events>"}
+{"instruction": "List all events from 2026-11-10 to 2026-11-14.", "input": "", "output": "<read_calendar_events>{date:2026-11-10,end_date:2026-11-14}</read_calendar_events>"}
+{"instruction": "Read calendar entries between 2026-12-01 and 2026-12-05.", "input": "", "output": "<read_calendar_events>{date:2026-12-01,end_date:2026-12-05}</read_calendar_events>"}
+{"instruction": "Show schedule from 2026-10-22 to 2026-10-25.", "input": "", "output": "<read_calendar_events>{date:2026-10-22,end_date:2026-10-25}</read_calendar_events>"}
+{"instruction": "Check appointments between 2026-11-15 and 2026-11-18.", "input": "", "output": "<read_calendar_events>{date:2026-11-15,end_date:2026-11-18}</read_calendar_events>"}
+{"instruction": "Find all events on 2026-10-24.", "input": "", "output": "<read_calendar_events>{date:2026-10-24}</read_calendar_events>"}
+{"instruction": "Fetch meetings for 2026-11-02.", "input": "", "output": "<read_calendar_events>{date:2026-11-02}</read_calendar_events>"}
+{"instruction": "Kal ke meetings dikhao.", "input": "Today is Friday, 2026-10-16", "output": "<read_calendar_events>{date:2026-10-17}</read_calendar_events>"}
+{"instruction": "Aaj mera kya schedule hai calendar mein?", "input": "Today is Friday, 2026-10-16", "output": "<read_calendar_events>{date:2026-10-16}</read_calendar_events>"}
+{"instruction": "Kal calendar mein kya kya hai?", "input": "Today is Friday, 2026-10-16", "output": "<read_calendar_events>{date:2026-10-17}</read_calendar_events>"}
+{"instruction": "Mera kal ka program dikhao.", "input": "Today is Friday, 2026-10-16", "output": "<read_calendar_events>{date:2026-10-17}</read_calendar_events>"}
+{"instruction": "Aaj ke saare events check karo.", "input": "Today is Friday, 2026-10-16", "output": "<read_calendar_events>{date:2026-10-16}</read_calendar_events>"}
+{"instruction": "2026-10-20 ke events check karo.", "input": "", "output": "<read_calendar_events>{date:2026-10-20}</read_calendar_events>"}
+{"instruction": "Mera calendar check karo 2026-10-25 ke liye.", "input": "", "output": "<read_calendar_events>{date:2026-10-25}</read_calendar_events>"}
+{"instruction": "2026-11-05 ko kya plans hain?", "input": "", "output": "<read_calendar_events>{date:2026-11-05}</read_calendar_events>"}
+{"instruction": "2026-10-30 ki meeting details dikhao.", "input": "", "output": "<read_calendar_events>{date:2026-10-30}</read_calendar_events>"}
+{"instruction": "2026-11-12 ke calendar events dikhao.", "input": "", "output": "<read_calendar_events>{date:2026-11-12}</read_calendar_events>"}
+{"instruction": "Kya 2026-10-27 ko koi appointment hai?", "input": "", "output": "<read_calendar_events>{date:2026-10-27}</read_calendar_events>"}
+{"instruction": "2026-11-01 ka calendar padho.", "input": "", "output": "<read_calendar_events>{date:2026-11-01}</read_calendar_events>"}
+{"instruction": "2026-10-23 ke schedule mein kya hai?", "input": "", "output": "<read_calendar_events>{date:2026-10-23}</read_calendar_events>"}
+{"instruction": "2026-10-20 se 2026-10-25 tak ke meetings dikhao.", "input": "", "output": "<read_calendar_events>{date:2026-10-20,end_date:2026-10-25}</read_calendar_events>"}
+{"instruction": "Calendar check karo 2026-11-01 se 2026-11-06 tak.", "input": "", "output": "<read_calendar_events>{date:2026-11-01,end_date:2026-11-06}</read_calendar_events>"}
+{"instruction": "Agla hafta 2026-10-19 se 2026-10-24 tak kya events hain?", "input": "", "output": "<read_calendar_events>{date:2026-10-19,end_date:2026-10-24}</read_calendar_events>"}
+{"instruction": "Mera schedule dikhao 2026-11-10 se 2026-11-15 ke beech.", "input": "", "output": "<read_calendar_events>{date:2026-11-10,end_date:2026-11-15}</read_calendar_events>"}
+{"instruction": "2026-12-01 se 2026-12-05 tak ka calendar dikhana.", "input": "", "output": "<read_calendar_events>{date:2026-12-01,end_date:2026-12-05}</read_calendar_events>"}
+{"instruction": "2026-10-29 ke saare meetings list karo.", "input": "", "output": "<read_calendar_events>{date:2026-10-29}</read_calendar_events>"}
+{"instruction": "2026-11-08 ko kya schedule fix hai?", "input": "", "output": "<read_calendar_events>{date:2026-11-08}</read_calendar_events>"}
+{"instruction": "Calendar events dikhao 2026-10-21 ke.", "input": "", "output": "<read_calendar_events>{date:2026-10-21}</read_calendar_events>"}
+{"instruction": "Do you have access to my calendar?", "input": "", "output": "<calendar_permission_status>{}</calendar_permission_status>"}
+{"instruction": "Can you read my calendar events?", "input": "", "output": "<calendar_permission_status>{}</calendar_permission_status>"}
+{"instruction": "Check calendar permission status.", "input": "", "output": "<calendar_permission_status>{}</calendar_permission_status>"}
+{"instruction": "Is calendar access granted?", "input": "", "output": "<calendar_permission_status>{}</calendar_permission_status>"}
+{"instruction": "Do I have calendar reading enabled?", "input": "", "output": "<calendar_permission_status>{}</calendar_permission_status>"}
+{"instruction": "Check if calendar permission is active.", "input": "", "output": "<calendar_permission_status>{}</calendar_permission_status>"}
+{"instruction": "Are you allowed to read my calendar?", "input": "", "output": "<calendar_permission_status>{}</calendar_permission_status>"}
+{"instruction": "Can you view my calendar appointments?", "input": "", "output": "<calendar_permission_status>{}</calendar_permission_status>"}
+{"instruction": "Verify my calendar permissions.", "input": "", "output": "<calendar_permission_status>{}</calendar_permission_status>"}
+{"instruction": "Check whether calendar access has been permitted.", "input": "", "output": "<calendar_permission_status>{}</calendar_permission_status>"}
+{"instruction": "Do you possess calendar read permissions?", "input": "", "output": "<calendar_permission_status>{}</calendar_permission_status>"}
+{"instruction": "Is calendar read privilege available?", "input": "", "output": "<calendar_permission_status>{}</calendar_permission_status>"}
+{"instruction": "Check if you have calendar access rights.", "input": "", "output": "<calendar_permission_status>{}</calendar_permission_status>"}
+{"instruction": "Can this assistant access device calendar?", "input": "", "output": "<calendar_permission_status>{}</calendar_permission_status>"}
+{"instruction": "Tell me my calendar permission state.", "input": "", "output": "<calendar_permission_status>{}</calendar_permission_status>"}
+{"instruction": "Is calendar access enabled right now?", "input": "", "output": "<calendar_permission_status>{}</calendar_permission_status>"}
+{"instruction": "Do you have authorization to read calendar?", "input": "", "output": "<calendar_permission_status>{}</calendar_permission_status>"}
+{"instruction": "Check calendar access authorization.", "input": "", "output": "<calendar_permission_status>{}</calendar_permission_status>"}
+{"instruction": "Can you see my schedule permissions?", "input": "", "output": "<calendar_permission_status>{}</calendar_permission_status>"}
+{"instruction": "Is reading calendar permitted on this device?", "input": "", "output": "<calendar_permission_status>{}</calendar_permission_status>"}
+{"instruction": "Check if calendar permission was granted by user.", "input": "", "output": "<calendar_permission_status>{}</calendar_permission_status>"}
+{"instruction": "Has calendar permission been provided?", "input": "", "output": "<calendar_permission_status>{}</calendar_permission_status>"}
+{"instruction": "Check my calendar access state.", "input": "", "output": "<calendar_permission_status>{}</calendar_permission_status>"}
+{"instruction": "Kya tumhe mere calendar ka access hai?", "input": "", "output": "<calendar_permission_status>{}</calendar_permission_status>"}
+{"instruction": "Calendar permission status check karo.", "input": "", "output": "<calendar_permission_status>{}</calendar_permission_status>"}
+{"instruction": "Kya calendar read karne ki permission mili hui hai?", "input": "", "output": "<calendar_permission_status>{}</calendar_permission_status>"}
+{"instruction": "Calendar access allow hai ya nahi?", "input": "", "output": "<calendar_permission_status>{}</calendar_permission_status>"}
+{"instruction": "Permission status kya hai calendar ka?", "input": "", "output": "<calendar_permission_status>{}</calendar_permission_status>"}
+{"instruction": "Check karo kya app calendar padh sakti hai?", "input": "", "output": "<calendar_permission_status>{}</calendar_permission_status>"}
+{"instruction": "Calendar permission enable hai kya?", "input": "", "output": "<calendar_permission_status>{}</calendar_permission_status>"}
+{"instruction": "Tumhare paas calendar dekhne ki permission hai?", "input": "", "output": "<calendar_permission_status>{}</calendar_permission_status>"}
+{"instruction": "Batao calendar access mila hai ya nahi.", "input": "", "output": "<calendar_permission_status>{}</calendar_permission_status>"}
+{"instruction": "Calendar read permission check karke batao.", "input": "", "output": "<calendar_permission_status>{}</calendar_permission_status>"}
+{"instruction": "Kya calendar dekhne ki permission on hai?", "input": "", "output": "<calendar_permission_status>{}</calendar_permission_status>"}
+{"instruction": "Calendar permission grant hui hai ya deny?", "input": "", "output": "<calendar_permission_status>{}</calendar_permission_status>"}
+{"instruction": "Mere calendar ka permission status kya hai?", "input": "", "output": "<calendar_permission_status>{}</calendar_permission_status>"}
+{"instruction": "Check karo calendar access hai ya nahi.", "input": "", "output": "<calendar_permission_status>{}</calendar_permission_status>"}
+{"instruction": "Calendar reading allowed hai kya?", "input": "", "output": "<calendar_permission_status>{}</calendar_permission_status>"}
+{"instruction": "Kya main tumhe calendar access de chuka hoon?", "input": "", "output": "<calendar_permission_status>{}</calendar_permission_status>"}
+{"instruction": "Device calendar permission verify karo.", "input": "", "output": "<calendar_permission_status>{}</calendar_permission_status>"}
+{"instruction": "Calendar permission ka halat kya hai?", "input": "", "output": "<calendar_permission_status>{}</calendar_permission_status>"}
+{"instruction": "Calendar allow kiya hua hai kya maine?", "input": "", "output": "<calendar_permission_status>{}</calendar_permission_status>"}
+{"instruction": "Kya assistant calendar events access kar sakta hai?", "input": "", "output": "<calendar_permission_status>{}</calendar_permission_status>"}
+{"instruction": "Calendar permission status bata do.", "input": "", "output": "<calendar_permission_status>{}</calendar_permission_status>"}
+{"instruction": "Check kijiye calendar access hai ya nahi.", "input": "", "output": "<calendar_permission_status>{}</calendar_permission_status>"}
+{"instruction": "How many steps have I walked today?", "input": "", "output": "<query_lifetrack_status>{query:How many steps have I walked today?}</query_lifetrack_status>"}
+{"instruction": "Did I reach my daily water intake goal?", "input": "", "output": "<query_lifetrack_status>{query:Did I reach my daily water intake goal?}</query_lifetrack_status>"}
+{"instruction": "What's my reading goal progress this week?", "input": "", "output": "<query_lifetrack_status>{query:What's my reading goal progress this week?}</query_lifetrack_status>"}
+{"instruction": "How many hours did I sleep last night?", "input": "", "output": "<query_lifetrack_status>{query:How many hours did I sleep last night?}</query_lifetrack_status>"}
+{"instruction": "Did I hit my 10,000 steps target today?", "input": "", "output": "<query_lifetrack_status>{query:Did I hit my 10,000 steps target today?}</query_lifetrack_status>"}
+{"instruction": "What is my current savings goal status?", "input": "", "output": "<query_lifetrack_status>{query:What is my current savings goal status?}</query_lifetrack_status>"}
+{"instruction": "How much money have I saved this month on LifeTrack?", "input": "", "output": "<query_lifetrack_status>{query:How much money have I saved this month on LifeTrack?}</query_lifetrack_status>"}
+{"instruction": "Did I complete my gym workout goal today?", "input": "", "output": "<query_lifetrack_status>{query:Did I complete my gym workout goal today?}</query_lifetrack_status>"}
+{"instruction": "Check my meditation streak status.", "input": "", "output": "<query_lifetrack_status>{query:Check my meditation streak status.}</query_lifetrack_status>"}
+{"instruction": "How many calories have I burned so far?", "input": "", "output": "<query_lifetrack_status>{query:How many calories have I burned so far?}</query_lifetrack_status>"}
+{"instruction": "What is my progress on the marathon goal?", "input": "", "output": "<query_lifetrack_status>{query:What is my progress on the marathon goal?}</query_lifetrack_status>"}
+{"instruction": "Did I finish my 30 minutes reading target?", "input": "", "output": "<query_lifetrack_status>{query:Did I finish my 30 minutes reading target?}</query_lifetrack_status>"}
+{"instruction": "What is my water drinking progress today?", "input": "", "output": "<query_lifetrack_status>{query:What is my water drinking progress today?}</query_lifetrack_status>"}
+{"instruction": "Check my status on the coding challenge habit.", "input": "", "output": "<query_lifetrack_status>{query:Check my status on the coding challenge habit.}</query_lifetrack_status>"}
+{"instruction": "How many glasses of water did I drink today?", "input": "", "output": "<query_lifetrack_status>{query:How many glasses of water did I drink today?}</query_lifetrack_status>"}
+{"instruction": "What's my sleep score and total hours?", "input": "", "output": "<query_lifetrack_status>{query:What's my sleep score and total hours?}</query_lifetrack_status>"}
+{"instruction": "Am I on track for my monthly investment goal?", "input": "", "output": "<query_lifetrack_status>{query:Am I on track for my monthly investment goal?}</query_lifetrack_status>"}
+{"instruction": "How close am I to reaching my 5km run goal?", "input": "", "output": "<query_lifetrack_status>{query:How close am I to reaching my 5km run goal?}</query_lifetrack_status>"}
+{"instruction": "Check progress on my daily pushups challenge.", "input": "", "output": "<query_lifetrack_status>{query:Check progress on my daily pushups challenge.}</query_lifetrack_status>"}
+{"instruction": "What is my study goal status for today?", "input": "", "output": "<query_lifetrack_status>{query:What is my study goal status for today?}</query_lifetrack_status>"}
+{"instruction": "Did I achieve my intermittent fasting goal?", "input": "", "output": "<query_lifetrack_status>{query:Did I achieve my intermittent fasting goal?}</query_lifetrack_status>"}
+{"instruction": "How many active minutes did I log today?", "input": "", "output": "<query_lifetrack_status>{query:How many active minutes did I log today?}</query_lifetrack_status>"}
+{"instruction": "Show my progress on the yoga habit.", "input": "", "output": "<query_lifetrack_status>{query:Show my progress on the yoga habit.}</query_lifetrack_status>"}
+{"instruction": "Aaj kitne steps chale maine?", "input": "", "output": "<query_lifetrack_status>{query:Aaj kitne steps chale maine?}</query_lifetrack_status>"}
+{"instruction": "Paani peene ka goal complete hua kya aaj?", "input": "", "output": "<query_lifetrack_status>{query:Paani peene ka goal complete hua kya aaj?}</query_lifetrack_status>"}
+{"instruction": "Mera gym workout goal kaisa chal raha hai?", "input": "", "output": "<query_lifetrack_status>{query:Mera gym workout goal kaisa chal raha hai?}</query_lifetrack_status>"}
+{"instruction": "Kal raat kitne ghante soye the?", "input": "", "output": "<query_lifetrack_status>{query:Kal raat kitne ghante soye the?}</query_lifetrack_status>"}
+{"instruction": "Aaj 10,000 steps poore hue ya nahi?", "input": "", "output": "<query_lifetrack_status>{query:Aaj 10,000 steps poore hue ya nahi?}</query_lifetrack_status>"}
+{"instruction": "Mera savings target kaisa chal raha hai?", "input": "", "output": "<query_lifetrack_status>{query:Mera savings target kaisa chal raha hai?}</query_lifetrack_status>"}
+{"instruction": "Kitne glass paani piya maine aaj?", "input": "", "output": "<query_lifetrack_status>{query:Kitne glass paani piya maine aaj?}</query_lifetrack_status>"}
+{"instruction": "Reading goal ka progress kitna hua iss hafte?", "input": "", "output": "<query_lifetrack_status>{query:Reading goal ka progress kitna hua iss hafte?}</query_lifetrack_status>"}
+{"instruction": "Aaj ka meditation status kya hai?", "input": "", "output": "<query_lifetrack_status>{query:Aaj ka meditation status kya hai?}</query_lifetrack_status>"}
+{"instruction": "Kya mera walking goal poora ho gaya?", "input": "", "output": "<query_lifetrack_status>{query:Kya mera walking goal poora ho gaya?}</query_lifetrack_status>"}
+{"instruction": "LifeTrack par running goal kitna bacha hai?", "input": "", "output": "<query_lifetrack_status>{query:LifeTrack par running goal kitna bacha hai?}</query_lifetrack_status>"}
+{"instruction": "Calorie burn karne ka status dikhao.", "input": "", "output": "<query_lifetrack_status>{query:Calorie burn karne ka status dikhao.}</query_lifetrack_status>"}
+{"instruction": "Aaj ka study target hit hua kya?", "input": "", "output": "<query_lifetrack_status>{query:Aaj ka study target hit hua kya?}</query_lifetrack_status>"}
+{"instruction": "Bachat ka target kitna percent poora hua?", "input": "", "output": "<query_lifetrack_status>{query:Bachat ka target kitna percent poora hua?}</query_lifetrack_status>"}
+{"instruction": "Water intake goal mein kitna paani baki hai?", "input": "", "output": "<query_lifetrack_status>{query:Water intake goal mein kitna paani baki hai?}</query_lifetrack_status>"}
+{"instruction": "Sleep hours kitne record hue kal raat ke?", "input": "", "output": "<query_lifetrack_status>{query:Sleep hours kitne record hue kal raat ke?}</query_lifetrack_status>"}
+{"instruction": "Pushups challenge ka status check karo.", "input": "", "output": "<query_lifetrack_status>{query:Pushups challenge ka status check karo.}</query_lifetrack_status>"}
+{"instruction": "Coding practice streak kitni chal rahi hai?", "input": "", "output": "<query_lifetrack_status>{query:Coding practice streak kitni chal rahi hai?}</query_lifetrack_status>"}
+{"instruction": "Aaj ka exercise goal complete hua ya baki hai?", "input": "", "output": "<query_lifetrack_status>{query:Aaj ka exercise goal complete hua ya baki hai?}</query_lifetrack_status>"}
+{"instruction": "Weight loss goal ka current status batao.", "input": "", "output": "<query_lifetrack_status>{query:Weight loss goal ka current status batao.}</query_lifetrack_status>"}
+{"instruction": "Mera weekly fitness goal kaisa chal raha hai?", "input": "", "output": "<query_lifetrack_status>{query:Mera weekly fitness goal kaisa chal raha hai?}</query_lifetrack_status>"}
+{"instruction": "Kitna distance run kiya maine iss hafte?", "input": "", "output": "<query_lifetrack_status>{query:Kitna distance run kiya maine iss hafte?}</query_lifetrack_status>"}
+{"instruction": "Show my budget.", "input": "", "output": "<open_route>{target:budget}</open_route>"}
+{"instruction": "Open my budget planner screen.", "input": "", "output": "<open_route>{target:budget}</open_route>"}
+{"instruction": "View my monthly budget.", "input": "", "output": "<open_route>{target:budget}</open_route>"}
+{"instruction": "Check budget dashboard.", "input": "", "output": "<open_route>{target:budget}</open_route>"}
+{"instruction": "Show my expenses.", "input": "", "output": "<open_route>{target:expenses}</open_route>"}
+{"instruction": "Track my daily expenses.", "input": "", "output": "<open_route>{target:expenses}</open_route>"}
+{"instruction": "Open the expense tracker.", "input": "", "output": "<open_route>{target:expenses}</open_route>"}
+{"instruction": "View all expenses.", "input": "", "output": "<open_route>{target:expenses}</open_route>"}
+{"instruction": "Split a bill.", "input": "", "output": "<open_route>{target:split}</open_route>"}
+{"instruction": "Split the dinner check with friends.", "input": "", "output": "<open_route>{target:split}</open_route>"}
+{"instruction": "Open the bill split calculator.", "input": "", "output": "<open_route>{target:split}</open_route>"}
+{"instruction": "Divide expenses with roommates.", "input": "", "output": "<open_route>{target:split}</open_route>"}
+{"instruction": "Open money manager.", "input": "", "output": "<open_route>{target:money}</open_route>"}
+{"instruction": "Show my money overview.", "input": "", "output": "<open_route>{target:money}</open_route>"}
+{"instruction": "Take me to financial money screen.", "input": "", "output": "<open_route>{target:money}</open_route>"}
+{"instruction": "Go to assistant settings.", "input": "", "output": "<open_route>{target:assistant}</open_route>"}
+{"instruction": "Open assistant panel.", "input": "", "output": "<open_route>{target:assistant}</open_route>"}
+{"instruction": "Navigate to assistant route.", "input": "", "output": "<open_route>{target:assistant}</open_route>"}
+{"instruction": "Open models screen.", "input": "", "output": "<open_route>{target:models}</open_route>"}
+{"instruction": "Show downloaded AI models.", "input": "", "output": "<open_route>{target:models}</open_route>"}
+{"instruction": "Open model library screen.", "input": "", "output": "<open_route>{target:models}</open_route>"}
+{"instruction": "open music", "input": "", "output": "<open_route>{target:music}</open_route>"}
+{"instruction": "play music", "input": "", "output": "<open_route>{target:music}</open_route>"}
+{"instruction": "Open music player.", "input": "", "output": "<open_route>{target:music}</open_route>"}
+{"instruction": "Start beats audio music.", "input": "", "output": "<open_route>{target:music}</open_route>"}
+{"instruction": "Switch to TV mode.", "input": "", "output": "<open_route>{target:tv}</open_route>"}
+{"instruction": "Open live TV.", "input": "", "output": "<open_route>{target:tv}</open_route>"}
+{"instruction": "Watch TV channels.", "input": "", "output": "<open_route>{target:tv}</open_route>"}
+{"instruction": "Let's play games.", "input": "", "output": "<open_route>{target:games}</open_route>"}
+{"instruction": "Open the games section.", "input": "", "output": "<open_route>{target:games}</open_route>"}
+{"instruction": "Launch mini games.", "input": "", "output": "<open_route>{target:games}</open_route>"}
+{"instruction": "play chess", "input": "", "output": "<open_route>{target:chess}</open_route>"}
+{"instruction": "Start a chess game.", "input": "", "output": "<open_route>{target:chess}</open_route>"}
+{"instruction": "Open chess board.", "input": "", "output": "<open_route>{target:chess}</open_route>"}
+{"instruction": "Start a new quest.", "input": "", "output": "<open_route>{target:quest}</open_route>"}
+{"instruction": "Open quest dashboard.", "input": "", "output": "<open_route>{target:quest}</open_route>"}
+{"instruction": "View my active quests.", "input": "", "output": "<open_route>{target:quest}</open_route>"}
+{"instruction": "Mera budget dikhao.", "input": "", "output": "<open_route>{target:budget}</open_route>"}
+{"instruction": "Kharcha screen kholo.", "input": "", "output": "<open_route>{target:expenses}</open_route>"}
+{"instruction": "Doston ke saath bill baanto.", "input": "", "output": "<open_route>{target:split}</open_route>"}
+{"instruction": "Paisa dashboard open karo.", "input": "", "output": "<open_route>{target:money}</open_route>"}
+{"instruction": "Assistant ki settings mein le jao.", "input": "", "output": "<open_route>{target:assistant}</open_route>"}
+{"instruction": "Models wali library screen kholo.", "input": "", "output": "<open_route>{target:models}</open_route>"}
+{"instruction": "Gaana sunna hai music chalao.", "input": "", "output": "<open_route>{target:music}</open_route>"}
+{"instruction": "TV screen open karo.", "input": "", "output": "<open_route>{target:tv}</open_route>"}
+{"instruction": "Games khelna hai kholo.", "input": "", "output": "<open_route>{target:games}</open_route>"}
+{"instruction": "Chess khelna hai mujhe.", "input": "", "output": "<open_route>{target:chess}</open_route>"}
+{"instruction": "Quest list dikhao.", "input": "", "output": "<open_route>{target:quest}</open_route>"}
+{"instruction": "Remind me at 7:30 to take the medicine", "input": "", "output": "<schedule_notification>{title:Medicine,message:Take the medicine,hour:7,minute:30,repeat_daily:true}</schedule_notification>"}
+{"instruction": "Remind me at 14:00 to call mom.", "input": "", "output": "<schedule_notification>{title:Call Mom,message:Call mom,hour:14,minute:0}</schedule_notification>"}
+{"instruction": "Set a reminder at 9:15 to submit project report.", "input": "", "output": "<schedule_notification>{title:Submit Report,message:Submit project report,hour:9,minute:15}</schedule_notification>"}
+{"instruction": "Remind me every day at 8:00 to drink water.", "input": "", "output": "<schedule_notification>{title:Drink Water,message:Drink water,hour:8,minute:0,repeat_daily:true}</schedule_notification>"}
+{"instruction": "Daily reminder at 21:00 to read a book.", "input": "", "output": "<schedule_notification>{title:Read Book,message:Read a book,hour:21,minute:0,repeat_daily:true}</schedule_notification>"}
+{"instruction": "Remind me every morning at 6:30 for morning walk.", "input": "", "output": "<schedule_notification>{title:Morning Walk,message:Morning walk,hour:6,minute:30,repeat_daily:true}</schedule_notification>"}
+{"instruction": "Set notification at 17:45 for evening meeting.", "input": "", "output": "<schedule_notification>{title:Meeting,message:Evening meeting,hour:17,minute:45}</schedule_notification>"}
+{"instruction": "Remind me on 2026-10-25 at 16:30 for dentist appointment.", "input": "", "output": "<schedule_notification>{title:Dentist Appointment,message:Dentist appointment,hour:16,minute:30,date:2026-10-25}</schedule_notification>"}
+{"instruction": "Set a reminder on 2026-11-04 at 11:00 to pay electric bill.", "input": "", "output": "<schedule_notification>{title:Pay Bill,message:Pay electric bill,hour:11,minute:0,date:2026-11-04}</schedule_notification>"}
+{"instruction": "Schedule reminder on 2026-10-30 at 10:00 for team sprint demo.", "input": "", "output": "<schedule_notification>{title:Sprint Demo,message:Team sprint demo,hour:10,minute:0,date:2026-10-30}</schedule_notification>"}
+{"instruction": "Remind me at 12:30 to take lunch.", "input": "", "output": "<schedule_notification>{title:Lunch,message:Take lunch,hour:12,minute:30}</schedule_notification>"}
+{"instruction": "Set an alert for 15:00 to review pull request.", "input": "", "output": "<schedule_notification>{title:Review PR,message:Review pull request,hour:15,minute:0}</schedule_notification>"}
+{"instruction": "Notify me at 19:00 to pick up groceries.", "input": "", "output": "<schedule_notification>{title:Groceries,message:Pick up groceries,hour:19,minute:0}</schedule_notification>"}
+{"instruction": "Remind me at 22:00 every night to turn off lights.", "input": "", "output": "<schedule_notification>{title:Turn Off Lights,message:Turn off lights,hour:22,minute:0,repeat_daily:true}</schedule_notification>"}
+{"instruction": "Daily alert at 7:00 to take vitamins.", "input": "", "output": "<schedule_notification>{title:Vitamins,message:Take vitamins,hour:7,minute:0,repeat_daily:true}</schedule_notification>"}
+{"instruction": "Remind me tomorrow at 8:30 to water plants.", "input": "Today is Friday, 2026-10-16", "output": "<schedule_notification>{title:Water Plants,message:Water plants,hour:8,minute:30,date:2026-10-17}</schedule_notification>"}
+{"instruction": "Wake me up tomorrow at 6:00.", "input": "Today is Friday, 2026-10-16", "output": "<schedule_notification>{title:Wake Up,message:Wake up,hour:6,minute:0,date:2026-10-17}</schedule_notification>"}
+{"instruction": "Remind me at 13:15 to reply to client email.", "input": "", "output": "<schedule_notification>{title:Client Email,message:Reply to client email,hour:13,minute:15}</schedule_notification>"}
+{"instruction": "Set reminder at 20:00 for yoga class.", "input": "", "output": "<schedule_notification>{title:Yoga Class,message:Yoga class,hour:20,minute:0}</schedule_notification>"}
+{"instruction": "Remind me on 2026-11-15 at 18:00 for flight checkin.", "input": "", "output": "<schedule_notification>{title:Flight Checkin,message:Flight checkin,hour:18,minute:0,date:2026-11-15}</schedule_notification>"}
+{"instruction": "Alert me at 16:15 to drink green tea.", "input": "", "output": "<schedule_notification>{title:Green Tea,message:Drink green tea,hour:16,minute:15}</schedule_notification>"}
+{"instruction": "Remind me every day at 12:00 to take a break.", "input": "", "output": "<schedule_notification>{title:Break,message:Take a break,hour:12,minute:0,repeat_daily:true}</schedule_notification>"}
+{"instruction": "Schedule notification at 23:00 to sleep.", "input": "", "output": "<schedule_notification>{title:Sleep,message:Time to sleep,hour:23,minute:0}</schedule_notification>"}
+{"instruction": "Roz subah 7 baje dawa lene ka reminder lagao.", "input": "", "output": "<schedule_notification>{title:Medicine,message:Dawa lena,hour:7,minute:0,repeat_daily:true}</schedule_notification>"}
+{"instruction": "Subah 6 baje jagao gym ke liye.", "input": "", "output": "<schedule_notification>{title:Gym,message:Gym ke liye uthna,hour:6,minute:0}</schedule_notification>"}
+{"instruction": "Raat ko 10 baje reminder do kitab padhne ka.", "input": "", "output": "<schedule_notification>{title:Reading,message:Kitab padhna,hour:22,minute:0}</schedule_notification>"}
+{"instruction": "Dopahar 2 baje meeting ka notification set karo.", "input": "", "output": "<schedule_notification>{title:Meeting,message:Meeting time,hour:14,minute:0}</schedule_notification>"}
+{"instruction": "Roz raat 11 baje sone ka reminder lagao.", "input": "", "output": "<schedule_notification>{title:Sleep,message:Sone ka waqt,hour:23,minute:0,repeat_daily:true}</schedule_notification>"}
+{"instruction": "Shaam 5:30 par chai peene ka reminder do.", "input": "", "output": "<schedule_notification>{title:Tea Break,message:Chai peena,hour:17,minute:30}</schedule_notification>"}
+{"instruction": "Roz subah 8:00 baje exercise ka reminder set karo.", "input": "", "output": "<schedule_notification>{title:Exercise,message:Exercise time,hour:8,minute:0,repeat_daily:true}</schedule_notification>"}
+{"instruction": "Kal subah 9 baje bill pay karne ka reminder lagana.", "input": "Today is Friday, 2026-10-16", "output": "<schedule_notification>{title:Pay Bill,message:Bill payment,hour:9,minute:0,date:2026-10-17}</schedule_notification>"}
+{"instruction": "2026-10-25 ko dopahar 3 baje car service ka reminder lagao.", "input": "", "output": "<schedule_notification>{title:Car Service,message:Car servicing,hour:15,minute:0,date:2026-10-25}</schedule_notification>"}
+{"instruction": "Har roz shaam 6 baje walk par jaane ka notification do.", "input": "", "output": "<schedule_notification>{title:Walk,message:Evening walk,hour:18,minute:0,repeat_daily:true}</schedule_notification>"}
+{"instruction": "Subah 7:45 baje office nikalne ka alert lagao.", "input": "", "output": "<schedule_notification>{title:Office,message:Office nikalna,hour:7,minute:45}</schedule_notification>"}
+{"instruction": "Roz dopahar 1 baje lunch karne ka reminder set karo.", "input": "", "output": "<schedule_notification>{title:Lunch,message:Lunch time,hour:13,minute:0,repeat_daily:true}</schedule_notification>"}
+{"instruction": "Shaam 7 baje sabzi lane ka reminder set karo.", "input": "", "output": "<schedule_notification>{title:Groceries,message:Sabzi lana,hour:19,minute:0}</schedule_notification>"}
+{"instruction": "Raat 9:30 par walk karne ka reminder do.", "input": "", "output": "<schedule_notification>{title:Night Walk,message:Walk karna,hour:21,minute:30}</schedule_notification>"}
+{"instruction": "2026-11-01 ko subah 10 baje rent dene ka reminder lagao.", "input": "", "output": "<schedule_notification>{title:Rent,message:Pay rent,hour:10,minute:0,date:2026-11-01}</schedule_notification>"}
+{"instruction": "Kal shaam 4 baje doctor visit ka reminder do.", "input": "Today is Friday, 2026-10-16", "output": "<schedule_notification>{title:Doctor,message:Doctor appointment,hour:16,minute:0,date:2026-10-17}</schedule_notification>"}
+{"instruction": "Roz subah 5:30 baje dhyan karne ka reminder set karo.", "input": "", "output": "<schedule_notification>{title:Meditation,message:Meditation time,hour:5,minute:30,repeat_daily:true}</schedule_notification>"}
+{"instruction": "Dopahar 3:15 baje code review ka reminder set karna.", "input": "", "output": "<schedule_notification>{title:Code Review,message:Review code,hour:15,minute:15}</schedule_notification>"}
+{"instruction": "Shaam 8 baje paani peene ka reminder do.", "input": "", "output": "<schedule_notification>{title:Drink Water,message:Paani peena,hour:20,minute:0}</schedule_notification>"}
+{"instruction": "Kal subah 7 baje airport nikalne ka reminder lagao.", "input": "Today is Friday, 2026-10-16", "output": "<schedule_notification>{title:Airport,message:Airport departure,hour:7,minute:0,date:2026-10-17}</schedule_notification>"}
+{"instruction": "Har roz raat 10 baje diary likhne ka alert lagao.", "input": "", "output": "<schedule_notification>{title:Diary,message:Diary likhna,hour:22,minute:0,repeat_daily:true}</schedule_notification>"}
+{"instruction": "Subah 8:15 baje call karne ka reminder set karo.", "input": "", "output": "<schedule_notification>{title:Call,message:Phone call,hour:8,minute:15}</schedule_notification>"}
+{"instruction": "I drank 500ml of water just now.", "input": "", "output": "<record_lifetrack_facts>{query:I drank 500ml of water just now.}</record_lifetrack_facts>"}
+{"instruction": "Logged 30 minutes of cardio workout.", "input": "", "output": "<record_lifetrack_facts>{query:Logged 30 minutes of cardio workout.}</record_lifetrack_facts>"}
+{"instruction": "I read 15 pages of Atomic Habits today.", "input": "", "output": "<record_lifetrack_facts>{query:I read 15 pages of Atomic Habits today.}</record_lifetrack_facts>"}
+{"instruction": "Completed 45 pushups this morning.", "input": "", "output": "<record_lifetrack_facts>{query:Completed 45 pushups this morning.}</record_lifetrack_facts>"}
+{"instruction": "Slept 8 hours last night peacefully.", "input": "", "output": "<record_lifetrack_facts>{query:Slept 8 hours last night peacefully.}</record_lifetrack_facts>"}
+{"instruction": "Walked 7,200 steps so far today.", "input": "", "output": "<record_lifetrack_facts>{query:Walked 7,200 steps so far today.}</record_lifetrack_facts>"}
+{"instruction": "I saved 200 dollars into my emergency savings.", "input": "", "output": "<record_lifetrack_facts>{query:I saved 200 dollars into my emergency savings.}</record_lifetrack_facts>"}
+{"instruction": "Had a healthy salad bowl with 400 calories.", "input": "", "output": "<record_lifetrack_facts>{query:Had a healthy salad bowl with 400 calories.}</record_lifetrack_facts>"}
+{"instruction": "Finished chapter 4 of my psychology book.", "input": "", "output": "<record_lifetrack_facts>{query:Finished chapter 4 of my psychology book.}</record_lifetrack_facts>"}
+{"instruction": "Meditated for 20 minutes before breakfast.", "input": "", "output": "<record_lifetrack_facts>{query:Meditated for 20 minutes before breakfast.}</record_lifetrack_facts>"}
+{"instruction": "Completed 5km morning run in 28 minutes.", "input": "", "output": "<record_lifetrack_facts>{query:Completed 5km morning run in 28 minutes.}</record_lifetrack_facts>"}
+{"instruction": "Drank 1 liter bottle of water.", "input": "", "output": "<record_lifetrack_facts>{query:Drank 1 liter bottle of water.}</record_lifetrack_facts>"}
+{"instruction": "Did 50 squats and 30 lunges at the gym.", "input": "", "output": "<record_lifetrack_facts>{query:Did 50 squats and 30 lunges at the gym.}</record_lifetrack_facts>"}
+{"instruction": "Recorded 7 hours and 45 minutes of deep sleep.", "input": "", "output": "<record_lifetrack_facts>{query:Recorded 7 hours and 45 minutes of deep sleep.}</record_lifetrack_facts>"}
+{"instruction": "Logged 10,500 steps for the evening walk.", "input": "", "output": "<record_lifetrack_facts>{query:Logged 10,500 steps for the evening walk.}</record_lifetrack_facts>"}
+{"instruction": "Deposited 50 dollars into mutual fund.", "input": "", "output": "<record_lifetrack_facts>{query:Deposited 50 dollars into mutual fund.}</record_lifetrack_facts>"}
+{"instruction": "Read 30 minutes of financial news.", "input": "", "output": "<record_lifetrack_facts>{query:Read 30 minutes of financial news.}</record_lifetrack_facts>"}
+{"instruction": "Ate oatmeal and fruits for breakfast.", "input": "", "output": "<record_lifetrack_facts>{query:Ate oatmeal and fruits for breakfast.}</record_lifetrack_facts>"}
+{"instruction": "Did 15 minutes of stretching exercises.", "input": "", "output": "<record_lifetrack_facts>{query:Did 15 minutes of stretching exercises.}</record_lifetrack_facts>"}
+{"instruction": "Walked 3 miles around the neighborhood park.", "input": "", "output": "<record_lifetrack_facts>{query:Walked 3 miles around the neighborhood park.}</record_lifetrack_facts>"}
+{"instruction": "Drank 2 glasses of warm water.", "input": "", "output": "<record_lifetrack_facts>{query:Drank 2 glasses of warm water.}</record_lifetrack_facts>"}
+{"instruction": "Finished studying 2 lectures on machine learning.", "input": "", "output": "<record_lifetrack_facts>{query:Finished studying 2 lectures on machine learning.}</record_lifetrack_facts>"}
+{"instruction": "Did 35 pullups in total today.", "input": "", "output": "<record_lifetrack_facts>{query:Did 35 pullups in total today.}</record_lifetrack_facts>"}
+{"instruction": "Maine aaj 2 litre paani piya.", "input": "", "output": "<record_lifetrack_facts>{query:Maine aaj 2 litre paani piya.}</record_lifetrack_facts>"}
+{"instruction": "Aaj 10,000 steps complete ho gaye mere.", "input": "", "output": "<record_lifetrack_facts>{query:Aaj 10,000 steps complete ho gaye mere.}</record_lifetrack_facts>"}
+{"instruction": "Subah 45 minute gym kiya tha.", "input": "", "output": "<record_lifetrack_facts>{query:Subah 45 minute gym kiya tha.}</record_lifetrack_facts>"}
+{"instruction": "Raat ko 8 ghante achhi neend aayi.", "input": "", "output": "<record_lifetrack_facts>{query:Raat ko 8 ghante achhi neend aayi.}</record_lifetrack_facts>"}
+{"instruction": "Maine aaj 500 rupaye bachat account mein daale.", "input": "", "output": "<record_lifetrack_facts>{query:Maine aaj 500 rupaye bachat account mein daale.}</record_lifetrack_facts>"}
+{"instruction": "Book ke 20 panne padh liye maine.", "input": "", "output": "<record_lifetrack_facts>{query:Book ke 20 panne padh liye maine.}</record_lifetrack_facts>"}
+{"instruction": "15 minute meditation kiya subah.", "input": "", "output": "<record_lifetrack_facts>{query:15 minute meditation kiya subah.}</record_lifetrack_facts>"}
+{"instruction": "Aaj shaam ko 4 kilometer dauda hoon.", "input": "", "output": "<record_lifetrack_facts>{query:Aaj shaam ko 4 kilometer dauda hoon.}</record_lifetrack_facts>"}
+{"instruction": "Do glass paani piya abhi abhi.", "input": "", "output": "<record_lifetrack_facts>{query:Do glass paani piya abhi abhi.}</record_lifetrack_facts>"}
+{"instruction": "Gym mein 50 pushups lagaye aaj.", "input": "", "output": "<record_lifetrack_facts>{query:Gym mein 50 pushups lagaye aaj.}</record_lifetrack_facts>"}
+{"instruction": "7 ghante 30 minute soya kal raat.", "input": "", "output": "<record_lifetrack_facts>{query:7 ghante 30 minute soya kal raat.}</record_lifetrack_facts>"}
+{"instruction": "8500 steps chal liye aaj din bhar mein.", "input": "", "output": "<record_lifetrack_facts>{query:8500 steps chal liye aaj din bhar mein.}</record_lifetrack_facts>"}
+{"instruction": "Aaj lunch mein 500 calories ka khana khaya.", "input": "", "output": "<record_lifetrack_facts>{query:Aaj lunch mein 500 calories ka khana khaya.}</record_lifetrack_facts>"}
+{"instruction": "Chapter 3 complete kar liya economics ka.", "input": "", "output": "<record_lifetrack_facts>{query:Chapter 3 complete kar liya economics ka.}</record_lifetrack_facts>"}
+{"instruction": "1000 rupaye ki saving ki aaj.", "input": "", "output": "<record_lifetrack_facts>{query:1000 rupaye ki saving ki aaj.}</record_lifetrack_facts>"}
+{"instruction": "20 minute yoga kiya subah subah.", "input": "", "output": "<record_lifetrack_facts>{query:20 minute yoga kiya subah subah.}</record_lifetrack_facts>"}
+{"instruction": "Maine 1 litre paani ki botal khatam ki.", "input": "", "output": "<record_lifetrack_facts>{query:Maine 1 litre paani ki botal khatam ki.}</record_lifetrack_facts>"}
+{"instruction": "Aaj 6000 steps ho chuke hain mere.", "input": "", "output": "<record_lifetrack_facts>{query:Aaj 6000 steps ho chuke hain mere.}</record_lifetrack_facts>"}
+{"instruction": "Shaam ko 30 minute cardio kiya.", "input": "", "output": "<record_lifetrack_facts>{query:Shaam ko 30 minute cardio kiya.}</record_lifetrack_facts>"}
+{"instruction": "Ek ghanta coding practice ki aaj.", "input": "", "output": "<record_lifetrack_facts>{query:Ek ghanta coding practice ki aaj.}</record_lifetrack_facts>"}
+{"instruction": "Subah 10 minute pranayama kiya.", "input": "", "output": "<record_lifetrack_facts>{query:Subah 10 minute pranayama kiya.}</record_lifetrack_facts>"}
+{"instruction": "Dopahar mein healthy sprout salad khaya.", "input": "", "output": "<record_lifetrack_facts>{query:Dopahar mein healthy sprout salad khaya.}</record_lifetrack_facts>"}
+{"instruction": "Turn on the flashlight", "input": "", "output": "I can open Wi-Fi, the map, mail, contacts, the flashlight, and calendar events with the Mobile Actions model. This model opens Airo screens, reminders, and LifeTrack."}
+{"instruction": "Turn off the flashlight please.", "input": "", "output": "I can open Wi-Fi, the map, mail, contacts, the flashlight, and calendar events with the Mobile Actions model. This model opens Airo screens, reminders, and LifeTrack."}
+{"instruction": "Switch on my phone torch.", "input": "", "output": "I can open Wi-Fi, the map, mail, contacts, the flashlight, and calendar events with the Mobile Actions model. This model opens Airo screens, reminders, and LifeTrack."}
+{"instruction": "Turn off torch right now.", "input": "", "output": "I can open Wi-Fi, the map, mail, contacts, the flashlight, and calendar events with the Mobile Actions model. This model opens Airo screens, reminders, and LifeTrack."}
+{"instruction": "Send an email to sarah@example.com about the project.", "input": "", "output": "I can open Wi-Fi, the map, mail, contacts, the flashlight, and calendar events with the Mobile Actions model. This model opens Airo screens, reminders, and LifeTrack."}
+{"instruction": "Send email to manager regarding leave.", "input": "", "output": "I can open Wi-Fi, the map, mail, contacts, the flashlight, and calendar events with the Mobile Actions model. This model opens Airo screens, reminders, and LifeTrack."}
+{"instruction": "Compose and send an email to support.", "input": "", "output": "I can open Wi-Fi, the map, mail, contacts, the flashlight, and calendar events with the Mobile Actions model. This model opens Airo screens, reminders, and LifeTrack."}
+{"instruction": "Create contact for Alex with phone number 9876543210.", "input": "", "output": "I can open Wi-Fi, the map, mail, contacts, the flashlight, and calendar events with the Mobile Actions model. This model opens Airo screens, reminders, and LifeTrack."}
+{"instruction": "Save Dr. Sharma in my phone contacts.", "input": "", "output": "I can open Wi-Fi, the map, mail, contacts, the flashlight, and calendar events with the Mobile Actions model. This model opens Airo screens, reminders, and LifeTrack."}
+{"instruction": "Add a new contact named John Doe.", "input": "", "output": "I can open Wi-Fi, the map, mail, contacts, the flashlight, and calendar events with the Mobile Actions model. This model opens Airo screens, reminders, and LifeTrack."}
+{"instruction": "Show map to Central Park.", "input": "", "output": "I can open Wi-Fi, the map, mail, contacts, the flashlight, and calendar events with the Mobile Actions model. This model opens Airo screens, reminders, and LifeTrack."}
+{"instruction": "Open map for directions to the airport.", "input": "", "output": "I can open Wi-Fi, the map, mail, contacts, the flashlight, and calendar events with the Mobile Actions model. This model opens Airo screens, reminders, and LifeTrack."}
+{"instruction": "Show navigation map to nearby petrol pump.", "input": "", "output": "I can open Wi-Fi, the map, mail, contacts, the flashlight, and calendar events with the Mobile Actions model. This model opens Airo screens, reminders, and LifeTrack."}
+{"instruction": "Open wifi settings.", "input": "", "output": "I can open Wi-Fi, the map, mail, contacts, the flashlight, and calendar events with the Mobile Actions model. This model opens Airo screens, reminders, and LifeTrack."}
+{"instruction": "Turn on Wi-Fi in settings.", "input": "", "output": "I can open Wi-Fi, the map, mail, contacts, the flashlight, and calendar events with the Mobile Actions model. This model opens Airo screens, reminders, and LifeTrack."}
+{"instruction": "Open my wifi configuration screen.", "input": "", "output": "I can open Wi-Fi, the map, mail, contacts, the flashlight, and calendar events with the Mobile Actions model. This model opens Airo screens, reminders, and LifeTrack."}
+{"instruction": "Create calendar event: Team lunch on Friday at 1pm.", "input": "", "output": "I can open Wi-Fi, the map, mail, contacts, the flashlight, and calendar events with the Mobile Actions model. This model opens Airo screens, reminders, and LifeTrack."}
+{"instruction": "Schedule calendar event Doctor Appointment on 2026-10-25 at 15:00.", "input": "", "output": "I can open Wi-Fi, the map, mail, contacts, the flashlight, and calendar events with the Mobile Actions model. This model opens Airo screens, reminders, and LifeTrack."}
+{"instruction": "Add meeting with client to Google calendar.", "input": "", "output": "I can open Wi-Fi, the map, mail, contacts, the flashlight, and calendar events with the Mobile Actions model. This model opens Airo screens, reminders, and LifeTrack."}
+{"instruction": "Torch jala do.", "input": "", "output": "I can open Wi-Fi, the map, mail, contacts, the flashlight, and calendar events with the Mobile Actions model. This model opens Airo screens, reminders, and LifeTrack."}
+{"instruction": "Flashlight band kar do.", "input": "", "output": "I can open Wi-Fi, the map, mail, contacts, the flashlight, and calendar events with the Mobile Actions model. This model opens Airo screens, reminders, and LifeTrack."}
+{"instruction": "Mummy ko email bhejo.", "input": "", "output": "I can open Wi-Fi, the map, mail, contacts, the flashlight, and calendar events with the Mobile Actions model. This model opens Airo screens, reminders, and LifeTrack."}
+{"instruction": "Naya contact save karo phone mein.", "input": "", "output": "I can open Wi-Fi, the map, mail, contacts, the flashlight, and calendar events with the Mobile Actions model. This model opens Airo screens, reminders, and LifeTrack."}
+{"instruction": "Airport jaane ka map dikhao.", "input": "", "output": "I can open Wi-Fi, the map, mail, contacts, the flashlight, and calendar events with the Mobile Actions model. This model opens Airo screens, reminders, and LifeTrack."}
+{"instruction": "Wifi settings open karo phone ki.", "input": "", "output": "I can open Wi-Fi, the map, mail, contacts, the flashlight, and calendar events with the Mobile Actions model. This model opens Airo screens, reminders, and LifeTrack."}
+{"instruction": "What is the capital of France?", "input": "", "output": "I can only help with Airo navigation, reminders, calendar lookups, and LifeTrack goals."}
+{"instruction": "Write a python script to sort a list.", "input": "", "output": "I can only help with Airo navigation, reminders, calendar lookups, and LifeTrack goals."}
+{"instruction": "Tell me a funny joke.", "input": "", "output": "I can only help with Airo navigation, reminders, calendar lookups, and LifeTrack goals."}
+{"instruction": "What's the weather like in New Delhi?", "input": "", "output": "I can only help with Airo navigation, reminders, calendar lookups, and LifeTrack goals."}
+{"instruction": "Who won the cricket world cup in 2011?", "input": "", "output": "I can only help with Airo navigation, reminders, calendar lookups, and LifeTrack goals."}
+{"instruction": "Can you write a poem about autumn?", "input": "", "output": "I can only help with Airo navigation, reminders, calendar lookups, and LifeTrack goals."}
+{"instruction": "Explain quantum computing in simple terms.", "input": "", "output": "I can only help with Airo navigation, reminders, calendar lookups, and LifeTrack goals."}
+{"instruction": "What is the stock price of Apple today?", "input": "", "output": "I can only help with Airo navigation, reminders, calendar lookups, and LifeTrack goals."}
+{"instruction": "Translate 'Good morning' into Spanish.", "input": "", "output": "I can only help with Airo navigation, reminders, calendar lookups, and LifeTrack goals."}
+{"instruction": "How do I bake chocolate chip cookies?", "input": "", "output": "I can only help with Airo navigation, reminders, calendar lookups, and LifeTrack goals."}
+{"instruction": "Who is the president of the United States?", "input": "", "output": "I can only help with Airo navigation, reminders, calendar lookups, and LifeTrack goals."}
+{"instruction": "What is the distance from Earth to Mars?", "input": "", "output": "I can only help with Airo navigation, reminders, calendar lookups, and LifeTrack goals."}
+{"instruction": "Give me a recipe for paneer butter masala.", "input": "", "output": "I can only help with Airo navigation, reminders, calendar lookups, and LifeTrack goals."}
+{"instruction": "Write a short essay on climate change.", "input": "", "output": "I can only help with Airo navigation, reminders, calendar lookups, and LifeTrack goals."}
+{"instruction": "Solve this math problem: 45 multiplied by 82.", "input": "", "output": "I can only help with Airo navigation, reminders, calendar lookups, and LifeTrack goals."}
+{"instruction": "Ek accha sa chutkula sunao.", "input": "", "output": "I can only help with Airo navigation, reminders, calendar lookups, and LifeTrack goals."}
+{"instruction": "Aaj Mumbai ka mausam kaisa hai?", "input": "", "output": "I can only help with Airo navigation, reminders, calendar lookups, and LifeTrack goals."}
+{"instruction": "Python mein reverse string kaise likhein?", "input": "", "output": "I can only help with Airo navigation, reminders, calendar lookups, and LifeTrack goals."}
+{"instruction": "Bharat ke pradhan mantri kaun hain?", "input": "", "output": "I can only help with Airo navigation, reminders, calendar lookups, and LifeTrack goals."}
+{"instruction": "Biryani banane ki recipe batao.", "input": "", "output": "I can only help with Airo navigation, reminders, calendar lookups, and LifeTrack goals."}
+{"instruction": "Taj Mahal kisne banwaya tha?", "input": "", "output": "I can only help with Airo navigation, reminders, calendar lookups, and LifeTrack goals."}
+{"instruction": "Kal ke cricket match ka score kya tha?", "input": "", "output": "I can only help with Airo navigation, reminders, calendar lookups, and LifeTrack goals."}
+{"instruction": "Mujhe ek kahani sunao.", "input": "", "output": "I can only help with Airo navigation, reminders, calendar lookups, and LifeTrack goals."}
+{"instruction": "Dollar ka rate kya chal raha hai rupaye mein?", "input": "", "output": "I can only help with Airo navigation, reminders, calendar lookups, and LifeTrack goals."}
+{"instruction": "English se Hindi translation kar sakte ho?", "input": "", "output": "I can only help with Airo navigation, reminders, calendar lookups, and LifeTrack goals."}
+{"instruction": "Gym workout today", "input": "", "output": "Are you asking for your gym workout status or recording a new workout fact?"}
+{"instruction": "Water intake", "input": "", "output": "Are you asking for your water intake status or recording water you drank?"}
+{"instruction": "Reading goal progress or record", "input": "", "output": "Are you asking for your reading goal status or recording pages read?"}
+{"instruction": "Sleep hours", "input": "", "output": "Are you asking for your sleep status or recording how many hours you slept?"}
+{"instruction": "Daily steps", "input": "", "output": "Are you asking for your step count status or recording steps walked?"}
+{"instruction": "Savings target status or add money", "input": "", "output": "Are you asking for your savings status or recording saved money?"}
+{"instruction": "Aaj ka gym", "input": "", "output": "Kya aap gym workout ka status dekhna chahte hain ya gym fact record karna chahte hain?"}
+{"instruction": "Paani ka hisaab", "input": "", "output": "Kya aap water intake status check karna chahte hain ya paani pina record karna chahte hain?"}
+{"instruction": "Aaj ke steps", "input": "", "output": "Kya aap aaj ke steps ka status dekhna chahte hain ya naye steps record karna chahte hain?"}
+{"instruction": "Kitab padhna", "input": "", "output": "Kya aap reading goal ka status dekhna chahte hain ya padhe hue panne record karna chahte hain?"}

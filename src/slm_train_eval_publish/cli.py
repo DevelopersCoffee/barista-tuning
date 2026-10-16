@@ -694,6 +694,89 @@ def predict_media_actions(
     console.print(f"Prediction JSONL: {path}")
 
 
+@app.command("predict-airo-actions")
+def predict_airo_actions_command(
+    dataset: Annotated[Path, typer.Argument(exists=True, readable=True)],
+    model_path: Annotated[Path, typer.Argument(exists=True, readable=True)],
+    output: Annotated[Path, typer.Option("--output", "-o")] = Path(
+        "reports/airo-actions-270m/eval_predictions.jsonl"
+    ),
+    limit: Annotated[int | None, typer.Option("--limit", min=1)] = None,
+    max_new_tokens: Annotated[int, typer.Option("--max-new-tokens", min=1)] = 128,
+) -> None:
+    """Generate Airo action tool-call predictions from a local model or PEFT adapter."""
+    from slm_train_eval_publish.airo_action_predictions import (
+        predict_airo_actions_with_model,
+    )
+
+    path = predict_airo_actions_with_model(
+        dataset=dataset,
+        model_path=model_path,
+        output=output,
+        limit=limit,
+        max_new_tokens=max_new_tokens,
+    )
+    console.print(f"Prediction JSONL: {path}")
+
+
+@app.command("eval-airo-actions")
+def eval_airo_actions_command(
+    dataset: Annotated[Path, typer.Argument(exists=True, readable=True)],
+    model_path: Annotated[Path, typer.Argument(exists=True, readable=True)],
+    output: Annotated[Path, typer.Option("--output", "-o")] = Path(
+        "reports/airo-actions-270m/eval_report.json"
+    ),
+    predictions_output: Annotated[Path | None, typer.Option("--predictions-output")] = None,
+    limit: Annotated[int | None, typer.Option("--limit", min=1)] = None,
+    max_new_tokens: Annotated[int, typer.Option("--max-new-tokens", min=1)] = 128,
+) -> None:
+    """Evaluate Airo action model against quality gates (tool name >= 90%, required args >= 85%, refusal >= 90%)."""
+    from slm_train_eval_publish.airo_action_predictions import (
+        evaluate_airo_actions_model,
+    )
+
+    report = evaluate_airo_actions_model(
+        dataset=dataset,
+        model_path=model_path,
+        output_report=output,
+        predictions_output=predictions_output,
+        limit=limit,
+        max_new_tokens=max_new_tokens,
+    )
+    console.print(f"Total: {report['total_samples']}")
+    console.print(f"Tool accuracy: {report['tool_name_accuracy']:.3%}")
+    console.print(f"Required argument accuracy: {report['required_args_accuracy']:.3%}")
+    console.print(f"Exact argument accuracy: {report['exact_args_accuracy']:.3%}")
+    console.print(f"Refusal accuracy: {report['refusal_accuracy']:.3%}")
+    console.print(f"Gates passed: {report['all_gates_pass']}")
+    console.print(f"Report: {output}")
+
+
+@app.command("export-airo-actions")
+def export_airo_actions_command(
+    model_path: Annotated[Path, typer.Argument(exists=True, readable=True)],
+    output_dir: Annotated[Path, typer.Argument()],
+    artifact_name: Annotated[str, typer.Option("--artifact-name")] = "airo_actions_q8_ekv1024.litertlm",
+    schema_source: Annotated[Path | None, typer.Option("--schema")] = None,
+    cache_length: Annotated[int, typer.Option("--cache-length")] = 1024,
+) -> None:
+    """Export fine-tuned Airo actions model into a generic .litertlm artifact with tool schemas."""
+    from slm_train_eval_publish.airo_actions_export import (
+        export_airo_actions_litertlm,
+    )
+
+    manifest = export_airo_actions_litertlm(
+        model_path=model_path,
+        output_dir=output_dir,
+        artifact_name=artifact_name,
+        schema_source=schema_source,
+        cache_length=cache_length,
+    )
+    console.print(f"[bold green]Export complete:[/bold green] {manifest['artifact_path']}")
+    console.print(f"File size: {manifest['file_size_bytes']} bytes")
+    console.print(f"SHA-256: {manifest['sha256']}")
+
+
 @app.command("package-edge-ffi-android")
 def package_edge_ffi_android(
     airo_app: Annotated[

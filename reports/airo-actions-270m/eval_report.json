@@ -1,0 +1,147 @@
+{
+  "all_gates_pass": true,
+  "exact_args_accuracy": 0.8081761006289309,
+  "exact_args_correct": 257,
+  "failures_count": 43,
+  "failures_sample": [
+    {
+      "expected": "<get_current_date_time>{}</get_current_date_time>",
+      "expected_args": {},
+      "expected_tool": "get_current_date_time",
+      "input": "",
+      "instruction": "Abhi ka samay aur taarikh batao.",
+      "predicted": "Kya aap job status dekhna chahte hain ya job status dekhna chahte hain?",
+      "predicted_args": {},
+      "predicted_tool": null
+    },
+    {
+      "expected": "<read_calendar_events>{date:2026-10-16}</read_calendar_events>",
+      "expected_args": {
+        "date": "2026-10-16"
+      },
+      "expected_tool": "read_calendar_events",
+      "input": "Today is Friday, 2026-10-16",
+      "instruction": "What events do I have scheduled for today?",
+      "predicted": "<read_calendar_events>{date:2026-10-17}</read_calendar_events>",
+      "predicted_args": {
+        "date": "2026-10-17"
+      },
+      "predicted_tool": "read_calendar_events"
+    },
+    {
+      "expected": "<read_calendar_events>{date:2026-10-16}</read_calendar_events>",
+      "expected_args": {
+        "date": "2026-10-16"
+      },
+      "expected_tool": "read_calendar_events",
+      "input": "Today is Friday, 2026-10-16",
+      "instruction": "What is on my schedule for today?",
+      "predicted": "<read_calendar_events>{date:2026-10-17}</read_calendar_events>",
+      "predicted_args": {
+        "date": "2026-10-17"
+      },
+      "predicted_tool": "read_calendar_events"
+    },
+    {
+      "expected": "<read_calendar_events>{date:2026-10-24}</read_calendar_events>",
+      "expected_args": {
+        "date": "2026-10-24"
+      },
+      "expected_tool": "read_calendar_events",
+      "input": "",
+      "instruction": "Find all events on 2026-10-24.",
+      "predicted": "I can only help with Airo navigation, reminders, calendar lookups, and LifeTrack goals.",
+      "predicted_args": {},
+      "predicted_tool": null
+    },
+    {
+      "expected": "<read_calendar_events>{date:2026-10-16}</read_calendar_events>",
+      "expected_args": {
+        "date": "2026-10-16"
+      },
+      "expected_tool": "read_calendar_events",
+      "input": "Today is Friday, 2026-10-16",
+      "instruction": "Aaj mera kya schedule hai calendar mein?",
+      "predicted": "<read_calendar_events>{date:2026-10-17}</read_calendar_events>",
+      "predicted_args": {
+        "date": "2026-10-17"
+      },
+      "predicted_tool": "read_calendar_events"
+    },
+    {
+      "expected": "<read_calendar_events>{date:2026-10-16}</read_calendar_events>",
+      "expected_args": {
+        "date": "2026-10-16"
+      },
+      "expected_tool": "read_calendar_events",
+      "input": "Today is Friday, 2026-10-16",
+      "instruction": "Aaj ke saare events check karo.",
+      "predicted": "<read_calendar_events>{date:2026-10-17}</read_calendar_events>",
+      "predicted_args": {
+        "date": "2026-10-17"
+      },
+      "predicted_tool": "read_calendar_events"
+    },
+    {
+      "expected": "<read_calendar_events>{date:2026-10-19,end_date:2026-10-24}</read_calendar_events>",
+      "expected_args": {
+        "date": "2026-10-19",
+        "end_date": "2026-10-24"
+      },
+      "expected_tool": "read_calendar_events",
+      "input": "",
+      "instruction": "Agla hafta 2026-10-19 se 2026-10-24 tak kya events hain?",
+      "predicted": "I can only help with Airo navigation, reminders, calendar lookups, and LifeTrack goals.",
+      "predicted_args": {},
+      "predicted_tool": null
+    },
+    {
+      "expected": "<query_lifetrack_status>{query:How many steps have I walked today?}</query_lifetrack_status>",
+      "expected_args": {
+        "query": "How many steps have I walked today?"
+      },
+      "expected_tool": "query_lifetrack_status",
+      "input": "",
+      "instruction": "How many steps have I walked today?",
+      "predicted": "I can only help with Airo navigation, reminders, calendar lookups, and LifeTrack goals.",
+      "predicted_args": {},
+      "predicted_tool": null
+    },
+    {
+      "expected": "<query_lifetrack_status>{query:How many glasses of water did I drink today?}</query_lifetrack_status>",
+      "expected_args": {
+        "query": "How many glasses of water did I drink today?"
+      },
+      "expected_tool": "query_lifetrack_status",
+      "input": "",
+      "instruction": "How many glasses of water did I drink today?",
+      "predicted": "I can only help with Airo navigation, reminders, calendar lookups, and LifeTrack goals.",
+      "predicted_args": {},
+      "predicted_tool": null
+    },
+    {
+      "expected": "<query_lifetrack_status>{query:Aaj kitne steps chale maine?}</query_lifetrack_status>",
+      "expected_args": {
+        "query": "Aaj kitne steps chale maine?"
+      },
+      "expected_tool": "query_lifetrack_status",
+      "input": "",
+      "instruction": "Aaj kitne steps chale maine?",
+      "predicted": "<get_current_date_time>{}</get_current_date_time>",
+      "predicted_args": {},
+      "predicted_tool": "get_current_date_time"
+    }
+  ],
+  "gate_refusal": true,
+  "gate_required_args": true,
+  "gate_tool_name": true,
+  "refusal_accuracy": 0.9666666666666667,
+  "refusal_correct": 58,
+  "refusal_samples": 60,
+  "required_args_accuracy": 0.8710691823899371,
+  "required_args_correct": 277,
+  "tool_name_accuracy": 0.9371069182389937,
+  "tool_name_correct": 298,
+  "tool_samples": 318,
+  "total_samples": 378
+}

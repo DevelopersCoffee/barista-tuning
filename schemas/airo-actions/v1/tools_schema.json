@@ -1,0 +1,146 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://edge-intelligence.local/schemas/airo-actions/v1/tools_schema.json",
+  "title": "Airo Function Calling Tools Schema 1.0",
+  "tools": [
+    {
+      "name": "get_current_date_time",
+      "description": "Current local date, time, weekday, and timezone. No arguments.",
+      "parameters": {
+        "type": "object",
+        "properties": {},
+        "required": [],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "read_calendar_events",
+      "description": "Read calendar events for a date or date range. date and end_date are YYYY-MM-DD. date is required.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "date": {
+            "type": "string",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+            "description": "Start date in YYYY-MM-DD format"
+          },
+          "end_date": {
+            "type": "string",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+            "description": "Optional end date in YYYY-MM-DD format"
+          }
+        },
+        "required": ["date"],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "calendar_permission_status",
+      "description": "Whether calendar read access is granted. No arguments.",
+      "parameters": {
+        "type": "object",
+        "properties": {},
+        "required": [],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "query_lifetrack_status",
+      "description": "query is a short question about a local LifeTrack goal. Required.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "query": {
+            "type": "string",
+            "description": "Short question about a local LifeTrack goal"
+          }
+        },
+        "required": ["query"],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "open_route",
+      "description": "Open an Airo app route. target is one of: money, budget, expenses, split, assistant, models, music, tv, games, chess, quest.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "target": {
+            "type": "string",
+            "enum": [
+              "money",
+              "budget",
+              "expenses",
+              "split",
+              "assistant",
+              "models",
+              "music",
+              "tv",
+              "games",
+              "chess",
+              "quest"
+            ],
+            "description": "Target screen or route identifier"
+          }
+        },
+        "required": ["target"],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "schedule_notification",
+      "description": "Schedule a reminder notification. hour is 0-23. minute is 0-59. date is YYYY-MM-DD when for one day. repeat_daily is true only when asked for every day.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "Title of the reminder"
+          },
+          "message": {
+            "type": "string",
+            "description": "Message or details of the reminder"
+          },
+          "hour": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 23,
+            "description": "Hour in 24-hour format (0-23)"
+          },
+          "minute": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 59,
+            "description": "Minute (0-59)"
+          },
+          "date": {
+            "type": "string",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+            "description": "Optional date in YYYY-MM-DD format"
+          },
+          "repeat_daily": {
+            "type": "boolean",
+            "description": "Whether the reminder repeats daily"
+          }
+        },
+        "required": ["title", "message", "hour", "minute"],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "record_lifetrack_facts",
+      "description": "The user is stating a fact to store on a LifeTrack, not asking for status. query is the fact in the user's words.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "query": {
+            "type": "string",
+            "description": "The fact in the user's words"
+          }
+        },
+        "required": ["query"],
+        "additionalProperties": false
+      }
+    }
+  ]
+}

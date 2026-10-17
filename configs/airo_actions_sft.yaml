@@ -1,0 +1,78 @@
+# Airo Actions SFT Configuration
+# Fine-tunes FunctionGemma 270M for Airo-specific on-device tool calling.
+# Tool call format: <tool_name>{arg:value,arg:value}</tool_name>
+#
+# Supported Tools:
+#   - get_current_date_time()
+#   - read_calendar_events(date, end_date?)
+#   - calendar_permission_status()
+#   - query_lifetrack_status(query)
+#   - open_route(target: [money, budget, expenses, split, assistant, models, music, tv, games, chess, quest])
+#   - schedule_notification(title, message, hour, minute, date?, repeat_daily?)
+#   - record_lifetrack_facts(query)
+#
+# Refusals (Plain text, no tool call):
+#   - Google 7 tools (flashlight, contacts, email, map, wifi, calendar-write)
+#   - Unknown/general queries and ambiguous queries
+
+model:
+  base_model: unsloth/functiongemma-270m-it
+  torch_dtype: auto
+  trust_remote_code: false
+  use_flash_attention_2: false
+
+data:
+  train_path: data/processed/airo_actions_train.jsonl
+  eval_path: data/processed/airo_actions_eval.jsonl
+  instruction_field: instruction
+  input_field: input
+  output_field: output
+  max_seq_length: 512
+
+lora:
+  enabled: true
+  r: 16
+  alpha: 32
+  dropout: 0.05
+  target_modules:
+    - q_proj
+    - v_proj
+    - k_proj
+    - o_proj
+
+training:
+  output_dir: models/airo-actions-270m
+  seed: 42
+  num_train_epochs: 2
+  per_device_train_batch_size: 2
+  per_device_eval_batch_size: 2
+  gradient_accumulation_steps: 4
+  learning_rate: 0.0003
+  warmup_ratio: 0.05
+  weight_decay: 0.01
+  logging_steps: 25
+  save_steps: 150
+  eval_steps: 150
+  save_total_limit: 2
+  gradient_checkpointing: false
+  report_to: []
+
+eval:
+  model_path: models/airo-actions-270m
+  output_dir: reports/airo-actions-270m
+  max_eval_samples: 378
+  max_new_tokens: 128
+  generation_prompts:
+    - "### Instruction\nWhat's on my calendar tomorrow?\n\n### Input\nToday is Friday, 2026-10-16\n\n### Response\n"
+    - "### Instruction\nRemind me at 7:30 to take the medicine\n\n### Response\n"
+    - "### Instruction\nSplit a bill\n\n### Response\n"
+    - "### Instruction\nTurn on the flashlight\n\n### Response\n"
+    - "### Instruction\nHow many steps have I walked today?\n\n### Response\n"
+    - "### Instruction\nI drank 500ml of water\n\n### Response\n"
+    - "### Instruction\nCheck calendar permission status\n\n### Response\n"
+
+publish:
+  repo_id: developerscoffee/airo-actions-270m-litertlm
+  model_dir: models/airo-actions-270m-litertlm
+  private: false
+  commit_message: "Publish Airo Actions 270M LiteRT-LM on-device model"

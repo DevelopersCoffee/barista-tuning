@@ -17,6 +17,13 @@ reports/*
 !data/processed/.gitkeep
 !models/.gitkeep
 !reports/.gitkeep
+!data/processed/airo_actions_train.jsonl
+!data/processed/airo_actions_eval.jsonl
+!reports/airo-actions-270m/
+!reports/airo-actions-270m/*
+gguf/
+*.litertlm
+CLAUDE.md
 
 # Hugging Face and experiment logs.
 .cache/
